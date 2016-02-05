@@ -2,126 +2,138 @@
 {% load tagging_tags %}
 {% load comments %}
 
-{% block title %}{{ book.a_title }} :: Pathagar Book Server{% endblock %}
+{% block title %}{{ book.a_title }} :: Pathagar{% endblock %}
 
 {% block script %}
-  {{ block.super }}
-  $('#search').example('Book Search...');
+    {{ block.super }}
+    $('#search').example('Book Search...');
 {% endblock %}
 
 {% block content %}
 
-<div id="content">
+    <div id="content">
 
-<h1 class="alt">{{ book.a_title }}</h1>
-<h2>by <span class="alt">{{ book.a_author }}</span></h2>
-<hr class="space">
-{% if user.is_authenticated %}
-<div class="span-3">
-<a class="button" href="{% url pathagar.books.views.edit_book book.pk %}">Edit</a>
-<a class="button" href="{% url pathagar.books.views.remove_book book.pk %}">Remove</a>
-</div>
-<hr class="space">
-<hr class="space">
-<div class="span-2"><label>Status:</label></div>
-<div class="span-3">{{ book.a_status }}</div>
-<hr class="space">
-{% endif %}
+        <div class="span-6 last" id="sidebar">
+            {% if  book.cover_img %}
+                <img src="{{ book.cover_img.url }}" alt="Cover" width=200px/>
+            {% else %}
+                <img src="{{ STATIC_URL }}images/generic_cover.png" alt="Cover" width=200px/>
+            {% endif %}
+            <hr class="space">
+            <a class="detail_download" href="{% url pathagar.books.views.download_book book.pk %}">Download</a>
+            {% if user.is_authenticated %}
+                <br/><br/>
+                <div class="span-3">
+                    <a class="button" href="{% url pathagar.books.views.edit_book book.pk %}">Edit</a>
+                    <a class="button" href="{% url pathagar.books.views.remove_book book.pk %}">Remove</a>
+                </div>
+                <hr class="space">
+                {#<hr class="space">#}
+                {#<div class="span-2"><label>Status:</label></div>#}
+                {#<div class="span-3">{{ book.a_status }}</div>#}
+                {#<hr class="space">#}
+            {% endif %}
+        </div>
 
-{% if book.tags.count != 0 %}
-  <div class="span-2"><label>Tags:</label></div>
-  <div class="span-10">
-  {% for tag in book.tags.all %}
-    <a class="button" href="{% url by_tag tag.name %}">{{ tag.name }}</a>
-  {% endfor %}
-  </div>
-  <hr class="space">
-{% endif %}
-<div class="span-16 colborder">
-<div class="span-2"><label>Language:</label></div>
-{% ifnotequal book.dc_language None %}
-<div class="span-3">{{ book.dc_language }}</div>
-{% else %}
-<div class="span-3">Unknown</div>
-{% endifnotequal %}
-<hr class="space">
-<div class="span-2"><label>Downloads:</label></div>
-<div class="span-3">{{ book.downloads }}</div>
-<hr class="space">
-<div class="span-2"><label>Publisher:</label></div>
-<div class="span-3">{{ book.dc_publisher }}</div>
-<hr class="space">
-<div class="span-2"><label>Published:</label></div>
-<div class="span-3">{{ book.dc_issued }}</div>
-<hr class="space">
-<div class="span-2"><label>Rights:</label></div>
-<div class="span-3">{{ book.dc_rights }}</div>
-<hr class="space">
-<div class="span-16">
-<p>
-{{ book.a_summary }}
-</p>
-</div>
-<hr>
-{% if allow_user_comments %}
+        <div class="detail_info" style="float:right">
+            <h2 class="detail_title">{{ book.a_title }}</h2>
+            <h4 class="detail_author"><a href="{% url by_title %}?q={{ book.a_author }}">{{ book.a_author }}</a></h4>
+            <hr class="space">
 
-<div class="span-16">
-<label>Readers comments:</label>
-</div>
-<hr class="space">
+            {% if book.tags.count != 0 %}
+                <div class="span-2"><label>Tags:</label></div>
+                <div class="span-10">
+                    {% for tag in book.tags.all %}
+                        <a class="button" href="{% url by_tag tag.name %}">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+                <hr class="space">
+            {% endif %}
+            <div class="span-16 colborder">
+                <div class="span-3">Publisher:</div>
+                <div class="span-6">{{ book.dc_publisher }}</div>
+                <br/>
+                <div class="span-3">Published:</div>
+                <div class="span-6">{{ book.dc_issued }}</div>
+                <br/>
+                <div class="span-3">Language:</div>
+                {% ifnotequal book.dc_language None %}
+                    <div class="span-3">{{ book.dc_language }}</div>
+                {% else %}
+                    <div class="span-6">Unknown</div>
+                {% endifnotequal %}
+                <br/>
+                <div class="detail_stats">
+                    <div class="span-3">Added:</div>
+                    <div class="span-6">{{ book.time_added|timesince }} ago</div>
+                    <br/>
+                    <div class="span-3">Downloads:</div>
+                    <div class="span-6">{{ book.downloads }}</div>
+                    {% if user.is_superuser %}
+                        <br/>
+                        <div class="span-3">Path:</div>
+                        <div>{{ book.book_file }}</div>
+                    {% endif %}
+                </div>
+                {#<hr class="space">#}
+                {#<div class="span-2"><label>Rights:</label></div>#}
+                {#<div class="span-3">{{ book.dc_rights }}</div>#}
 
-{% get_comment_list for book as comment_list %}
-{% for comment in comment_list %}
-<div class="span-16"><b> {{ comment.user_name }} said: </b>{{ comment.comment }}</div>
-<hr class="space">
-{% endfor %}
+                <hr class="space">
+                <div class="detail_desc">{{ book.a_summary }}</div>
+            </div> <!-- detail-info -->
+        </div>
+    </div>
 
-<hr>
+    {% if allow_user_comments %}
+        <div class="detail_comments">
+            <div class="span-16">
+                <h4><label>Comments:</label></h4>
+            </div>
+            {#                <hr class="space">#}
 
-<div class="span-16">
-<label>Add your comment:</label>
-</div>
+            {% get_comment_list for book as comment_list %}
+            {% for comment in comment_list %}
+                <div class="span-16" style="padding-left:2em">
+                    <b> {{ comment.user_name }} - {{ comment.submit_date|timesince }} ago:</b>
+                    <br/>
+                    <div>{{ comment.comment }}</div>
+                </div>
+                <hr class="space">
+            {% endfor %}
 
-{% get_comment_form for book as form %}
-<form action="{% comment_form_target %}" method="post">
-{% csrf_token %}
+            {#                <hr>#}
 
-{{ form.content_type }}
-{{ form.object_pk }}
-{{ form.timestamp }}
-{{ form.security_hash }}
-<input type="hidden" name="next" value="{% url pathagar.books.views.book_detail book.pk %}" />
+            {#<div class="span-16">#}
+            {#<label>Add your comment:</label>#}
+            {#</div>#}
 
-<div class="span-4"><label for="id_your_name">Your name:</label></div>
-{{ form.name }}
-<hr class="space">
+            {% get_comment_form for book as form %}
+            <form action="{% comment_form_target %}" method="post">
+                {% csrf_token %}
 
-<div class="span-4"><label for="id_comment">Your comment:</label></div>
-{{ form.comment }}
-<hr class="space">
+                {{ form.content_type }}
+                {{ form.object_pk }}
+                {{ form.timestamp }}
+                {{ form.security_hash }}
+                <input type="hidden" name="next" value="{% url pathagar.books.views.book_detail book.pk %}"/>
 
-<input type="hidden" name="email" value="fake_emai@kfake.org" />
-<input type="hidden" name="url" value="http://faksite.org" />
+                {#<div class="span-4"><label for="id_your_name">Your name:</label></div>#}
+                {#{{ form.name }}#}
+                {#<hr class="space">#}
 
-<input type="submit" name="submit" value="Post">
-</form>
+                {#                <div class="span-4" style="padding-left:2em"><label for="id_comment">Comment:</label></div>#}
+                {{ form.comment }}
+                <hr class="space">
 
+                <input type="hidden" name="email" value="fake_emai@kfake.org"/>
+                <input type="hidden" name="url" value="http://faksite.org"/>
 
-{% endif %}
-</div>
-
-<div class="span-6 last" id="sidebar">
-{% if  book.cover_img %}
-<img src="{{ book.cover_img.url }}" alt="Cover" width=150px/>
-{% else %}
-<img src="{{ STATIC_URL }}images/generic_cover.png" alt="Cover" width=150px/>
-{% endif %}
-<hr class="space">
-<a class="download" href="{% url pathagar.books.views.download_book book.pk %}">Download book</a>
-</div>
+                <input type="submit" name="submit" value="Post">
+            </form>
+        </div>
+    {% endif %}
 
 
-</div>
-
-{%  endblock %}
+{% endblock %}
 

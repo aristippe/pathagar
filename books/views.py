@@ -26,9 +26,12 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.list_detail import object_detail
+from django.views.generic.detail import DetailView
 from django.views.generic.create_update import create_object, update_object, \
-  delete_object
+    delete_object
 from django.template import RequestContext, resolve_variable
+
+from django.core.files import File
 
 from app_settings import BOOKS_PER_PAGE
 from django.conf import settings
@@ -57,6 +60,7 @@ from pathagar.books.app_settings import BOOK_PUBLISHED
 def add_language(request):
     return handlePopAdd(request, AddLanguageForm, 'language')
 
+@login_required
 def add_book(request):
     context_instance = RequestContext(request)
     user = resolve_variable('user', context_instance)
@@ -91,6 +95,7 @@ def remove_book(request, book_id):
         post_delete_redirect = '/',
     )
 
+@login_required
 def book_detail(request, book_id):
     return object_detail(
         request,
@@ -101,12 +106,13 @@ def book_detail(request, book_id):
     )
 
 def download_book(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
-    filename = os.path.join(settings.MEDIA_ROOT, book.book_file.name)
+    book = get_object_or_404(Book, pk = book_id)
+    # filename = os.path.join(settings.MEDIA_ROOT, book.book_file.name)
+    filename = unicode(os.path.abspath(book.book_file))  # unicode?
 
     # TODO, currently the downloads counter is incremented when the
     # download is requested, without knowing if the file sending was
-    # successfull:
+    # successful:
     book.downloads += 1
     book.save()
     return sendfile(request, filename, attachment=True)
@@ -124,7 +130,6 @@ def tags(request, qtype=None, group_slug=None):
     tag_groups = TagGroup.objects.all()
     context.update({'tag_group_list': tag_groups})
 
-
     # Return OPDS Atom Feed:
     if qtype == 'feed':
         catalog = generate_tags_catalog(context['tag_list'])
@@ -141,6 +146,7 @@ def tags_listgroups(request):
     catalog = generate_taggroups_catalog(tag_groups)
     return HttpResponse(catalog, mimetype='application/atom+xml')
 
+@login_required
 def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     """
     Filter the books, paginate the result, and return either a HTML
@@ -210,6 +216,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         context_instance = RequestContext(request),
     )
 
+@login_required
 def home(request):
     return redirect('latest')
 
@@ -218,22 +225,26 @@ def root(request, qtype=None):
     root_catalog = generate_root_catalog()
     return HttpResponse(root_catalog, mimetype='application/atom+xml')
 
+@login_required
 def latest(request, qtype=None):
     queryset = Book.objects.all()
     return _book_list(request, queryset, qtype, list_by='latest')
 
+@login_required
 def by_title(request, qtype=None):
     queryset = Book.objects.all().order_by('a_title')
     return _book_list(request, queryset, qtype, list_by='by-title')
 
+@login_required
 def by_author(request, qtype=None):
     queryset = Book.objects.all().order_by('a_author')
     return _book_list(request, queryset, qtype, list_by='by-author')
 
+@login_required
 def by_tag(request, tag, qtype=None):
     """ displays a book list by the tag argument """
     # get the Tag object
-    tag_instance = tTag.objects.get(name=tag) # TODO replace as Tag when django-tagging is removed
+    tag_instance = tTag.objects.get(name=tag)  # TODO replace as Tag when django-tagging is removed
 
     # if the tag does not exist, return 404
     if tag_instance is None:
@@ -244,7 +255,7 @@ def by_tag(request, tag, qtype=None):
     return _book_list(request, queryset, qtype, list_by='by-tag',
                       tag=tag_instance)
 
+@login_required
 def most_downloaded(request, qtype=None):
     queryset = Book.objects.all().order_by('-downloads')
     return _book_list(request, queryset, qtype, list_by='most-downloaded')
-

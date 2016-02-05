@@ -1,4 +1,8 @@
 database.db
 *pyc
 staticfiles/
-static_media/books
+static_media/**
+*.pyc
+.DS_Store
+local_settings.py
+db.sqlite

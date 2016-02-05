@@ -1,0 +1,21 @@
+# -*- coding: utf-8 -*-
+"""
+Sample deployment-specific Django settings. The variables defined in this file
+override those set on settings.py - please customize it to your needs and
+rename it to "local_settings.py".
+"""
+import os
+
+CUR_DIR = os.path.dirname(__file__)
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(CUR_DIR, 'db.sqlite'),
+    }
+}
+
+SECRET_KEY = 'some random unique string'
