@@ -28,7 +28,7 @@ from hashlib import sha256
 from taggit.managers import TaggableManager  # NEW
 
 from uuidfield import UUIDField
-from langlist import langs
+from langlist import langs_by_code
 from epub import Epub
 
 
@@ -39,30 +39,34 @@ def sha256_sum(_file):  # used to generate sha256 sum of book files
     return s.hexdigest()
 
 
+class LanguageManager(models.Manager):
+    def get_or_create_by_code(self, code):
+        """Convenience method for returning the Language that corresponds to
+        the specified code, creating it if needed.
+        If the code is not valid, it raises a ValueError.
+
+        TODO: replace with a RFC5646 compatible system.
+        TODO: find the proper Exception to subclass.
+        TODO: revise fixtures, some (or all) of them might be unreachable.
+        """
+        # Add Language, discarding it if it does not have a valid code.
+        if code in langs_by_code:
+            language, _ = self.get_or_create(
+                code=code, label=langs_by_code[code])
+            return language
+        raise ValueError('%s is not a valid language code' % code)
+
+
 class Language(models.Model):
-    label = models.CharField('language name', max_length=50, blank=True, unique=False)
+    # Custom manager for using get_or_create_by_code().
+    objects = LanguageManager()
+
+    label = models.CharField('language name', max_length=50, blank=True,
+                             unique=False)
     code = models.CharField(max_length=5, blank=True, unique=True)
 
     def __unicode__(self):
         return self.label
-
-    def add(self, language):
-        self.code = language
-        self.save()
-
-    def save(self, *args, **kwargs):
-        '''
-        This method automatically tries to assign the right language code
-        to the specified language. If a code cannot be found, it assigns
-        'xx'
-        '''
-        # code = 'xx'
-        # for lang in langs:
-        #     if self.label.lower() == lang[1].lower():
-        #         code = lang[0]
-        #         break
-        # self.code = code
-        super(Language, self).save(*args, **kwargs)
 
 
 class TagGroup(models.Model):

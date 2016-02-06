@@ -7846,3 +7846,7 @@ langs = (
     ("zyp", "Zyphe"),
     ("zza", "Zaza"),
     ("zzj", "Zuojiang Zhuang"))
+
+langs_by_label = {label: code for code, label in langs}
+
+langs_by_code = {code: label for code, label in langs}
