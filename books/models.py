@@ -128,7 +128,7 @@ class Book(models.Model):
     dc_issued = models.CharField('dc:issued', max_length=100, null=True)
     dc_identifier = models.CharField('dc:identifier', max_length=50,
                                      help_text='Use ISBN for this', null=True)
-    cover_img = models.FileField(blank=True, upload_to='covers')
+    cover_img = models.ImageField(blank=True, upload_to='covers')
 
     def validate_unique(self, *args, **kwargs):
         # if not self.file_sha256sum:
