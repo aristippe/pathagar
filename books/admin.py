@@ -30,15 +30,11 @@ class BookAdmin(admin.ModelAdmin):
     list_display = ('a_title', 'a_author', 'time_added', 'book_file')
 
 
-class LanguageAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields': ['label']})]
-
-
 class TagGroupAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
 admin.site.register(Book, BookAdmin)
-admin.site.register(Language, LanguageAdmin)
+admin.site.register(Language)
 admin.site.register(Status)
 admin.site.register(TagGroup, TagGroupAdmin)
