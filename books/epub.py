@@ -15,12 +15,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import zipfile
-import tempfile
-import os
 import os.path
-from lxml import etree
 import shutil
+from sys import version_info
+import tempfile
+import zipfile
+
+
+from lxml import etree
 
 import epubinfo
 
@@ -35,32 +37,50 @@ class Epub(object):
         self._opfpath = None
         self._ncxpath = None
         self._basepath = None
-        self._tempdir = tempfile.mkdtemp()
 
-        if not self._verify():
-            print 'Warning: This does not seem to be a valid epub file'
+        try:
+            # Lazy approach to ensure the Epub is really initialized.
+            self._tempdir = tempfile.mkdtemp()
 
-        self._get_opf()
-        self._get_ncx()
+            if not self._verify():
+                print 'Warning: This does not seem to be a valid epub file'
 
-        opffile = self._zobject.open(self._opfpath)
-        self._info = epubinfo.EpubInfo(opffile)
+            self._get_opf()
+            self._get_ncx()
 
-        self._unzip()
+            opffile = self._zobject.open(self._opfpath)
+            self._info = epubinfo.EpubInfo(opffile)
+
+            self._unzip()
+        except Exception as e:
+            self.close()
+            raise e
 
     def _unzip(self):
-        # self._zobject.extractall(path = self._tempdir) # This is broken up to python 2.7
+        # Use safe version (2.7+) if possible, that escapes dangerous names.
+        if version_info >= (2, 7, 4):
+            self._zobject.extractall(path=self._tempdir)
+            return
+
+        # TODO: further restrict the "safe" names (several slashes, relative
+        # paths, ...)
         orig_cwd = os.getcwd()
-        os.chdir(self._tempdir)
-        for name in self._zobject.namelist():
-            if name.startswith(
-                    os.path.sep):  # Some weird zip file entries start with a slash, and we don't want to write to the root directory
-                name = name[1:]
-            if name.endswith(os.path.sep) or name.endswith('\\'):
-                os.makedirs(name)
-            else:
-                self._zobject.extract(name)
-        os.chdir(orig_cwd)
+        try:
+            os.chdir(self._tempdir)
+            for name in self._zobject.namelist():
+                # Some weird zip file entries start with a slash, and we don't
+                # want to write to the root directory.
+                if name.startswith(os.path.sep):
+                    name = name[1:]
+                if name.endswith(os.path.sep) or name.endswith('\\'):
+                    os.makedirs(name)
+                else:
+                    self._zobject.extract(name)
+        except Exception as e:
+            raise e
+        finally:
+            # Make sure that we return to the original directory.
+            os.chdir(orig_cwd)
 
     def _get_opf(self):
         containerfile = self._zobject.open('META-INF/container.xml')
@@ -136,10 +156,65 @@ class Epub(object):
         else:
             return None
 
+    def as_model_dict(self):
+        """Return a tuple with:
+        - the fields used for building a `Book` model, as a dict.
+        - the path of the temporary file that contains the cover (or None
+        if it could not be found). The file is *not* deleted from disk upon
+        close().
+
+        TODO: this method should be moved to other layer in order to decouple
+        it from the specific Epub implementation on a future refactoring.
+        TODO: move prints to logger.
+        """
+        info = self.get_info()
+
+        # Copy the cover to a temporary file, as otherwise it would be deleted
+        # during self.close().
+        cover_image_path = self.get_cover_image_path()
+        if cover_image_path:
+            suffix = os.path.splitext(cover_image_path)[1]
+            ret_cover = tempfile.NamedTemporaryFile(suffix=suffix,
+                                                    delete=False)
+            ret_cover.close()
+            ret_cover_path = os.path.abspath(ret_cover.name)
+            shutil.copy2(cover_image_path, ret_cover_path)
+        else:
+            ret_cover_path = None
+
+        # Add identifier.
+        # TODO: .strip('urn:uuid:') needed ?
+        identifier = info.identifier['value'] if info.identifier else None
+
+        # Print some info about the info found.
+        # TODO: move to logging.
+        for name, obj in [('Cover image', ret_cover_path),
+                          ('Identifier', identifier),
+                          ('Language', info.language)]:
+            if obj:
+                print '  [o] %s found: %s' % (name, obj)
+            else:
+                print '  [ ] %s not found' % name
+
+        # TODO: the previous HACKS (xx or '') should probably be avoided by
+        # setting the model fields to null-able and/or blank-able.
+        return ({
+            'a_title': info.title or '',
+            'a_author': info.creator or '',
+            'a_summary': info.summary or '',
+            'a_rights': info.rights or '',
+            'dc_language': info.language,
+            'dc_publisher': info.publisher,
+            'dc_identifier': identifier,
+            'dc_issued': info.date or '',
+            },
+            ret_cover_path)
+
     def close(self):
         '''
         Cleans up (closes open zip files and deletes uncompressed content of Epub.
         Please call this when a file is being closed or during application exit.
         '''
-        self._zobject.close()
+        if self._zobject:
+            self._zobject.close()
         shutil.rmtree(self._tempdir)
