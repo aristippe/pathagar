@@ -126,11 +126,12 @@ class EpubInfo():  # TODO: Cover the entire DC range
 
     def _get_cover_image(self):
         # TODO check if cover is image
+        meta_content_cover = None
         for element in self._e_metadata.iterfind('{http://www.idpf.org/2007/opf}meta'):
             if element.get('name') == 'cover':
                 meta_content_cover = element.get('content')
 
-        if meta_content_cover is not None:
+        if meta_content_cover:
             for node in self._tree.iter():
                 if node.tag == '{http://www.idpf.org/2007/opf}item':
                     if node.attrib['id'] == meta_content_cover:
