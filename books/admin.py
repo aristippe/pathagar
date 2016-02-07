@@ -22,7 +22,7 @@ import models as books_models
 class BookAdmin(admin.ModelAdmin):
     fieldsets = [
         ('File information', {
-            'fields': ['book_file_rev', 'book_file', 'file_sha256sum',
+            'fields': ['book_file', 'original_path', 'file_sha256sum',
                        'mimetype', 'cover_img']}),
         ('Basic information',
             {'fields': ['a_title', 'a_author', 'a_status', 'tags']}),
@@ -33,7 +33,7 @@ class BookAdmin(admin.ModelAdmin):
                        'downloads'],
             'classes': ['collapse']}),
     ]
-    list_display = ('a_title', 'a_author', 'time_added', 'book_file')
+    list_display = ('a_title', 'a_author', 'time_added', 'original_path')
 
     readonly_fields = ('time_added', 'a_updated', 'a_id')
 
