@@ -149,11 +149,11 @@ def add_language(request):
     return handlePopAdd(request, AddLanguageForm, 'language')
 
 @login_required
-def add_book(request):
+def add_book_old(request):
     context_instance = RequestContext(request)
     user = resolve_variable('user', context_instance)
     if not settings.ALLOW_PUBLIC_ADD_BOOKS and not user.is_authenticated():
-        return redirect('/accounts/login/?next=/book/add')
+        return redirect('/accounts/login/?next=/book/add_old')
 
     extra_context = {'action': 'add'}
     return create_object(

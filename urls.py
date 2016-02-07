@@ -2,10 +2,15 @@ import os
 
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
-admin.autodiscover()
-
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
 from pathagar.books.app_settings import BOOKS_STATICS_VIA_DJANGO
+
+from books.views import AddBookWizard
+from books import forms
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
 
@@ -55,7 +60,15 @@ urlpatterns = patterns('',
 
 
     # Add, view, edit and remove books:
-    (r'^book/add$', 'pathagar.books.views.add_book'),
+    url(r'^book/add$',
+        login_required(AddBookWizard.as_view([forms.BookUploadForm,
+                                              forms.BookMetadataForm])),
+        name='add_book'),
+    # TODO: this is the "old" add view, currently not reachable via links.
+    # It should be removed once the wizard-based add book is completed.
+    url(r'^book/add_old$', 'pathagar.books.views.add_book_old',
+        name='add_book_old'),
+
     (r'^book/(?P<book_id>\d+)/view$', 'pathagar.books.views.book_detail'),
     (r'^book/(?P<book_id>\d+)/edit$', 'pathagar.books.views.edit_book'),
     (r'^book/(?P<book_id>\d+)/remove$', 'pathagar.books.views.remove_book'),
