@@ -37,6 +37,7 @@ class Epub(object):
         self._opfpath = None
         self._ncxpath = None
         self._basepath = None
+        self._mimetype = None
 
         try:
             # Lazy approach to ensure the Epub is really initialized.
@@ -129,9 +130,9 @@ class Epub(object):
             return False
 
         mtypefile = self._zobject.open('mimetype')
-        mimetype = mtypefile.readline()
+        self._mimetype = mtypefile.readline()
 
-        if not mimetype.startswith('application/epub+zip'):  # Some files seem to have trailing characters
+        if not self._mimetype.startswith('application/epub+zip'):  # Some files seem to have trailing characters
             return False
 
         return True
@@ -196,17 +197,16 @@ class Epub(object):
             else:
                 print '  [ ] %s not found' % name
 
-        # TODO: the previous HACKS (xx or '') should probably be avoided by
-        # setting the model fields to null-able and/or blank-able.
         return ({
-            'a_title': info.title or '',
-            'a_author': info.creator or '',
-            'a_summary': info.summary or '',
-            'a_rights': info.rights or '',
+            'a_title': info.title,
+            'a_author': info.creator,
+            'a_summary': info.summary,
+            'a_rights': info.rights,
             'dc_language': info.language,
             'dc_publisher': info.publisher,
             'dc_identifier': identifier,
-            'dc_issued': info.date or '',
+            'dc_issued': info.date,
+            'mimetype': self._mimetype
             },
             ret_cover_path)
 
