@@ -18,11 +18,12 @@
 from lxml import etree
 
 
-class EpubInfo():  # TODO: Cover the entire DC range
+class EpubInfo:  # TODO: Cover the entire DC range
     def __init__(self, opffile):
         self._tree = etree.parse(opffile)
         self._root = self._tree.getroot()
-        self._e_metadata = self._root.find('{http://www.idpf.org/2007/opf}metadata')
+        self._e_metadata = self._root.find(
+            '{http://www.idpf.org/2007/opf}metadata')
 
         self.title = self._get_title()
         self.creator = self._get_creator()
@@ -42,7 +43,8 @@ class EpubInfo():  # TODO: Cover the entire DC range
 
     def _get_description(self):
         try:
-            ret = self._get_data('.//{http://purl.org/dc/elements/1.1/}description')
+            ret = self._get_data(
+                './/{http://purl.org/dc/elements/1.1/}description')
         except AttributeError:
             return None
 
@@ -58,7 +60,8 @@ class EpubInfo():  # TODO: Cover the entire DC range
 
     def _get_creator(self):
         try:
-            ret = self._get_data('.//{http://purl.org/dc/elements/1.1/}creator')
+            ret = self._get_data(
+                './/{http://purl.org/dc/elements/1.1/}creator')
         except AttributeError:
             return None
         return ret
@@ -90,17 +93,19 @@ class EpubInfo():  # TODO: Cover the entire DC range
 
     def _get_identifier(self):
         # TODO: iter
-        element = self._e_metadata.find('.//{http://purl.org/dc/elements/1.1/}identifier')
+        element = self._e_metadata.find(
+            './/{http://purl.org/dc/elements/1.1/}identifier')
 
         if element is not None:
-            return {'id':element.get('id'), 'value':element.text}
+            return {'id': element.get('id'), 'value': element.text}
         else:
             return None
 
     def _get_language(self):
         # print "Language: % " % self._get_data('.//{http://purl.org/dc/elements/1.1/}language')
         try:
-            ret = self._get_data('.//{http://purl.org/dc/elements/1.1/}language')
+            ret = self._get_data(
+                './/{http://purl.org/dc/elements/1.1/}language')
         except AttributeError:
             return None
 
@@ -109,7 +114,8 @@ class EpubInfo():  # TODO: Cover the entire DC range
     def _get_publisher(self):
         # print "Publisher: %" % self._get_data('.//{http://purl.org/dc/elements/1.1/}creator')
         try:
-            ret = self._get_data('.//{http://purl.org/dc/elements/1.1/}publisher')
+            ret = self._get_data(
+                './/{http://purl.org/dc/elements/1.1/}publisher')
         except AttributeError:
             return None
         return ret
@@ -117,7 +123,8 @@ class EpubInfo():  # TODO: Cover the entire DC range
     def _get_subject(self):
         try:
             subjectlist = []
-            for element in self._e_metadata.iterfind('.//{http://purl.org/dc/elements/1.1/}subject'):
+            for element in self._e_metadata.iterfind(
+                    './/{http://purl.org/dc/elements/1.1/}subject'):
                 subjectlist.append(element.text)
         except AttributeError:
             return None
@@ -127,7 +134,8 @@ class EpubInfo():  # TODO: Cover the entire DC range
     def _get_cover_image(self):
         # TODO check if cover is image
         meta_content_cover = None
-        for element in self._e_metadata.iterfind('{http://www.idpf.org/2007/opf}meta'):
+        for element in self._e_metadata.iterfind(
+                '{http://www.idpf.org/2007/opf}meta'):
             if element.get('name') == 'cover':
                 meta_content_cover = element.get('content')
 

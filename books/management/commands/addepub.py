@@ -13,6 +13,7 @@ def get_epubs_paths(paths):
     directory names. The returned list contains only files with the '.epub'
     extension, traversing the directories recursively.
     """
+
     def validate_and_add(path, filenames):
         """Check that the `path` has an '.epub' extension, convert it to
         absolute and add it to `filenames` if not present already in order to

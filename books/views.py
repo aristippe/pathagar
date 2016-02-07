@@ -28,8 +28,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.list_detail import object_detail
 from django.views.generic.detail import DetailView
-from django.views.generic.create_update import create_object, update_object, \
-    delete_object
+from django.views.generic.create_update import create_object, update_object, delete_object
 from django.template import RequestContext, resolve_variable
 
 from django.core.files import File
@@ -117,7 +116,7 @@ class AddBookWizard(SessionWizardView):
         uploaded_file = form_list[0].cleaned_data['epub_file']
         # Set file related parameters.
         self.instance.book_file = uploaded_file
-        self.instance.file_sha256sum = self.storage.\
+        self.instance.file_sha256sum = self.storage. \
             extra_data['file_sha256sum']
         self.instance.save()
 
@@ -148,6 +147,7 @@ class AddBookWizard(SessionWizardView):
 def add_language(request):
     return handlePopAdd(request, AddLanguageForm, 'language')
 
+
 @login_required
 def add_book_old(request):
     context_instance = RequestContext(request)
@@ -158,40 +158,43 @@ def add_book_old(request):
     extra_context = {'action': 'add'}
     return create_object(
         request,
-        form_class = BookForm,
-        extra_context = extra_context,
+        form_class=BookForm,
+        extra_context=extra_context,
     )
+
 
 @login_required
 def edit_book(request, book_id):
     extra_context = {'action': 'edit'}
     return update_object(
         request,
-        form_class = BookForm,
-        object_id = book_id,
-        template_object_name = 'book',
-        extra_context = extra_context,
+        form_class=BookForm,
+        object_id=book_id,
+        template_object_name='book',
+        extra_context=extra_context,
     )
+
 
 @login_required
 def remove_book(request, book_id):
     # TODO: delete the file and cover automatically.
     return delete_object(
         request,
-        model = Book,
-        object_id = book_id,
-        template_object_name = 'book',
-        post_delete_redirect = '/',
+        model=Book,
+        object_id=book_id,
+        template_object_name='book',
+        post_delete_redirect='/',
     )
+
 
 @login_required
 def book_detail(request, book_id):
     return object_detail(
         request,
-        queryset = Book.objects.all(),
-        object_id = book_id,
-        template_object_name = 'book',
-        extra_context = {'allow_user_comments': settings.ALLOW_USER_COMMENTS}
+        queryset=Book.objects.all(),
+        object_id=book_id,
+        template_object_name='book',
+        extra_context={'allow_user_comments': settings.ALLOW_USER_COMMENTS}
     )
 
 
@@ -237,13 +240,15 @@ def tags(request, qtype=None, group_slug=None):
     # Return HTML page:
     return render_to_response(
         'books/tag_list.html', context,
-        context_instance = RequestContext(request),
+        context_instance=RequestContext(request),
     )
+
 
 def tags_listgroups(request):
     tag_groups = TagGroup.objects.all()
     catalog = generate_taggroups_catalog(tag_groups)
     return HttpResponse(catalog, mimetype='application/atom+xml')
+
 
 @login_required
 def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
@@ -260,10 +265,10 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     context_instance = RequestContext(request)
     user = resolve_variable('user', context_instance)
     if not user.is_authenticated():
-        queryset = queryset.filter(a_status = BOOK_PUBLISHED)
+        queryset = queryset.filter(a_status=BOOK_PUBLISHED)
 
-    published_books_count = Book.objects.filter(a_status = BOOK_PUBLISHED).count()
-    unpublished_books_count = Book.objects.exclude(a_status = BOOK_PUBLISHED).count()
+    published_books_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
+    unpublished_books_count = Book.objects.exclude(a_status=BOOK_PUBLISHED).count()
 
     # If no search options are specified, assumes search all, the
     # advanced search will be used:
@@ -312,32 +317,38 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     return render_to_response(
         'books/book_list.html',
         extra_context,
-        context_instance = RequestContext(request),
+        context_instance=RequestContext(request),
     )
+
 
 @login_required
 def home(request):
     return redirect('latest')
+
 
 def root(request, qtype=None):
     """Return the root catalog for navigation"""
     root_catalog = generate_root_catalog()
     return HttpResponse(root_catalog, mimetype='application/atom+xml')
 
+
 @login_required
 def latest(request, qtype=None):
     queryset = Book.objects.all()
     return _book_list(request, queryset, qtype, list_by='latest')
+
 
 @login_required
 def by_title(request, qtype=None):
     queryset = Book.objects.all().order_by('a_title')
     return _book_list(request, queryset, qtype, list_by='by-title')
 
+
 @login_required
 def by_author(request, qtype=None):
     queryset = Book.objects.all().order_by('a_author')
     return _book_list(request, queryset, qtype, list_by='by-author')
+
 
 @login_required
 def by_tag(request, tag, qtype=None):
@@ -353,6 +364,7 @@ def by_tag(request, tag, qtype=None):
     queryset = Book.objects.filter(tags=tag_instance)
     return _book_list(request, queryset, qtype, list_by='by-tag',
                       tag=tag_instance)
+
 
 @login_required
 def most_downloaded(request, qtype=None):

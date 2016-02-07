@@ -18,21 +18,21 @@ import time
 import urllib
 import subprocess
 
-
 # Customize this script by editing global variables below
 # uncomment formats below to download more data
 # formats are listed in order of preference, i.e. prefer 'Text' over 'DjVuTXT'
-requested_formats = {'pdf':  ['Text PDF', 'Additional Text PDF', 'Image Container PDF'],
+requested_formats = {'pdf': ['Text PDF', 'Additional Text PDF', 'Image Container PDF'],
                      'epub': ['EPUB'],
                      'meta': ['Metadata'],
                      'text': ['Text', 'DjVuTXT'],
                      'jpeg': ['JPEG'],
-                     #'djvu': ['DjVu'],
-                    }
+                     # 'djvu': ['DjVu'],
+                     }
 
 download_directory = os.path.join(settings.MEDIA_ROOT, "books")
 
 should_download_cover = True
+
 
 def load_user_bookmarks(user):
     """Return an array of bookmarked items for a given user.
@@ -43,6 +43,7 @@ def load_user_bookmarks(user):
     f = urllib.urlopen(url)
     return json.load(f)
 
+
 def get_item_meatadata(item_id):
     """Returns an object from the archive.org Metadata API"""
 
@@ -50,13 +51,13 @@ def get_item_meatadata(item_id):
     f = urllib.urlopen(url)
     return json.load(f)
 
-def get_download_url(item_id, file):
 
+def get_download_url(item_id, file):
     prefix = 'http://archive.org/download/'
     return prefix + os.path.join(item_id, file)
 
-def download_files(item_id, matching_files, item_dir):
 
+def download_files(item_id, matching_files, item_dir):
     for file in matching_files:
         download_path = os.path.join(item_dir, file)
 
@@ -69,7 +70,7 @@ def download_files(item_id, matching_files, item_dir):
             os.makedirs(parent_dir)
 
         print "    Downloading", file, "to", download_path
-        download_url= get_download_url(item_id, file)
+        download_url = get_download_url(item_id, file)
         ret = subprocess.call(['wget', download_url, '-O', download_path,
                                '--limit-rate=1000k', '--user-agent=fetch_ia_item.py', '-q'])
 
@@ -78,6 +79,7 @@ def download_files(item_id, matching_files, item_dir):
             sys.exit(-1)
 
         time.sleep(0.5)
+
 
 def download_item(item_id, mediatype, metadata, out_dir, formats):
     """Download an archive.org item into the specified directory"""
@@ -92,20 +94,21 @@ def download_item(item_id, mediatype, metadata, out_dir, formats):
     files_list = metadata['files']
 
     if 'gutenberg' == metadata['metadata']['collection']:
-        #For Project Gutenberg books, download entire directory
+        # For Project Gutenberg books, download entire directory
         matching_files = [x['name'] for x in files_list]
         download_files(item_id, matching_files, item_dir)
         return
 
     for key, format_list in formats.iteritems():
         for format in format_list:
-            matching_files = [x['name'] for x in files_list if x['format']==format]
+            matching_files = [x['name'] for x in files_list if x['format'] == format]
             download_files(item_id, matching_files, item_dir)
 
-            #if we found some matching files in for this format, move on to next format
-            #(i.e. if we downloaded a Text, no need to download DjVuTXT as well)
+            # if we found some matching files in for this format, move on to next format
+            # (i.e. if we downloaded a Text, no need to download DjVuTXT as well)
             if len(matching_files) > 0:
                 break
+
 
 def download_cover(item_id, metadata, download_directory):
     files_list = metadata['files']
@@ -119,8 +122,9 @@ def download_cover(item_id, metadata, download_directory):
         download_files(item_id, [covers[0]], item_dir)
         return covers[0]
 
-    #no JPEG Thumbs, JPEGs, or AGIFs, return None
+    # no JPEG Thumbs, JPEGs, or AGIFs, return None
     return None
+
 
 def add_to_pathagar(pathagar_books, mdata, cover_image):
     pathagar_formats = []
@@ -164,7 +168,6 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
     if cover_image:
         book['cover_path'] = os.path.abspath(os.path.join(item_dir, cover_image))
 
-
     if 'subject' in metadata:
         if isinstance(metadata['subject'], list):
             tags = metadata['subject']
@@ -179,20 +182,21 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
 class Command(BaseCommand):
     help = "A script to download all of an user's bookmarked items from archive.org"
     args = "<--username ... --out ...>"
-    
+
     option_list = BaseCommand.option_list + (
         make_option('--username',
-            dest='username',
-            default=False,
-            help='The username at archive.org'),
+                    dest='username',
+                    default=False,
+                    help='The username at archive.org'),
         make_option('--out',
-            dest='out_json_path',
-            default=False,
-            help='The json file to write the output to'),        
-        )
+                    dest='out_json_path',
+                    default=False,
+                    help='The json file to write the output to'),
+    )
+
     def handle(self, *args, **options):
         if not options['username']:
-           raise CommandError("Option '--username ...' must be specified.")
+            raise CommandError("Option '--username ...' must be specified.")
         bookmarks = load_user_bookmarks(options['username'])
         pathagar_books = []
         for item in bookmarks:
@@ -213,4 +217,4 @@ class Command(BaseCommand):
                 fh = open(options['out_json_path'], 'w')
                 json.dump(pathagar_books, fh, indent=4)
             else:
-                print json.dumps(pathagar_books, indent = 4)
+                print json.dumps(pathagar_books, indent=4)

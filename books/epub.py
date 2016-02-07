@@ -21,7 +21,6 @@ from sys import version_info
 import tempfile
 import zipfile
 
-
 from lxml import etree
 
 import epubinfo
@@ -116,10 +115,10 @@ class Epub(object):
         opffile.close()
 
     def _verify(self):
-        '''
+        """
         Method to crudely check to verify that what we
         are dealing with is a epub file or not
-        '''
+        """
         if isinstance(self._file, basestring):
             if not os.path.exists(self._file):
                 return False
@@ -138,16 +137,16 @@ class Epub(object):
         return True
 
     def get_basedir(self):
-        '''
+        """
         Returns the base directory where the contents of the
         epub has been unzipped
-        '''
+        """
         return self._tempdir
 
     def get_info(self):
-        '''
+        """
         Returns a EpubInfo object for the open Epub file
-        '''
+        """
         return self._info
 
     def get_cover_image_path(self):
@@ -198,23 +197,23 @@ class Epub(object):
                 print '  [ ] %s not found' % name
 
         return ({
-            'a_title': info.title,
-            'a_author': info.creator,
-            'a_summary': info.summary,
-            'a_rights': info.rights,
-            'dc_language': info.language,
-            'dc_publisher': info.publisher,
-            'dc_identifier': identifier,
-            'dc_issued': info.date,
-            'mimetype': self._mimetype
-            },
-            ret_cover_path)
+                    'a_title': info.title,
+                    'a_author': info.creator,
+                    'a_summary': info.summary,
+                    'a_rights': info.rights,
+                    'dc_language': info.language,
+                    'dc_publisher': info.publisher,
+                    'dc_identifier': identifier,
+                    'dc_issued': info.date,
+                    'mimetype': self._mimetype
+                },
+                ret_cover_path)
 
     def close(self):
-        '''
+        """
         Cleans up (closes open zip files and deletes uncompressed content of Epub.
         Please call this when a file is being closed or during application exit.
-        '''
+        """
         if self._zobject:
             self._zobject.close()
         shutil.rmtree(self._tempdir)
