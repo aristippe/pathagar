@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+import logging
 import os
 
 from django.conf import settings
@@ -32,9 +33,10 @@ from django.views.generic.create_update import create_object, update_object, \
 from django.template import RequestContext, resolve_variable
 
 from django.core.files import File
+from django.core.files.storage import FileSystemStorage
+from django.contrib.formtools.wizard.views import SessionWizardView
 
 from app_settings import BOOKS_PER_PAGE
-from django.conf import settings
 
 # OLD ---------------
 from tagging.models import Tag
@@ -45,7 +47,7 @@ from sendfile import sendfile
 
 from search import simple_search, advanced_search
 from forms import BookForm, AddLanguageForm
-from models import TagGroup, Book
+from models import TagGroup, Book, Language, Status
 from popuphandler import handlePopAdd
 from opds import page_qstring
 from opds import generate_catalog
@@ -55,17 +57,103 @@ from opds import generate_taggroups_catalog
 
 from pathagar.books.app_settings import BOOK_PUBLISHED
 
+logger = logging.getLogger(__name__)
+
+
+class AddBookWizard(SessionWizardView):
+    file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
+                                                           'books'))
+    instance = None
+
+    def get_form_instance(self, step):
+        if self.instance is None:
+            self.instance = Book()
+        return self.instance
+
+    def process_step_files(self, form):
+        """Append the values appended by the first form to storarge.extra_data.
+        """
+        if self.steps.current == '0':
+            self.storage.extra_data = {
+                'original_path': form.cleaned_data['original_path'],
+                'info_dict': form.cleaned_data['info_dict'],
+                'cover_path': form.cleaned_data['cover_path'],
+                'file_sha256sum': form.cleaned_data['file_sha256sum']
+            }
+
+        return self.get_form_step_files(form)
+
+    def get_form_initial(self, step):
+        """Use the values parsed from the uploaded Epub as the initial values
+        (on step 0) as the initial values for the form on step 1.
+        """
+        ret = super(AddBookWizard, self).get_form_initial(step)
+
+        if step == '1':
+            # Update the initial values with the epub information.
+            info_dict = self.storage.extra_data['info_dict']
+            ret.update(info_dict)
+            ret['original_path'] = self.storage.extra_data['original_path']
+            ret['a_status'] = Status.objects.get(
+                status=settings.DEFAULT_BOOK_STATUS
+            )
+
+            try:
+                # TODO: Language is created even if the Book is not saved.
+                ret['dc_language'] = Language.objects.get_or_create_by_code(
+                    info_dict['dc_language']
+                )
+            except ValueError:
+                logger.warn('Invalid language: %s' %
+                            str(info_dict['dc_language']))
+                ret['dc_language'] = None
+        return ret
+
+    def done(self, form_list, **kwargs):
+        """Create a new Book when all the forms have been submitted. The file
+        uploaded on step 0 is added to the Book along with its sha256 hash, and
+        the temporary cover filed (if applicable) is copied and deleted.
+        """
+        uploaded_file = form_list[0].cleaned_data['epub_file']
+        # Set file related parameters.
+        self.instance.book_file = uploaded_file
+        self.instance.file_sha256sum = self.storage.\
+            extra_data['file_sha256sum']
+        self.instance.save()
+
+        # Set the cover image.
+        tmp_cover_path = self.storage.extra_data['cover_path']
+        if tmp_cover_path:
+            try:
+                cover_filename = '%s%s' % (self.instance.pk,
+                                           os.path.splitext(tmp_cover_path)[1])
+                self.instance.cover_img.save(cover_filename,
+                                             File(open(tmp_cover_path)),
+                                             save=True)
+            except Exception as e:
+                logger.warn('Error saving cover image %s: %s' %
+                            (cover_filename, str(e)))
+            finally:
+                # A second tmp cover file is generated during form validation.
+                second_tmp = form_list[0].cleaned_data['cover_path']
+                # Delete temporary cover files.
+                os.remove(tmp_cover_path)
+                if second_tmp:
+                    os.remove(second_tmp)
+
+        return redirect(self.instance.get_absolute_url())
+
 
 @login_required
 def add_language(request):
     return handlePopAdd(request, AddLanguageForm, 'language')
 
 @login_required
-def add_book(request):
+def add_book_old(request):
     context_instance = RequestContext(request)
     user = resolve_variable('user', context_instance)
     if not settings.ALLOW_PUBLIC_ADD_BOOKS and not user.is_authenticated():
-        return redirect('/accounts/login/?next=/book/add')
+        return redirect('/accounts/login/?next=/book/add_old')
 
     extra_context = {'action': 'add'}
     return create_object(
@@ -87,6 +175,7 @@ def edit_book(request, book_id):
 
 @login_required
 def remove_book(request, book_id):
+    # TODO: delete the file and cover automatically.
     return delete_object(
         request,
         model = Book,
@@ -105,17 +194,27 @@ def book_detail(request, book_id):
         extra_context = {'allow_user_comments': settings.ALLOW_USER_COMMENTS}
     )
 
+
 def download_book(request, book_id):
-    book = get_object_or_404(Book, pk = book_id)
-    # filename = os.path.join(settings.MEDIA_ROOT, book.book_file.name)
-    filename = unicode(os.path.abspath(book.book_file))  # unicode?
+    """Return the epub file for a Book with `book_id` using sendfile. It
+    returns the file stored in media by Django.
+    TODO: decide if in some cases the original file should be returned instead.
+    TODO: currently the downloaded file name is the same as the stored file.
+    Decide if it should be standardized to something else instead.
+    """
+    book = get_object_or_404(Book, pk=book_id)
+    # filename = os.path.join(settings.MEDIA_ROOT, book.original_path.name)
+    # filename = unicode(os.path.abspath(book.original_path))  # unicode?
+    filename = book.book_file.path
 
     # TODO, currently the downloads counter is incremented when the
     # download is requested, without knowing if the file sending was
     # successful:
     book.downloads += 1
     book.save()
+
     return sendfile(request, filename, attachment=True)
+
 
 def tags(request, qtype=None, group_slug=None):
     context = {'list_by': 'by-tag'}

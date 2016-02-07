@@ -80,6 +80,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.formtools',
     'tagging',  # TODO old
     'taggit',
     'django.contrib.comments',

@@ -15,26 +15,34 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from pathagar.books.models import Book, Language, Status, TagGroup
 from django.contrib import admin
+import models as books_models
 
 
 class BookAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['book_file']}),
-        ('Basic Information', {'fields': ['a_title', 'a_author', 'a_status', 'tags']}),
+        ('File information', {
+            'fields': ['book_file', 'original_path', 'file_sha256sum',
+                       'mimetype', 'cover_img']}),
+        ('Basic information',
+            {'fields': ['a_title', 'a_author', 'a_status', 'tags']}),
         ('Extended information', {
-            'fields': ['a_summary', 'a_category', 'a_rights', 'dc_language', 'dc_publisher', 'dc_issued',
-                       'dc_identifier', 'cover_img'], 'classes': ['collapse']}),
+            'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
+                       'dc_language', 'dc_publisher', 'dc_issued',
+                       'dc_identifier', 'time_added', 'a_updated',
+                       'downloads'],
+            'classes': ['collapse']}),
     ]
-    list_display = ('a_title', 'a_author', 'time_added', 'book_file')
+    list_display = ('a_title', 'a_author', 'time_added', 'original_path')
+
+    readonly_fields = ('time_added', 'a_updated', 'a_id')
 
 
 class TagGroupAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
-admin.site.register(Book, BookAdmin)
-admin.site.register(Language)
-admin.site.register(Status)
-admin.site.register(TagGroup, TagGroupAdmin)
+admin.site.register(books_models.Book, BookAdmin)
+admin.site.register(books_models.Language)
+admin.site.register(books_models.Status)
+admin.site.register(books_models.TagGroup, TagGroupAdmin)

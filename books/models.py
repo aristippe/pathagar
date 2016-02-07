@@ -15,21 +15,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import os
+from hashlib import sha256
 
 from django.db import models
-from django.core.files import File
-from django.core.exceptions import ValidationError
-from django.conf import settings
-from django.forms.forms import NON_FIELD_ERRORS
-
-from hashlib import sha256
 
 from taggit.managers import TaggableManager  # NEW
 
 from uuidfield import UUIDField
-from langlist import langs
-from epub import Epub
+from langlist import langs_by_code
 
 
 def sha256_sum(_file):  # used to generate sha256 sum of book files
@@ -39,30 +32,34 @@ def sha256_sum(_file):  # used to generate sha256 sum of book files
     return s.hexdigest()
 
 
+class LanguageManager(models.Manager):
+    def get_or_create_by_code(self, code):
+        """Convenience method for returning the Language that corresponds to
+        the specified code, creating it if needed.
+        If the code is not valid, it raises a ValueError.
+
+        TODO: replace with a RFC5646 compatible system.
+        TODO: find the proper Exception to subclass.
+        TODO: revise fixtures, some (or all) of them might be unreachable.
+        """
+        # Add Language, discarding it if it does not have a valid code.
+        if code in langs_by_code:
+            language, _ = self.get_or_create(
+                code=code, label=langs_by_code[code])
+            return language
+        raise ValueError('%s is not a valid language code' % code)
+
+
 class Language(models.Model):
-    label = models.CharField('language name', max_length=50, blank=True, unique=False)
+    # Custom manager for using get_or_create_by_code().
+    objects = LanguageManager()
+
+    label = models.CharField('language name', max_length=50, blank=True,
+                             unique=False)
     code = models.CharField(max_length=5, blank=True, unique=True)
 
     def __unicode__(self):
         return self.label
-
-    def add(self, language):
-        self.code = language
-        self.save()
-
-    def save(self, *args, **kwargs):
-        '''
-        This method automatically tries to assign the right language code
-        to the specified language. If a code cannot be found, it assigns
-        'xx'
-        '''
-        # code = 'xx'
-        # for lang in langs:
-        #     if self.label.lower() == lang[1].lower():
-        #         code = lang[0]
-        #         break
-        # self.code = code
-        super(Language, self).save(*args, **kwargs)
 
 
 class TagGroup(models.Model):
@@ -103,51 +100,40 @@ class Book(models.Model):
     # https://stackoverflow.com/questions/10905674/django-how-to-save-original-filename-in-filefield
     # get the model instance you want to set the value on... set the value.. save it
 
-    # book_file = models.FileField(upload_to='books') # only_filename ?
-    book_file = models.CharField('file', max_length=1016)  # OS X 10.10 1016 chars?
-    file_sha256sum = models.CharField(max_length=64, unique=False)
+    # File related fields.
+    book_file = models.FileField(upload_to='books', null=False)
+    # TODO: OS X 10.10 1016 chars? remove max_length entirely?
+    original_path = models.CharField('file', max_length=1016)
+    file_sha256sum = models.CharField(max_length=64, unique=True)
     mimetype = models.CharField(max_length=200, null=True)
+    cover_img = models.ImageField(upload_to='covers', blank=True, null=True)
+
+    # Atom fields.
+    a_id = UUIDField('atom:id')
+    a_title = models.CharField('atom:title', max_length=200, null=False)
+    a_author = models.CharField('atom:author', max_length=200)
+    a_updated = models.DateTimeField('atom:updated', auto_now=True)
+    a_summary = models.TextField('atom:summary', blank=True, null=True)
+    a_category = models.CharField('atom:category',
+                                  max_length=200, blank=True, null=True)
+    a_rights = models.CharField('atom:rights',
+                                max_length=200, blank=True, null=True)
+
+    # Info fields.
+    dc_language = models.ForeignKey(Language, blank=True, null=True)
+    dc_publisher = models.CharField('dc:publisher',
+                                    max_length=200, blank=True, null=True)
+    dc_issued = models.CharField('dc:issued',
+                                 max_length=100, blank=True, null=True)
+    dc_identifier = models.CharField('dc:identifier',
+                                     max_length=50, blank=True, null=True,
+                                     help_text='Use ISBN for this')
+
+    # Other fields.
+    a_status = models.ForeignKey(Status, blank=False, null=False)
     time_added = models.DateTimeField(auto_now_add=True)
     tags = TaggableManager(blank=True)
     downloads = models.IntegerField(default=0)
-    a_id = UUIDField('atom:id')
-    a_status = models.ForeignKey(Status, blank=False, null=False,
-                                 default=settings.DEFAULT_BOOK_STATUS)
-    a_title = models.CharField('atom:title', max_length=200)
-    a_author = models.CharField('atom:author', max_length=200)
-    a_updated = models.DateTimeField('atom:updated', auto_now=True)
-    a_summary = models.TextField('atom:summary', blank=True)
-    a_category = models.CharField('atom:category', max_length=200, blank=True)
-    a_rights = models.CharField('atom:rights', max_length=200, blank=True)
-    dc_language = models.ForeignKey(Language, blank=True, null=True)
-    dc_publisher = models.CharField('dc:publisher', max_length=200, null=True)
-    dc_issued = models.CharField('dc:issued', max_length=100, null=True)
-    dc_identifier = models.CharField('dc:identifier', max_length=50,
-                                     help_text='Use ISBN for this', null=True)
-    cover_img = models.FileField(blank=True, upload_to='covers')
-
-    def validate_unique(self, *args, **kwargs):
-        # if not self.file_sha256sum:
-        #     self.file_sha256sum = sha256_sum(self.book_file)
-        if (self.__class__.objects.filter(
-                file_book_file=self.file_dc_identifier).exists()):
-            raise ValidationError({
-                NON_FIELD_ERRORS:['The book already exists in the server.',]})
-
-    def save(self, *args, **kwargs):
-        if not self.cover_img:
-            if self.book_file.name.endswith('.epub'):
-                # get the cover path from the epub file
-                epub_file = Epub(self.book_file)
-                cover_path = epub_file.get_cover_image_path()
-                if cover_path is not None:
-                    cover_file = File(open(cover_path))
-                    self.cover_img.save(os.path.basename(cover_path),
-                                        cover_file)
-                epub_file.close()
-
-        # save file to books
-        super(Book, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ('-time_added',)
