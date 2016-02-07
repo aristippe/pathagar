@@ -175,6 +175,7 @@ def edit_book(request, book_id):
 
 @login_required
 def remove_book(request, book_id):
+    # TODO: delete the file and cover automatically.
     return delete_object(
         request,
         model = Book,
@@ -193,17 +194,27 @@ def book_detail(request, book_id):
         extra_context = {'allow_user_comments': settings.ALLOW_USER_COMMENTS}
     )
 
+
 def download_book(request, book_id):
-    book = get_object_or_404(Book, pk = book_id)
-    # filename = os.path.join(settings.MEDIA_ROOT, book.book_file.name)
-    filename = unicode(os.path.abspath(book.book_file))  # unicode?
+    """Return the epub file for a Book with `book_id` using sendfile. It
+    returns the file stored in media by Django.
+    TODO: decide if in some cases the original file should be returned instead.
+    TODO: currently the downloaded file name is the same as the stored file.
+    Decide if it should be standardized to something else instead.
+    """
+    book = get_object_or_404(Book, pk=book_id)
+    # filename = os.path.join(settings.MEDIA_ROOT, book.original_path.name)
+    # filename = unicode(os.path.abspath(book.original_path))  # unicode?
+    filename = book.book_file.path
 
     # TODO, currently the downloads counter is incremented when the
     # download is requested, without knowing if the file sending was
     # successful:
     book.downloads += 1
     book.save()
+
     return sendfile(request, filename, attachment=True)
+
 
 def tags(request, qtype=None, group_slug=None):
     context = {'list_by': 'by-tag'}
