@@ -13,7 +13,10 @@ def handlePopAdd(request, addForm, field):
             except forms.ValidationError:
                 newObject = None
             if newObject:
-                return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+                return HttpResponse(
+                    '<script type="text/javascript">'
+                    'opener.dismissAddAnotherPopup(window, "%s", "%s");'
+                    '</script>' %
                     (escape(newObject._get_pk_val()), escape(newObject)))
 
     else:
@@ -21,5 +24,3 @@ def handlePopAdd(request, addForm, field):
 
     pageContext = {'form': form, 'field': field}
     return render_to_response("popupadd.html", pageContext)
-
-

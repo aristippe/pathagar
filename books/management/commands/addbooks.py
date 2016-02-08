@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     dest='is_json_format',
                     default=False,
                     help='The file is in JSON format'),
-        )
+    )
 
     def _handle_csv(self, csvpath):
         """
@@ -112,7 +112,7 @@ class Command(BaseCommand):
             except IntegrityError as e:
                 if str(e) == "column file_sha256sum is not unique":
                     print "The book (", d['book_file'], ") was not saved " \
-                        "because the file already exsists in the database."
+                        "because the file already exists in the database."
                 else:
                     raise CommandError('Error adding file %s: %s' % (
                         d['book_file'], sys.exc_info()[1]))

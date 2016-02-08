@@ -12,8 +12,8 @@ from books import forms
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-
+urlpatterns = patterns(
+    '',
     # Book list:
     (r'^$', 'pathagar.books.views.home',
      {}, 'home'),
@@ -58,7 +58,6 @@ urlpatterns = patterns('',
     (r'^tags.atom$', 'pathagar.books.views.tags',
      {'qtype': u'feed'}, 'tags_feed'),
 
-
     # Add, view, edit and remove books:
     url(r'^book/add$',
         login_required(AddBookWizard.as_view([forms.BookUploadForm,
@@ -72,7 +71,8 @@ urlpatterns = patterns('',
     (r'^book/(?P<book_id>\d+)/view$', 'pathagar.books.views.book_detail'),
     (r'^book/(?P<book_id>\d+)/edit$', 'pathagar.books.views.edit_book'),
     (r'^book/(?P<book_id>\d+)/remove$', 'pathagar.books.views.remove_book'),
-    (r'^book/(?P<book_id>\d+)/download$', 'pathagar.books.views.download_book'),
+    (r'^book/(?P<book_id>\d+)/download$',
+     'pathagar.books.views.download_book'),
 
     # Comments
     (r'^comments/', include('django.contrib.comments.urls')),
@@ -88,15 +88,16 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 )
 
-
 if BOOKS_STATICS_VIA_DJANGO:
     from django.views.static import serve
-    # Serve static media:
-    urlpatterns += patterns('',
-       url(r'^static_media/(?P<path>.*)$', serve,
-           {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 
-       # Book covers:
-       url(r'^covers/(?P<path>.*)$', serve,
-           {'document_root': os.path.join(settings.MEDIA_ROOT, 'covers')}),
+    # Serve static media:
+    urlpatterns += patterns(
+        '',
+        url(r'^static_media/(?P<path>.*)$', serve,
+            {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+
+        # Book covers:
+        url(r'^covers/(?P<path>.*)$', serve,
+            {'document_root': os.path.join(settings.MEDIA_ROOT, 'covers')}),
     )

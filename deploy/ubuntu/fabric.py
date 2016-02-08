@@ -8,7 +8,6 @@
 
 SETTINGS = {}
 
-
 #
 # SSH connection for Fabric
 #
@@ -17,7 +16,6 @@ SETTINGS = {}
 SETTINGS['hosts'] = ['localhost']
 #: Username to log in in the remote machine
 SETTINGS['user'] = 'aneesh'
-
 
 #
 # Database
@@ -35,7 +33,6 @@ SETTINGS['db_name'] = 'pathagar'
 SETTINGS['db_user'] = 'root'
 SETTINGS['db_password'] = ''
 
-
 SETTINGS['db_password_opt'] = '-p'
 
 #
@@ -49,7 +46,6 @@ SETTINGS['project_url'] = 'localhost'
 #: Change the first path part if your Apache websites are stored somewhere else
 SETTINGS['project_path'] = '/var/www/sites/%s' % SETTINGS['project_name']
 
-
 #
 # The rest of the settings probably won't need any changes
 #
@@ -57,7 +53,7 @@ SETTINGS['project_path'] = '/var/www/sites/%s' % SETTINGS['project_name']
 SETTINGS['project_repo_path'] = '%s/src/pathagar' % SETTINGS['project_path']
 SETTINGS['project_repo'] = 'https://github.com/PathagarBooks/pathagar.git'
 SETTINGS['project_settings_path'] = '%s/settings.py' % \
-                                        SETTINGS['project_repo_path']
+                                    SETTINGS['project_repo_path']
 
 #
 # Secret key
@@ -65,8 +61,8 @@ SETTINGS['project_settings_path'] = '%s/settings.py' % \
 
 from base64 import b64encode
 from os import urandom
-SETTINGS['secret_key'] = b64encode(urandom(50))
 
+SETTINGS['secret_key'] = b64encode(urandom(50))
 
 #
 # Virtualenv
@@ -76,7 +72,6 @@ SETTINGS['secret_key'] = b64encode(urandom(50))
 SETTINGS['python'] = 'python2.7'
 SETTINGS['env_path'] = '%s/env' % SETTINGS['project_path']
 
-
 #
 # Apache + VirtualHost + WSGI
 #
@@ -84,5 +79,5 @@ SETTINGS['env_path'] = '%s/env' % SETTINGS['project_path']
 #: The group your web server is running on
 SETTINGS['server_group'] = 'www-data'
 SETTINGS['vhost_file'] = '/etc/apache2/sites-available/%s' % \
-                                SETTINGS['project_name']
+                         SETTINGS['project_name']
 SETTINGS['wsgi_file'] = '%s/wsgi.py' % SETTINGS['project_repo_path']

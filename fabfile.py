@@ -16,6 +16,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib.files import exists, upload_template
 from fabric.operations import require, run, sudo, put, get
 
+
 #
 # Deployment environments
 #
@@ -32,6 +33,7 @@ def ubuntu():
     env.update(fabric.SETTINGS)
     env.environment = 'ubuntu'
 
+
 def fedora():
     """Work on the fedora (red-hat based) environment"""
 
@@ -43,6 +45,7 @@ def fedora():
 
     env.update(fabric.SETTINGS)
     env.environment = 'fedora'
+
 
 #
 # Commands
@@ -108,19 +111,19 @@ def bootstrap(branch="master"):
     require('environment', provided_by=[ubuntu, fedora])
 
     if (not exists('%(project_path)s' % env) or
-        confirm('\n%(project_path)s already exists. Do you want to continue?'
+            confirm(
+                '\n%(project_path)s already exists. Do you want to continue?'
                 % env, default=False)):
+        print('Bootstrapping initial directories...')
 
-            print('Bootstrapping initial directories...')
-
-            with settings(hide('stdout', 'stderr')):
-                _init_directories()
-                _init_virtualenv()
-                _clone_repo()
-                run("touch %(project_repo_path)s/../__init__.py" % env)
-                _checkout_repo(branch=branch)
-                with prefix('source %(env_path)s/bin/activate' % env):
-                    _install_requirements()
+        with settings(hide('stdout', 'stderr')):
+            _init_directories()
+            _init_virtualenv()
+            _clone_repo()
+            run("touch %(project_repo_path)s/../__init__.py" % env)
+            _checkout_repo(branch=branch)
+            with prefix('source %(env_path)s/bin/activate' % env):
+                _install_requirements()
     else:
         print('Aborting.')
 
@@ -141,22 +144,25 @@ def _create_db_mysql():
             create_db_cmd +
             ("' || { test root = '%(db_user)s' && exit $?; }" % env))
 
+
 def _create_db_sqlite3():
     db_path = env.db_name
-    db_dir  = dirname(db_path)
+    db_dir = dirname(db_path)
     try:
         makedirs(db_dir)
     except OSError:
         pass
     run("touch %s" % db_path)
     sudo("chown -R %s:%s %s" % (env.user, env.server_group, db_dir))
-    sudo("chmod -R g+w %s" % (db_dir)) # mark the db writable
+    sudo("chmod -R g+w %s" % (db_dir))  # mark the db writable
+
 
 def _get_database_type():
     if env.db_engine == "django.db.backends.sqlite3":
         return "sqlite3"
     elif env.db_engine == "django.db.backends.mysql":
         return "mysql"
+
 
 def create_db():
     """Creates a new DB"""
@@ -168,7 +174,9 @@ def create_db():
     elif db_type == 'sqlite3':
         _create_db_sqlite3(database)
     else:
-        print("The database type is not currently supported by our fabfile. You'll have to create it manually.")
+        print("The database type is not currently supported by our fabfile. "
+              "You'll have to create it manually.")
+
 
 def drop_db():
     """Drops the current DB - losing all data!"""
@@ -187,10 +195,12 @@ def drop_db():
 
 def _drop_db_mysql():
     run("echo 'DROP DATABASE `%s`' | mysql -u %s %s" %
-            (env['db_name'], env['db_user'], env['db_password_opt']))
+        (env['db_name'], env['db_user'], env['db_password_opt']))
+
 
 def _drop_db_sqlite3(database):
     run("rm %s" % database['NAME'])
+
 
 def setup_db():
     """Runs all the necessary steps to create the DB schema from scratch"""
@@ -205,6 +215,7 @@ def syncdb():
         with prefix('source %(env_path)s/bin/activate' % env):
             run('python manage.py syncdb')
 
+
 def load_db(dumpfile=None):
     """Loads data from a SQL script to Pootle DB"""
     require('environment', provided_by=[production, staging])
@@ -214,21 +225,21 @@ def load_db(dumpfile=None):
             remote_filename = '%(project_path)s/DB_backup_to_load.sql' % env
 
             if (not exists(remote_filename) or
-                confirm('\n%s already exists. Do you want to overwrite it?'
-                        % remote_filename, default=False)):
+                    confirm('\n%s already exists. Do you want to overwrite it?'
+                            % remote_filename, default=False)):
+                print('\nLoading data into the DB...')
 
-                    print('\nLoading data into the DB...')
-
-                    with settings(hide('stderr')):
-                        put(dumpfile, remote_filename)
-                        run('mysql -u %s %s %s < %s' %
-                            (env['db_user'], env['db_password_opt'],
-                             env['db_name'], remote_filename))
-                        run('rm %s' % (remote_filename))
+                with settings(hide('stderr')):
+                    put(dumpfile, remote_filename)
+                    run('mysql -u %s %s %s < %s' %
+                        (env['db_user'], env['db_password_opt'],
+                         env['db_name'], remote_filename))
+                    run('rm %s' % (remote_filename))
             else:
                 print('\nAborting.')
         else:
-            print('\nERROR: The file "%s" does not exist. Aborting.' % dumpfile)
+            print('\nERROR: The file "%s" does not exist. Aborting.'
+                  % dumpfile)
     else:
         print('\nERROR: A (local) dumpfile must be provided. Aborting.')
 
@@ -243,23 +254,21 @@ def dump_db(dumpfile="pathagarh_DB_backup.sql"):
     elif (not isfile(dumpfile) or
           confirm('\n%s already exists locally. Do you want to overwrite it?'
                   % dumpfile, default=False)):
+        remote_filename = '%s/%s' % (env['project_path'], dumpfile)
 
-              remote_filename = '%s/%s' % (env['project_path'], dumpfile)
+        if (not exists(remote_filename) or
+                confirm('\n%s already exists. Do you want to overwrite it?'
+                        % remote_filename, default=False)):
+            print('\nDumping DB...')
 
-              if (not exists(remote_filename) or
-                  confirm('\n%s already exists. Do you want to overwrite it?'
-                          % remote_filename, default=False)):
-
-                      print('\nDumping DB...')
-
-                      with settings(hide('stderr')):
-                          run('mysqldump -u %s %s %s > %s' %
-                              (env['db_user'], env['db_password_opt'],
-                               env['db_name'], remote_filename))
-                          get(remote_filename, '.')
-                          run('rm %s' % (remote_filename))
-              else:
-                  print('\nAborting.')
+            with settings(hide('stderr')):
+                run('mysqldump -u %s %s %s > %s' %
+                    (env['db_user'], env['db_password_opt'],
+                     env['db_name'], remote_filename))
+                get(remote_filename, '.')
+                run('rm %s' % (remote_filename))
+        else:
+            print('\nAborting.')
     else:
         print('\nAborting.')
 
@@ -273,6 +282,7 @@ def update_code(branch="master"):
     with settings(hide('stdout', 'stderr')):
         _checkout_repo(branch=branch)
         _update_requirements()
+
 
 def deploy(branch="master"):
     """Updates the code and installs the production site"""
@@ -302,7 +312,6 @@ def update_config():
     require('environment', provided_by=[ubuntu, fedora])
 
     with settings(hide('stdout', 'stderr')):
-
         # Configure VirtualHost
         upload_template('deploy/%(environment)s/virtualhost.conf' % env,
                         env.vhost_file, context=env, use_sudo=True)

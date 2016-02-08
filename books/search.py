@@ -23,18 +23,19 @@ def simple_search(queryset, searchterms,
                   search_title=False, search_author=False):
     q_objects = []
     results = queryset
-    
+
     subterms = searchterms.split(' ')
     for subterm in subterms:
         word = subterm
         if search_title:
-            q_objects.append(Q(a_title__icontains = word))
+            q_objects.append(Q(a_title__icontains=word))
         if search_author:
-            q_objects.append(Q(a_author__icontains = word))
-    
+            q_objects.append(Q(a_author__icontains=word))
+
     for q_object in q_objects:
         results = results.filter(q_object)
     return results
+
 
 def advanced_search(queryset, searchterms):
     """
@@ -42,33 +43,33 @@ def advanced_search(queryset, searchterms):
     """
     q_objects = []
     results = queryset
-    
+
     subterms = searchterms.split('AND')
     for subterm in subterms:
         if ':' in subterm:
             key, word = subterm.split(':')
             key = key.strip()
             if key == 'title':
-                q_objects.append(Q(a_title__icontains = word))
+                q_objects.append(Q(a_title__icontains=word))
             if key == 'author':
-                q_objects.append(Q(a_author__icontains = word))
+                q_objects.append(Q(a_author__icontains=word))
             if key == 'publisher':
-                q_objects.append(Q(dc_publisher__icontains = word))
+                q_objects.append(Q(dc_publisher__icontains=word))
             if key == 'identifier':
-                q_objects.append(Q(dc_identifier__icontains = word))
+                q_objects.append(Q(dc_identifier__icontains=word))
             if key == 'summary':
-                q_objects.append(Q(a_summary__icontains = word))
+                q_objects.append(Q(a_summary__icontains=word))
         else:
             word = subterm
             try:
-                results = results.filter(Q(a_title__icontains = word) | \
-                    Q(a_author__icontains = word) | \
-                    Q(dc_publisher__icontains = word) | \
-                    Q(dc_identifier__icontains = word) | \
-                    Q(a_summary__icontains = word))
+                results = results.filter(Q(a_title__icontains=word) |
+                                         Q(a_author__icontains=word) |
+                                         Q(dc_publisher__icontains=word) |
+                                         Q(dc_identifier__icontains=word) |
+                                         Q(a_summary__icontains=word))
             except Book.DoesNotExist:
                 results = Book.objects.none()
-    
+
     for q_object in q_objects:
         results = results.filter(q_object)
     return results

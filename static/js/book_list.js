@@ -6,12 +6,12 @@ $(document).ready(function () {
         select: true
     });
 
-    $('#book_list tbody').on( 'click', 'tr', function () {
+    $('#book_list tbody').on('click', 'tr', function () {
         $(this).toggleClass('selected');
-    } );
+    });
 
-    $('#button').click( function () {
-        alert( table.rows('.selected').data().length +' row(s) selected' );
-    } );
+    $('#button').click(function () {
+        alert(table.rows('.selected').data().length + ' row(s) selected');
+    });
 
 });

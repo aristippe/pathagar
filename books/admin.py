@@ -25,7 +25,7 @@ class BookAdmin(admin.ModelAdmin):
             'fields': ['book_file', 'original_path', 'file_sha256sum',
                        'mimetype', 'cover_img']}),
         ('Basic information',
-            {'fields': ['a_title', 'a_author', 'a_status', 'tags']}),
+         {'fields': ['a_title', 'a_author', 'a_status', 'tags']}),
         ('Extended information', {
             'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
                        'dc_language', 'dc_publisher', 'dc_issued',

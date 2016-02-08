@@ -1,38 +1,40 @@
-[{
+[
+  {
     "pk": 1,
     "model": "books.language",
     "fields": {
-        "code": "en",
-        "label": "English"
+      "code": "en",
+      "label": "English"
     }
-},
-{
+  },
+  {
     "pk": 2,
     "model": "books.language",
-        "fields": {
-        "code": "es",
-        "label": "Spanish"
+    "fields": {
+      "code": "es",
+      "label": "Spanish"
     }
-},
-{
+  },
+  {
     "pk": 3,
     "model": "books.language",
-        "fields": {
-        "code": "ht",
-        "label": "Haitian"
+    "fields": {
+      "code": "ht",
+      "label": "Haitian"
     }
-},
-{
+  },
+  {
     "pk": 1,
     "model": "books.status",
     "fields": {
       "status": "Published"
     }
-},
-{
+  },
+  {
     "pk": 2,
     "model": "books.status",
     "fields": {
       "status": "Draft"
     }
-}]
+  }
+]

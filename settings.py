@@ -91,6 +91,6 @@ LOGIN_REDIRECT_URL = '/'
 
 # Deployment-specific variables are imported from local_settings.py
 try:
-    from local_settings import *
+    from local_settings import *  # NOQA
 except ImportError:
     pass
