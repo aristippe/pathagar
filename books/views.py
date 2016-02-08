@@ -302,17 +302,18 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
 
     # Return HTML page:
     extra_context = dict(kwargs)
-    extra_context.update({'book_list': page_obj.object_list,
-                          'published_books': published_count,
-                          'unpublished_books': unpublished_count,
-                          'q': q,
-                          'paginator': paginator,
-                          'page_obj': page_obj,
-                          'search_title': search_title,
-                          'search_author': search_author, 'list_by': list_by,
-                          'qstring': qstring,
-                          'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS
-                          })
+    extra_context.update({
+        'book_list': page_obj.object_list,
+        'published_books': published_count,
+        'unpublished_books': unpublished_count,
+        'q': q,
+        'paginator': paginator,
+        'page_obj': page_obj,
+        'search_title': search_title,
+        'search_author': search_author, 'list_by': list_by,
+        'qstring': qstring,
+        'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS
+    })
     return render_to_response(
         'books/book_list.html',
         extra_context,

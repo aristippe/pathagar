@@ -112,8 +112,8 @@ def bootstrap(branch="master"):
 
     if (not exists('%(project_path)s' % env) or
             confirm(
-                    '\n%(project_path)s already exists. Do you want to continue?'
-                    % env, default=False)):
+                '\n%(project_path)s already exists. Do you want to continue?'
+                % env, default=False)):
         print('Bootstrapping initial directories...')
 
         with settings(hide('stdout', 'stderr')):
@@ -174,8 +174,8 @@ def create_db():
     elif db_type == 'sqlite3':
         _create_db_sqlite3(database)
     else:
-        print(
-        "The database type is not currently supported by our fabfile. You'll have to create it manually.")
+        print("The database type is not currently supported by our fabfile. "
+              "You'll have to create it manually.")
 
 
 def drop_db():
@@ -184,7 +184,7 @@ def drop_db():
     db_type = _get_database_type()
 
     if confirm('\nDropping the %s DB loses ALL its data! Are you sure?'
-                       % (env['db_name']), default=False):
+               % (env['db_name']), default=False):
         if db_type == 'mysql':
             _drop_db_mysql()
         elif db_type == 'sqlite3':
@@ -226,7 +226,7 @@ def load_db(dumpfile=None):
 
             if (not exists(remote_filename) or
                     confirm('\n%s already exists. Do you want to overwrite it?'
-                                % remote_filename, default=False)):
+                            % remote_filename, default=False)):
                 print('\nLoading data into the DB...')
 
                 with settings(hide('stderr')):
@@ -238,8 +238,8 @@ def load_db(dumpfile=None):
             else:
                 print('\nAborting.')
         else:
-            print(
-            '\nERROR: The file "%s" does not exist. Aborting.' % dumpfile)
+            print('\nERROR: The file "%s" does not exist. Aborting.'
+                  % dumpfile)
     else:
         print('\nERROR: A (local) dumpfile must be provided. Aborting.')
 
@@ -252,14 +252,13 @@ def dump_db(dumpfile="pathagarh_DB_backup.sql"):
         print("dumpfile '%s' is a directory! Aborting." % dumpfile)
 
     elif (not isfile(dumpfile) or
-              confirm(
-                      '\n%s already exists locally. Do you want to overwrite it?'
-                      % dumpfile, default=False)):
+          confirm('\n%s already exists locally. Do you want to overwrite it?'
+                  % dumpfile, default=False)):
         remote_filename = '%s/%s' % (env['project_path'], dumpfile)
 
         if (not exists(remote_filename) or
                 confirm('\n%s already exists. Do you want to overwrite it?'
-                            % remote_filename, default=False)):
+                        % remote_filename, default=False)):
             print('\nDumping DB...')
 
             with settings(hide('stderr')):
