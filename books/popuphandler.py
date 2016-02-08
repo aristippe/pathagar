@@ -14,7 +14,9 @@ def handlePopAdd(request, addForm, field):
                 newObject = None
             if newObject:
                 return HttpResponse(
-                    '<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' %
+                    '<script type="text/javascript">'
+                    'opener.dismissAddAnotherPopup(window, "%s", "%s");'
+                    '</script>' %
                     (escape(newObject._get_pk_val()), escape(newObject)))
 
     else:

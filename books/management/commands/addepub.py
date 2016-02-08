@@ -78,7 +78,7 @@ class Command(BaseCommand):
         tmp_cover_path = None
         try:
             epub = Epub(filename)
-            _ = epub.get_info()
+            epub.get_info()
             # Get the information we need for creating the Model.
             info_dict, tmp_cover_path = epub.as_model_dict()
             assert info_dict

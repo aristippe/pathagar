@@ -88,7 +88,8 @@ class Epub(object):
         tree = etree.parse(containerfile)
         root = tree.getroot()
 
-        for element in root.iterfind('.//{urn:oasis:names:tc:opendocument:xmlns:container}rootfile'):
+        rfile = './/{urn:oasis:names:tc:opendocument:xmlns:container}rootfile'
+        for element in root.iterfind(rfile):
             if element.get('media-type') == 'application/oebps-package+xml':
                 self._opfpath = element.get('full-path')
 
@@ -125,13 +126,14 @@ class Epub(object):
 
         self._zobject = zipfile.ZipFile(self._file)
 
-        if not 'mimetype' in self._zobject.namelist():
+        if 'mimetype' not in self._zobject.namelist():
             return False
 
         mtypefile = self._zobject.open('mimetype')
         self._mimetype = mtypefile.readline()
 
-        if not self._mimetype.startswith('application/epub+zip'):  # Some files seem to have trailing characters
+        # Some files seem to have trailing characters
+        if not self._mimetype.startswith('application/epub+zip'):
             return False
 
         return True
@@ -151,8 +153,10 @@ class Epub(object):
 
     def get_cover_image_path(self):
         if self._info.cover_image is not None:
-            # return os.path.join(self._tempdir, 'OEBPS', self._info.cover_image)
-            return os.path.join(self._tempdir, self._basepath, self._info.cover_image)
+            # return os.path.join(self._tempdir, 'OEBPS',
+            #                     self._info.cover_image)
+            return os.path.join(self._tempdir, self._basepath,
+                                self._info.cover_image)
         else:
             return None
 
@@ -197,22 +201,24 @@ class Epub(object):
                 print '  [ ] %s not found' % name
 
         return ({
-                    'a_title': info.title,
-                    'a_author': info.creator,
-                    'a_summary': info.summary,
-                    'a_rights': info.rights,
-                    'dc_language': info.language,
-                    'dc_publisher': info.publisher,
-                    'dc_identifier': identifier,
-                    'dc_issued': info.date,
-                    'mimetype': self._mimetype
+                'a_title': info.title,
+                'a_author': info.creator,
+                'a_summary': info.summary,
+                'a_rights': info.rights,
+                'dc_language': info.language,
+                'dc_publisher': info.publisher,
+                'dc_identifier': identifier,
+                'dc_issued': info.date,
+                'mimetype': self._mimetype
                 },
                 ret_cover_path)
 
     def close(self):
         """
-        Cleans up (closes open zip files and deletes uncompressed content of Epub.
-        Please call this when a file is being closed or during application exit.
+        Cleans up (closes open zip files and deletes uncompressed content of
+        Epub.
+        Please call this when a file is being closed or during application
+        exit.
         """
         if self._zobject:
             self._zobject.close()

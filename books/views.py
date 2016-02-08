@@ -27,8 +27,8 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.list_detail import object_detail
-from django.views.generic.detail import DetailView
-from django.views.generic.create_update import create_object, update_object, delete_object
+from django.views.generic.create_update import (create_object, update_object,
+                                                delete_object)
 from django.template import RequestContext, resolve_variable
 
 from django.core.files import File
@@ -267,8 +267,8 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     if not user.is_authenticated():
         queryset = queryset.filter(a_status=BOOK_PUBLISHED)
 
-    published_books_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
-    unpublished_books_count = Book.objects.exclude(a_status=BOOK_PUBLISHED).count()
+    published_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
+    unpublished_count = Book.objects.exclude(a_status=BOOK_PUBLISHED).count()
 
     # If no search options are specified, assumes search all, the
     # advanced search will be used:
@@ -304,8 +304,8 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     extra_context = dict(kwargs)
     extra_context.update({
         'book_list': page_obj.object_list,
-        'published_books': published_books_count,
-        'unpublished_books': unpublished_books_count,
+        'published_books': published_count,
+        'unpublished_books': unpublished_count,
         'q': q,
         'paginator': paginator,
         'page_obj': page_obj,
@@ -354,7 +354,8 @@ def by_author(request, qtype=None):
 def by_tag(request, tag, qtype=None):
     """ displays a book list by the tag argument """
     # get the Tag object
-    tag_instance = tTag.objects.get(name=tag)  # TODO replace as Tag when django-tagging is removed
+    # TODO replace as Tag when django-tagging is removed
+    tag_instance = tTag.objects.get(name=tag)
 
     # if the tag does not exist, return 404
     if tag_instance is None:

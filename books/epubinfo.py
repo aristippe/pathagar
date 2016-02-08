@@ -102,7 +102,8 @@ class EpubInfo:  # TODO: Cover the entire DC range
             return None
 
     def _get_language(self):
-        # print "Language: % " % self._get_data('.//{http://purl.org/dc/elements/1.1/}language')
+        # print "Language: % " %
+        #     self._get_data('.//{http://purl.org/dc/elements/1.1/}language')
         try:
             ret = self._get_data(
                 './/{http://purl.org/dc/elements/1.1/}language')
@@ -112,7 +113,8 @@ class EpubInfo:  # TODO: Cover the entire DC range
         return ret
 
     def _get_publisher(self):
-        # print "Publisher: %" % self._get_data('.//{http://purl.org/dc/elements/1.1/}creator')
+        # print "Publisher: %" %
+        #     self._get_data('.//{http://purl.org/dc/elements/1.1/}creator')
         try:
             ret = self._get_data(
                 './/{http://purl.org/dc/elements/1.1/}publisher')

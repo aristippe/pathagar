@@ -21,7 +21,8 @@ import subprocess
 # Customize this script by editing global variables below
 # uncomment formats below to download more data
 # formats are listed in order of preference, i.e. prefer 'Text' over 'DjVuTXT'
-requested_formats = {'pdf': ['Text PDF', 'Additional Text PDF', 'Image Container PDF'],
+requested_formats = {'pdf': ['Text PDF', 'Additional Text PDF',
+                             'Image Container PDF'],
                      'epub': ['EPUB'],
                      'meta': ['Metadata'],
                      'text': ['Text', 'DjVuTXT'],
@@ -52,27 +53,28 @@ def get_item_meatadata(item_id):
     return json.load(f)
 
 
-def get_download_url(item_id, file):
+def get_download_url(item_id, file_):
     prefix = 'http://archive.org/download/'
-    return prefix + os.path.join(item_id, file)
+    return prefix + os.path.join(item_id, file_)
 
 
 def download_files(item_id, matching_files, item_dir):
-    for file in matching_files:
-        download_path = os.path.join(item_dir, file)
+    for file_ in matching_files:
+        download_path = os.path.join(item_dir, file_)
 
         if os.path.exists(download_path):
-            print "    Already downloaded", file
+            print "    Already downloaded", file_
             continue
 
         parent_dir = os.path.dirname(download_path)
         if not os.path.exists(parent_dir):
             os.makedirs(parent_dir)
 
-        print "    Downloading", file, "to", download_path
-        download_url = get_download_url(item_id, file)
-        ret = subprocess.call(['wget', download_url, '-O', download_path,
-                               '--limit-rate=1000k', '--user-agent=fetch_ia_item.py', '-q'])
+        print "    Downloading", file_, "to", download_path
+        download_url = get_download_url(item_id, file_)
+        ret = subprocess.call([
+            'wget', download_url, '-O', download_path,
+            '--limit-rate=1000k', '--user-agent=fetch_ia_item.py', '-q'])
 
         if 0 != ret:
             print "    ERROR DOWNLOADING", download_path
@@ -99,13 +101,15 @@ def download_item(item_id, mediatype, metadata, out_dir, formats):
         download_files(item_id, matching_files, item_dir)
         return
 
-    for key, format_list in formats.iteritems():
-        for format in format_list:
-            matching_files = [x['name'] for x in files_list if x['format'] == format]
+    for _, format_list in formats.iteritems():
+        for format_ in format_list:
+            matching_files = [x['name'] for x in files_list
+                              if x['format'] == format_]
             download_files(item_id, matching_files, item_dir)
 
-            # if we found some matching files in for this format, move on to next format
-            # (i.e. if we downloaded a Text, no need to download DjVuTXT as well)
+            # if we found some matching files in for this format, move on to
+            # next format (i.e. if we downloaded a Text, no need to download
+            # DjVuTXT as well)
             if len(matching_files) > 0:
                 break
 
@@ -139,7 +143,8 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
 
     metadata = mdata['metadata']
     files_list = mdata['files']
-    book_paths = [x['name'] for x in files_list if x['format'] in pathagar_formats]
+    book_paths = [x['name'] for x in files_list
+                  if x['format'] in pathagar_formats]
 
     if not book_paths:
         return
@@ -166,7 +171,8 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
     }
 
     if cover_image:
-        book['cover_path'] = os.path.abspath(os.path.join(item_dir, cover_image))
+        book['cover_path'] = os.path.abspath(os.path.join(item_dir,
+                                                          cover_image))
 
     if 'subject' in metadata:
         if isinstance(metadata['subject'], list):
@@ -180,7 +186,8 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
 
 
 class Command(BaseCommand):
-    help = "A script to download all of an user's bookmarked items from archive.org"
+    help = ("A script to download all of an user's bookmarked items from "
+            "archive.org")
     args = "<--username ... --out ...>"
 
     option_list = BaseCommand.option_list + (
@@ -203,10 +210,12 @@ class Command(BaseCommand):
             item_id = item['identifier']
             metadata = get_item_meatadata(item_id)
 
-            download_item(item_id, item['mediatype'], metadata, download_directory, requested_formats)
+            download_item(item_id, item['mediatype'], metadata,
+                          download_directory, requested_formats)
 
             if should_download_cover:
-                cover_image = download_cover(item_id, metadata, download_directory)
+                cover_image = download_cover(item_id, metadata,
+                                             download_directory)
             else:
                 cover_image = None
 

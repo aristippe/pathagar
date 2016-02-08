@@ -15,8 +15,8 @@ class UUIDField(CharField):
         suported by the uuid python module.
     """
 
-    def __init__(self, verbose_name=None, name=None, auto=True, version=1, node=None, clock_seq=None, namespace=None,
-                 **kwargs):
+    def __init__(self, verbose_name=None, name=None, auto=True, version=1,
+                 node=None, clock_seq=None, namespace=None, **kwargs):
         kwargs['max_length'] = 36
         self.auto = auto
         if auto:
@@ -44,7 +44,8 @@ class UUIDField(CharField):
         elif self.version == 5:
             return uuid.uuid5(self.namespace, self.name)
         else:
-            raise UUIDVersionError("UUID version %s is not valid." % self.version)
+            raise UUIDVersionError("UUID version %s is not valid." %
+                                   self.version)
 
     def pre_save(self, model_instance, add):
         if self.auto and add:

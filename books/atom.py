@@ -41,11 +41,12 @@ GENERATOR_ATTR = {
 }
 
 
-## based on django.utils.xmlutils.SimplerXMLGenerator
+# based on django.utils.xmlutils.SimplerXMLGenerator
 class SimplerXMLGenerator(XMLGenerator):
     def addQuickElement(self, name, contents=None, attrs=None, tabs=1):
         "Convenience method for adding an element with no children"
-        if attrs is None: attrs = {}
+        if attrs is None:
+            attrs = {}
         self.characters("\t" * tabs)
         self.startElement(name, attrs)
         if contents is not None:
@@ -61,7 +62,8 @@ def rfc3339_date(date):
 
 # based on django.utils.feedgenerator.get_tag_uri
 def get_tag_uri(url, date):
-    "Creates a TagURI. See http://diveintomark.org/archives/2004/05/28/howto-atom-id"
+    """Creates a TagURI. See
+    http://diveintomark.org/archives/2004/05/28/howto-atom-id"""
     tag = re.sub('^http://', '', url)
     if date is not None:
         tag = re.sub('/', ',%s:/' % date.strftime('%Y-%m-%d'), tag, 1)
@@ -160,7 +162,8 @@ class ValidationError(Exception):
     pass
 
 
-# based on django.utils.feedgenerator.SyndicationFeed and django.utils.feedgenerator.Atom1Feed
+# based on django.utils.feedgenerator.SyndicationFeed and
+# django.utils.feedgenerator.Atom1Feed
 class AtomFeed(object):
     mime_type = 'application/atom+xml'
     ns = u'http://www.w3.org/2005/Atom'
@@ -224,14 +227,17 @@ class AtomFeed(object):
 
     def latest_updated(self):
         """
-        Returns the latest item's updated or the current time if there are no items.
+        Returns the latest item's updated or the current time if there are no
+        items.
         """
         updates = [item['updated'] for item in self.items]
         if len(updates) > 0:
             updates.sort()
             return updates[-1]
         else:
-            return datetime.now()  # @@@ really we should allow a feed to define its "start" for this case
+            # @@@ really we should allow a feed to define its "start" for this
+            # case
+            return datetime.now()
 
     def write_text_construct(self, handler, element_name, data, tabs=1):
         if isinstance(data, tuple):
@@ -239,7 +245,7 @@ class AtomFeed(object):
             if text_type == 'xhtml':
                 handler.startElement(element_name, {'type': text_type})
                 handler._write(
-                    text)  # write unescaped -- it had better be well-formed XML
+                    text)  # write unescaped - it had better be well-formed XML
                 handler.endElement(element_name)
             else:
                 handler.addQuickElement(element_name, text,
@@ -301,7 +307,7 @@ class AtomFeed(object):
             if content_dict.get('type') == 'xhtml':
                 handler.startElement(u'content', content_dict)
                 handler._write(
-                    text)  # write unescaped -- it had better be well-formed XML
+                    text)  # write unescaped - it had better be well-formed XML
                 handler.endElement(u'content')
             else:
                 handler.addQuickElement(u'content', text, content_dict)
@@ -411,8 +417,10 @@ class AtomFeed(object):
             if isinstance(obj, tuple):
                 if obj[0] not in ['text', 'html', 'xhtml']:
                     return False
-            # @@@ no validation is done that 'html' text constructs are valid HTML
-            # @@@ no validation is done that 'xhtml' text constructs are well-formed XML or valid XHTML
+            # @@@ no validation is done that 'html' text constructs are
+            # valid HTML
+            # @@@ no validation is done that 'xhtml' text constructs are
+            # well-formed XML or valid XHTML
 
             return True
 
@@ -427,7 +435,7 @@ class AtomFeed(object):
 
         alternate_links = {}
         for link in self.feed.get('links'):
-            if link.get('rel') == 'alternate' or link.get('rel') == None:
+            if link.get('rel') == 'alternate' or link.get('rel') is None:
                 key = (link.get('type'), link.get('hreflang'))
                 if key in alternate_links:
                     raise ValidationError(
@@ -445,7 +453,8 @@ class AtomFeed(object):
                     pass
                 else:
                     raise ValidationError(
-                        'if no feed author, all entries must have author (possibly in source)')
+                        'if no feed author, all entries must have author '
+                        '(possibly in source)')
 
             if not validate_text_construct(item['title']):
                 raise ValidationError('entry title has invalid type')
@@ -470,7 +479,7 @@ class AtomFeed(object):
 
             alternate_links = {}
             for link in item.get('links'):
-                if link.get('rel') == 'alternate' or link.get('rel') == None:
+                if link.get('rel') == 'alternate' or link.get('rel') is None:
                     key = (link.get('type'), link.get('hreflang'))
                     if key in alternate_links:
                         raise ValidationError(
@@ -493,27 +502,29 @@ class AtomFeed(object):
                             'content with src requires a summary too')
                     if content_type in ['text', 'html', 'xhtml']:
                         raise ValidationError(
-                            'content with src cannot have type of text, html or xhtml')
+                            'content with src cannot have type of text, html '
+                            ' or xhtml')
                 if content_type:
                     if '/' in content_type and \
                             not content_type.startswith('text/') and \
-                            not content_type.endswith(
-                                '/xml') and not content_type.endswith(
-                        '+xml') and \
-                            not content_type in [
+                            not content_type.endswith('/xml') and \
+                            not content_type.endswith('+xml') and \
+                            content_type not in [
                                 'application/xml-external-parsed-entity',
                                 'application/xml-dtd']:
                         # @@@ check content is Base64
                         if not item.get('summary'):
                             raise ValidationError(
                                 'content in Base64 requires a summary too')
-                    if content_type not in ['text', 'html',
-                                            'xhtml'] and '/' not in content_type:
+                    if content_type not in ['text', 'html', 'xhtml'] and \
+                            '/' not in content_type:
                         raise ValidationError(
                             'content type does not appear to be valid')
 
-                    # @@@ no validation is done that 'html' text constructs are valid HTML
-                    # @@@ no validation is done that 'xhtml' text constructs are well-formed XML or valid XHTML
+                    # @@@ no validation is done that 'html' text constructs
+                    # are valid HTML
+                    # @@@ no validation is done that 'xhtml' text constructs
+                    # are well-formed XML or valid XHTML
 
                     return
 

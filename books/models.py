@@ -98,7 +98,7 @@ class Book(models.Model):
 
     # https://stackoverflow.com/questions/8332443/set-djangos-filefield-to-an-existing-file
     # https://stackoverflow.com/questions/10905674/django-how-to-save-original-filename-in-filefield
-    # get the model instance you want to set the value on... set the value.. save it
+    # get model instance you want to set the value on...set the value..save it
 
     # File related fields.
     book_file = models.FileField(upload_to='books', null=False)
