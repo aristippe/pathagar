@@ -100,7 +100,6 @@ class Feed(object):
         return attr
 
     def get_feed(self, extra_params=None):
-
         if extra_params:
             try:
                 obj = self.get_object(extra_params.split('/'))
@@ -205,25 +204,24 @@ class AtomFeed(object):
             raise LookupError('Feed has no item_title method')
         if updated is None:
             raise LookupError('Feed has no item_updated method')
-        self.items.append({
-            'id': atom_id,
-            'title': title,
-            'updated': updated,
-            'content': content,
-            'published': published,
-            'rights': rights,
-            'source': source,
-            'summary': summary,
-            'authors': authors,
-            'categories': categories,
-            'contributors': contributors,
-            'links': links,
-            'extra_attrs': extra_attrs,
-            'dc_language': dc_language,
-            'dc_publisher': dc_publisher,
-            'dc_issued': dc_issued,
-            'dc_identifier': dc_identifier,
-        })
+        self.items.append({'id': atom_id,
+                           'title': title,
+                           'updated': updated,
+                           'content': content,
+                           'published': published,
+                           'rights': rights,
+                           'source': source,
+                           'summary': summary,
+                           'authors': authors,
+                           'categories': categories,
+                           'contributors': contributors,
+                           'links': links,
+                           'extra_attrs': extra_attrs,
+                           'dc_language': dc_language,
+                           'dc_publisher': dc_publisher,
+                           'dc_issued': dc_issued,
+                           'dc_identifier': dc_identifier,
+                           })
 
     def latest_updated(self):
         """
@@ -412,7 +410,6 @@ class AtomFeed(object):
             handler.characters("\n")
 
     def validate(self):
-
         def validate_text_construct(obj):
             if isinstance(obj, tuple):
                 if obj[0] not in ['text', 'html', 'xhtml']:
@@ -542,7 +539,6 @@ class LegacySyndicationFeed(AtomFeed):
                  author_name=None, author_link=None, subtitle=None,
                  categories=[],
                  feed_url=None, feed_copyright=None):
-
         atom_id = link
         title = title
         updated = None  # will be calculated
@@ -576,7 +572,6 @@ class LegacySyndicationFeed(AtomFeed):
                  comments=None,
                  unique_id=None, enclosure=None, categories=[],
                  item_copyright=None):
-
         if unique_id:
             atom_id = unique_id
         else:
