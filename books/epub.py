@@ -43,44 +43,16 @@ class Epub(object):
             self._tempdir = tempfile.mkdtemp()
 
             if not self._verify():
-                print 'Warning: This does not seem to be a valid epub file'
+                print 'Warning: This does not seem to be a valid ePub file'
 
             self._get_opf()
             self._get_ncx()
 
             opffile = self._zobject.open(self._opfpath)
             self._info = epubinfo.EpubInfo(opffile)
-
-            # self._unzip()
         except Exception as e:
             self.close()
             raise e
-
-    def _unzip(self):
-        # Use safe version (2.7+) if possible, that escapes dangerous names.
-        if version_info >= (2, 7, 4):
-            self._zobject.extractall(path=self._tempdir)
-            return
-
-        # TODO: further restrict the "safe" names (several slashes, relative
-        # paths, ...)
-        orig_cwd = os.getcwd()
-        try:
-            os.chdir(self._tempdir)
-            for name in self._zobject.namelist():
-                # Some weird zip file entries start with a slash, and we don't
-                # want to write to the root directory.
-                if name.startswith(os.path.sep):
-                    name = name[1:]
-                if name.endswith(os.path.sep) or name.endswith('\\'):
-                    os.makedirs(name)
-                else:
-                    self._zobject.extract(name)
-        except Exception as e:
-            raise e
-        finally:
-            # Make sure that we return to the original directory.
-            os.chdir(orig_cwd)
 
     def _unzip_file(self, name):
         # Use safe version (2.7+) if possible, that escapes dangerous names.
@@ -172,7 +144,7 @@ class Epub(object):
 
     def get_info(self):
         """
-        Returns a EpubInfo object for the open Epub file
+        Returns a EpubInfo object for the open ePpub file
         """
         return self._info
 
