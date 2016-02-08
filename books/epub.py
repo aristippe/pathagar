@@ -144,7 +144,7 @@ class Epub(object):
 
     def get_info(self):
         """
-        Returns a EpubInfo object for the open ePpub file
+        Returns a EpubInfo object for the open ePub file
         """
         return self._info
 
