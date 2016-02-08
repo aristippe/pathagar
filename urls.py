@@ -100,4 +100,4 @@ if BOOKS_STATICS_VIA_DJANGO:
         # Book covers:
         url(r'^covers/(?P<path>.*)$', serve,
             {'document_root': os.path.join(settings.MEDIA_ROOT, 'covers')}),
-        )
+    )
