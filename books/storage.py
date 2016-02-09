@@ -50,10 +50,6 @@ class LinkOrFileSystemStorage(FileSystemStorage):
 
         'x/symlink_file' == symbolic link to /x/srcfile
         'x/regular_file' == copy of /x/srcfile
-
-    TODO: delete() relies on os.remove(), which seems to be fine, but might
-    be worth checking if under ancient Python versions or similar it causes
-    the *original* file to be removed.
     """
     def _save(self, name, content):
         """Save the object using a symlink, and in case of errors, fall back
@@ -123,3 +119,26 @@ class LinkOrFileSystemStorage(FileSystemStorage):
             os.chmod(full_path, settings.FILE_UPLOAD_PERMISSIONS)
 
         return name
+
+    def delete(self, name):
+        """If the file exists, delete it from the filesystem.
+
+        This method is basically a straight copy of FileSystemStorage.delete(),
+        replacing the os.path.exists with os.path.lexists() in order to
+        consider broken symbolic links an existing file.
+
+        TODO: delete() relies on os.remove(), which seems to be fine, but might
+        be worth checking if under ancient Python versions or similar it causes
+        the *original* file to be removed.
+        """
+        name = self.path(name)
+        # If the file exists, delete it from the filesystem.
+        # Note that there is a race between os.path.exists and os.remove:
+        # if os.remove fails with ENOENT, the file was removed
+        # concurrently, and we can continue normally.
+        if os.path.lexists(name):
+            try:
+                os.remove(name)
+            except OSError, e:
+                if e.errno != errno.ENOENT:
+                    raise
