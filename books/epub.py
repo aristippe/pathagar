@@ -43,23 +43,21 @@ class Epub(object):
             self._tempdir = tempfile.mkdtemp()
 
             if not self._verify():
-                print 'Warning: This does not seem to be a valid epub file'
+                print 'Warning: This does not seem to be a valid ePub file'
 
             self._get_opf()
             self._get_ncx()
 
             opffile = self._zobject.open(self._opfpath)
             self._info = epubinfo.EpubInfo(opffile)
-
-            self._unzip()
         except Exception as e:
             self.close()
             raise e
 
-    def _unzip(self):
+    def _unzip_file(self, name):
         # Use safe version (2.7+) if possible, that escapes dangerous names.
         if version_info >= (2, 7, 4):
-            self._zobject.extractall(path=self._tempdir)
+            self._zobject.extract(name, path=self._tempdir)
             return
 
         # TODO: further restrict the "safe" names (several slashes, relative
@@ -67,15 +65,14 @@ class Epub(object):
         orig_cwd = os.getcwd()
         try:
             os.chdir(self._tempdir)
-            for name in self._zobject.namelist():
-                # Some weird zip file entries start with a slash, and we don't
-                # want to write to the root directory.
-                if name.startswith(os.path.sep):
-                    name = name[1:]
-                if name.endswith(os.path.sep) or name.endswith('\\'):
-                    os.makedirs(name)
-                else:
-                    self._zobject.extract(name)
+            # Some weird zip file entries start with a slash, and we don't
+            # want to write to the root directory.
+            if name.startswith(os.path.sep):
+                name = name[1:]
+            if name.endswith(os.path.sep) or name.endswith('\\'):
+                os.makedirs(name)
+            else:
+                self._zobject.extract(name)
         except Exception as e:
             raise e
         finally:
@@ -118,7 +115,7 @@ class Epub(object):
     def _verify(self):
         """
         Method to crudely check to verify that what we
-        are dealing with is a epub file or not
+        are dealing with is a ePub file or not
         """
         if isinstance(self._file, basestring):
             if not os.path.exists(self._file):
@@ -141,20 +138,19 @@ class Epub(object):
     def get_basedir(self):
         """
         Returns the base directory where the contents of the
-        epub has been unzipped
+        ePub has been unzipped
         """
         return self._tempdir
 
     def get_info(self):
         """
-        Returns a EpubInfo object for the open Epub file
+        Returns a EpubInfo object for the open ePub file
         """
         return self._info
 
     def get_cover_image_path(self):
         if self._info.cover_image is not None:
-            # return os.path.join(self._tempdir, 'OEBPS',
-            #                     self._info.cover_image)
+            self._unzip_file(self._basepath + self._info.cover_image)
             return os.path.join(self._tempdir, self._basepath,
                                 self._info.cover_image)
         else:
@@ -215,7 +211,7 @@ class Epub(object):
     def close(self):
         """
         Cleans up (closes open zip files and deletes uncompressed content of
-        Epub.
+        ePub.
         Please call this when a file is being closed or during application
         exit.
         """
