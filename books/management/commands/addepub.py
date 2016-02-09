@@ -2,10 +2,12 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
 from django.core.exceptions import ValidationError
 
+from optparse import make_option
 import os
 
 from books import models
 from books.epub import Epub
+from books.storage import LinkableFile
 
 
 def get_epubs_paths(paths):
@@ -47,6 +49,14 @@ class Command(BaseCommand):
             "adding all the files with '.epub' extension).")
     args = '<ITEM ITEM ...>'
 
+    option_list = BaseCommand.option_list + (
+        make_option('-l', '--link',
+                    action='store_true',
+                    dest='use_symlink',
+                    default=False,
+                    help='Use symbolic links instead of copying the files.'),
+    )
+
     def handle(self, *args, **options):
         epub_filenames = get_epubs_paths(args)
 
@@ -56,7 +66,7 @@ class Command(BaseCommand):
         for filename in epub_filenames:
             success = True
             try:
-                success = self.process_epub(filename)
+                success = self.process_epub(filename, options['use_symlink'])
             except Exception as e:
                 print 'Unhandled exception while importing: %s' % e
                 success = False
@@ -66,7 +76,7 @@ class Command(BaseCommand):
             else:
                 print 'File NOT imported'
 
-    def process_epub(self, filename):
+    def process_epub(self, filename, use_symlink=False):
         """Import a single EPUB from `filename`, creating a new `Book` based
         on the information parsed from the epub.
         """
@@ -116,9 +126,12 @@ class Command(BaseCommand):
         try:
             # Prepare the Book.
             book = models.Book(**info_dict)
-            book.book_file.save(os.path.basename(filename),
-                                File(open(filename)),
-                                save=False)
+            # Use a symlink or copy the file depending on options.
+            if use_symlink:
+                f = LinkableFile(open(filename))
+            else:
+                f = File(open(filename))
+            book.book_file.save(os.path.basename(filename), f, save=False)
             book.file_sha256sum = models.sha256_sum(book.book_file)
 
             # Validate and save.
