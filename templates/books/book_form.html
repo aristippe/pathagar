@@ -23,11 +23,12 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/RelatedObjectLookups.js"></script>{% endblock %}
 
 {% block content %}
+{{ form.errors }}
     <form enctype="multipart/form-data"
             {% if action == 'add' %}
-          action="{% url pathagar.books.views.add_book %}"
+          action="{% url "book_add" %}"
             {% else %}
-          action="{% url pathagar.books.views.edit_book book.pk %}"
+          action="{% url "book_edit" book.pk %}"
             {% endif %}
           method="POST">{% csrf_token %}
         <fieldset>

@@ -26,23 +26,23 @@
 {% block feed_link %}
     <a class="feed-link"
             {% if list_by == 'latest' %}
-       href="{% url latest_feed %}{{ qstring }}"
+       href="{% url "latest_feed" %}{{ qstring }}"
             {% endif %}
             {% if list_by == 'by-title' %}
-       href="{% url by_title_feed %}{{ qstring }}"
+       href="{% url "by_title_feed" %}{{ qstring }}"
             {% endif %}
             {% if list_by == 'by-author' %}
-       href="{% url by_author_feed %}{{ qstring }}"
+       href="{% url "by_author_feed" %}{{ qstring }}"
             {% endif %}
             {% if list_by == 'by-tag' %}
                 {% if tag %}
-       href="{% url by_tag_feed tag.name %}{{ qstring }}"
+       href="{% url "by_tag_feed" tag.name %}{{ qstring }}"
                 {% else %}
        href="#"
                 {% endif %}
             {% endif %}
             {% if list_by == 'most-downloaded' %}
-       href="{% url most_downloaded_feed %}{{ qstring }}"
+       href="{% url "most_downloaded_feed" %}{{ qstring }}"
             {% endif %}
     ><img src="{{ STATIC_URL }}images/feed.png" alt="Feed Icon"/><!--Subscribe to Feed--></a>
 {% endblock %}
@@ -76,13 +76,13 @@
         <tr>
             <th/>
             {% if q != None %}
-                <th><a data-name="by-title" href="{% url by_title %}?q={{ q|urlencode }}">Title</a></th>
-                <th><a data-name="by-author" href="{% url by_author %}?q={{ q|urlencode }}">Author</a></th>
-                <th><a data-name="latest" href="{% url latest %}?q={{ q|urlencode }}">Added</a></th>
+                <th><a data-name="by-title" href="{% url "by_title" %}?q={{ q|urlencode }}">Title</a></th>
+                <th><a data-name="by-author" href="{% url "by_author" %}?q={{ q|urlencode }}">Author</a></th>
+                <th><a data-name="latest" href="{% url "latest" %}?q={{ q|urlencode }}">Added</a></th>
             {% else %}
-                <th><a data-name="by-title" href="{% url by_title %}">Title</a></th>
-                <th><a data-name="by-author" href="{% url by_author %}">Author</a></th>
-                <th><a data-name="latest" href="{% url latest %}">Added</a></th>
+                <th><a data-name="by-title" href="{% url "by_title" %}">Title</a></th>
+                <th><a data-name="by-author" href="{% url "by_author" %}">Author</a></th>
+                <th><a data-name="latest" href="{% url "latest" %}">Added</a></th>
             {% endif %}
             <th/>
         </tr>
@@ -91,7 +91,7 @@
         {% for book in book_list %}
             <tr>
                 <td>
-                    <a href="{% url pathagar.books.views.book_detail book.pk %}">
+                    <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
                             <img src="{{ book.cover_img.url }}" alt="Cover" width=24px/>
                         {% else %}
@@ -100,19 +100,19 @@
                     </a>
                 </td>
                 <td class="list_title">
-                    <a href="{% url pathagar.books.views.book_detail book.pk %}">{{ book.a_title }}</a>
+                    <a href="{% url "book_detail" book.pk %}">{{ book.a_title }}</a>
                     {% if book.tags.count != 0 %}
                         <div class="list_tags">
                             {% for tag in book.tags.all %}
-                                <a class="list_tag" href="{% url by_tag tag.name %}">{{ tag.name }}</a>
+                                <a class="list_tag" href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
                             {% endfor %}
                         </div>
                     {% endif %}
                 </td>
                 <td class="list_author"><a
-                        href="{% url by_title %}?q={{ book.a_author|urlencode }}">{{ book.a_author }}</a></td>
+                        href="{% url "by_title" %}?q={{ book.a_author|urlencode }}">{{ book.a_author }}</a></td>
                 <td class="list_date">{{ book.time_added|timesince }} ago</td> <!-- date:'Y-m-d H:i' -->
-                <td><a class="download" href="{% url pathagar.books.views.download_book book.pk %}">⬇︎</a></td>
+                <td><a class="download" href="{% url "pathagar.books.views.download_book" book.pk %}">⬇︎</a></td>
             </tr>
         {% endfor %}
         </tbody>
