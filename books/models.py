@@ -18,6 +18,8 @@
 from hashlib import sha256
 
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from taggit.managers import TaggableManager  # NEW
 
@@ -147,3 +149,17 @@ class Book(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return 'pathagar.books.views.book_detail', [self.pk]
+
+
+@receiver(post_delete, sender=Book)
+def book_post_delete_handler(**kwargs):
+    """
+    Book model post_delete handler to ensure book and cover files are removed
+    with book. Check if optional cover exists to avoid error.
+    """
+    book = kwargs['instance']
+
+    book.book_file.delete(save=False)
+
+    if book.cover_img:
+        book.cover_img.delete(save=False)
