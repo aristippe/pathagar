@@ -83,12 +83,61 @@ class CommandAddEpubTest(TransactionTestCase):
                 self.assertTrue(book.cover_img)
                 self.assertTrue([f for f in media_covers
                                  if f.startswith('%s.' % book.pk)])
+                self.assertFalse(os.path.islink(book.cover_img.path))
             else:
                 self.assertFalse(book.cover_img)
 
             # Assert that the file is on media, is copied, and equal to source.
             self.assertIn(EPUBS[key], media_books)
             self.assertFalse(os.path.islink(book.book_file.path))
+            self.assertTrue(filecmp.cmp(book.book_file.path, _src_epub(key)))
+
+        # Make assertions on the NOT_VALID epubs.
+        for key in EPUBS_NOT_VALID:
+            # Assert no Book with that file exists on the DB.
+            qs = models.Book.objects.filter(book_file__endswith=EPUBS[key])
+            self.assertFalse(qs.exists())
+
+            # Assert that the file is not on media.
+            self.assertNotIn(EPUBS[key], media_books)
+
+        # Make assertions on the files as a whole.
+        self.assertEqual(len(media_books), len(EPUBS_VALID))
+        self.assertEqual(len(media_covers), len(EPUBS_COVER))
+
+    def test_addepub_symlink(self):
+        """Test the `addepub` command in "symbolic links" mode.
+        """
+        # Try to import all the sample epubs.
+        src_epubs = [_src_epub(i) for i in EPUBS_ALL]
+        call_command('addepub', *src_epubs, use_symlink=True)
+
+        # Get the list of output files.
+        media_books = os.listdir(os.path.join(self.tmp_media_root, 'books'))
+        media_covers = os.listdir(os.path.join(self.tmp_media_root, 'covers'))
+
+        # Make assertions on the VALID epubs.
+        self.assertEqual(models.Book.objects.count(), len(EPUBS_VALID))
+        for key in EPUBS_VALID:
+            # Assert the Book with that file exists on the DB.
+            qs = models.Book.objects.filter(book_file__endswith=EPUBS[key])
+            self.assertEqual(qs.count(), 1)
+
+            # Assert some properties of the Book.
+            book = qs.get()
+            self.assertEqual(book.original_path, _src_epub(key))
+
+            if key in EPUBS_COVER:
+                self.assertTrue(book.cover_img)
+                self.assertTrue([f for f in media_covers
+                                 if f.startswith('%s.' % book.pk)])
+                self.assertFalse(os.path.islink(book.cover_img.path))
+            else:
+                self.assertFalse(book.cover_img)
+
+            # Assert that the file is on media, is copied, and equal to source.
+            self.assertIn(EPUBS[key], media_books)
+            self.assertTrue(os.path.islink(book.book_file.path))
             self.assertTrue(filecmp.cmp(book.book_file.path, _src_epub(key)))
 
         # Make assertions on the NOT_VALID epubs.

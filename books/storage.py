@@ -59,7 +59,6 @@ class LinkOrFileSystemStorage(FileSystemStorage):
         """Save the object using a symlink, and in case of errors, fall back
         to saving it using a regular copy.
         """
-        print 'XXXXX: %s' % self.path(name)
         try:
             return self._save_symlink(name, content)
         except:
@@ -77,7 +76,10 @@ class LinkOrFileSystemStorage(FileSystemStorage):
         changed and update this method accordingly.
         """
         # Raise an exception if not applicable.
-        if not isinstance(content, LinkableFile):
+        # TODO: the second, ugly comparison is for being able to use the mock
+        # during tests.test_addepub_nolink. Cleanup needed!
+        if (not isinstance(content, LinkableFile) and
+                type(content).__name__ != 'LinkableFile'):
             raise TypeError('%s is not a LinkableFile')
 
         full_path = self.path(name)
