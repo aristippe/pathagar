@@ -21,8 +21,9 @@ from django.db import models
 
 from taggit.managers import TaggableManager  # NEW
 
-from uuidfield import UUIDField
 from langlist import langs_by_code
+from storage import LinkOrFileSystemStorage
+from uuidfield import UUIDField
 
 
 def sha256_sum(_file):  # used to generate sha256 sum of book files
@@ -101,7 +102,8 @@ class Book(models.Model):
     # get model instance you want to set the value on...set the value..save it
 
     # File related fields.
-    book_file = models.FileField(upload_to='books', null=False)
+    book_file = models.FileField(upload_to='books', null=False,
+                                 storage=LinkOrFileSystemStorage())
     # TODO: OS X 10.10 1016 chars? remove max_length entirely?
     original_path = models.CharField('file', max_length=1016)
     file_sha256sum = models.CharField(max_length=64, unique=True)
