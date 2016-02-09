@@ -177,7 +177,6 @@ def edit_book(request, book_id):
 
 @login_required
 def remove_book(request, book_id):
-    # TODO: delete the file and cover automatically.
     return delete_object(
         request,
         model=Book,
