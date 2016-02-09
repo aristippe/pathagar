@@ -153,12 +153,13 @@ class Book(models.Model):
 
 @receiver(post_delete, sender=Book)
 def book_post_delete_handler(**kwargs):
+    """
+    Book model post_delete handler to ensure book and cover files are removed
+    with book. Check if optional cover exists to avoid error.
+    """
     book = kwargs['instance']
 
-    book_storage, book_file = book.book_file.storage, book.book_file.path
-    if book_file is not None:
-        book_storage.delete(book_file)
+    book.book_file.delete(save=False)
 
-    cover_storage, cover_file = book.cover_img.storage, book.cover_img.path
-    if cover_file is not None:
-        cover_storage.delete(cover_file)
+    if book.cover_img:
+        book.cover_img.delete(save=False)
