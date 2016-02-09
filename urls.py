@@ -1,13 +1,13 @@
 import os
 
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from pathagar.books.app_settings import BOOKS_STATICS_VIA_DJANGO
 
-from books.views import AddBookWizard
+from books import views
 from books import forms
 
 admin.autodiscover()
@@ -60,17 +60,19 @@ urlpatterns = patterns(
 
     # Add, view, edit and remove books:
     url(r'^book/add$',
-        login_required(AddBookWizard.as_view([forms.BookUploadForm,
-                                              forms.BookMetadataForm])),
-        name='add_book'),
-    # TODO: this is the "old" add view, currently not reachable via links.
-    # It should be removed once the wizard-based add book is completed.
-    url(r'^book/add_old$', 'pathagar.books.views.add_book_old',
-        name='add_book_old'),
+        login_required(views.AddBookWizard.as_view([forms.BookUploadForm,
+                                                    forms.BookMetadataForm])),
+        name='book_add'),
+    url(r'^book/(?P<pk>\d+)/view$',
+        login_required(views.BookDetailView.as_view(template_name='book')),
+        name='book_detail'),
+    url(r'^book/(?P<pk>\d+)/edit$',
+        login_required(views.BookEditView.as_view(template_name='book')),
+        name='book_edit'),
+    url(r'^book/(?P<pk>\d+)/remove$',
+        login_required(views.BookDeleteView.as_view(template_name='book')),
+        name='book_delete'),
 
-    (r'^book/(?P<book_id>\d+)/view$', 'pathagar.books.views.book_detail'),
-    (r'^book/(?P<book_id>\d+)/edit$', 'pathagar.books.views.edit_book'),
-    (r'^book/(?P<book_id>\d+)/remove$', 'pathagar.books.views.remove_book'),
     (r'^book/(?P<book_id>\d+)/download$',
      'pathagar.books.views.download_book'),
 

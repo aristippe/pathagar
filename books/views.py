@@ -26,9 +26,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.views.generic.list_detail import object_detail
-from django.views.generic.create_update import (create_object, update_object,
-                                                delete_object)
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.template import RequestContext, resolve_variable
 
 from django.core.files import File
@@ -60,6 +59,8 @@ logger = logging.getLogger(__name__)
 
 
 class AddBookWizard(SessionWizardView):
+    # TODO: allow adding books to anonymous if settings.ALLOW_PUBLIC_ADD_BOOKS
+    # This is currently prevented by the login_required decorator on urls.py.
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
                                                            'books'))
     instance = None
@@ -116,7 +117,7 @@ class AddBookWizard(SessionWizardView):
         uploaded_file = form_list[0].cleaned_data['epub_file']
         # Set file related parameters.
         self.instance.book_file = uploaded_file
-        self.instance.file_sha256sum = self.storage. \
+        self.instance.file_sha256sum = self.storage.\
             extra_data['file_sha256sum']
         self.instance.save()
 
@@ -148,53 +149,30 @@ def add_language(request):
     return handlePopAdd(request, AddLanguageForm, 'language')
 
 
-@login_required
-def add_book_old(request):
-    context_instance = RequestContext(request)
-    user = resolve_variable('user', context_instance)
-    if not settings.ALLOW_PUBLIC_ADD_BOOKS and not user.is_authenticated():
-        return redirect('/accounts/login/?next=/book/add_old')
+class BookEditView(UpdateView):
+    model = Book
+    form_class = BookForm
 
-    extra_context = {'action': 'add'}
-    return create_object(
-        request,
-        form_class=BookForm,
-        extra_context=extra_context,
-    )
+    def get_context_data(self, **kwargs):
+        context = super(BookEditView, self).get_context_data(**kwargs)
+        context.update({'action': 'edit'})
+
+        return context
 
 
-@login_required
-def edit_book(request, book_id):
-    extra_context = {'action': 'edit'}
-    return update_object(
-        request,
-        form_class=BookForm,
-        object_id=book_id,
-        template_object_name='book',
-        extra_context=extra_context,
-    )
+class BookDeleteView(DeleteView):
+    model = Book
+    success_url = '/'
 
 
-@login_required
-def remove_book(request, book_id):
-    return delete_object(
-        request,
-        model=Book,
-        object_id=book_id,
-        template_object_name='book',
-        post_delete_redirect='/',
-    )
+class BookDetailView(DetailView):
+    model = Book
 
+    def get_context_data(self, **kwargs):
+        context = super(BookDetailView, self).get_context_data(**kwargs)
+        context.update({'allow_user_comments': settings.ALLOW_USER_COMMENTS})
 
-@login_required
-def book_detail(request, book_id):
-    return object_detail(
-        request,
-        queryset=Book.objects.all(),
-        object_id=book_id,
-        template_object_name='book',
-        extra_context={'allow_user_comments': settings.ALLOW_USER_COMMENTS}
-    )
+        return context
 
 
 def download_book(request, book_id):
