@@ -15,6 +15,8 @@ import sample_epubs
 
 
 class CommandAddEpubTest(TransactionTestCase):
+    fixtures = ['initial_data.json']
+
     def setUp(self):
         # Create a temporary dir to replace MEDIA_ROOT.
         self.tmp_media_root = tempfile.mkdtemp()
@@ -134,6 +136,8 @@ class CommandAddEpubTest(TransactionTestCase):
 
 
 class CommandResyncTest(TransactionTestCase):
+    fixtures = ['initial_data.json']
+
     def setUp(self):
         # Create a temporary dir to replace MEDIA_ROOT.
         self.tmp_media_root = tempfile.mkdtemp()

@@ -5,6 +5,6 @@ import django.forms as forms
 class SelectWithPop(forms.Select):
     def render(self, name, *args, **kwargs):
         html = super(SelectWithPop, self).render(name, *args, **kwargs)
-        popupplus = render_to_string("popupplus.html", {'field': name})
+        popupplus = render_to_string("popupplus.html", context={'field': name})
 
         return html + popupplus
