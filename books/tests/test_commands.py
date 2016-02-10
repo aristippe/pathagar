@@ -8,6 +8,7 @@ from mock import patch
 from django.core.files.storage import FileSystemStorage
 from django.core.management import call_command
 from django.test import TransactionTestCase
+from django.utils.crypto import get_random_string
 
 from books import models
 import sample_epubs
@@ -130,3 +131,105 @@ class CommandAddEpubTest(TransactionTestCase):
         # Make assertions on the files as a whole.
         self.assertEqual(len(media_books), len(sample_epubs.EPUBS_VALID))
         self.assertEqual(len(media_covers), len(sample_epubs.EPUBS_COVER))
+
+
+class CommandResyncTest(TransactionTestCase):
+    def setUp(self):
+        # Create a temporary dir to replace MEDIA_ROOT.
+        self.tmp_media_root = tempfile.mkdtemp()
+
+        # Start the mocker which replaces MEDIA_ROOT with the tmp folder.
+        # This should have been accomplished via test.utils.override_settings,
+        # but seems that it does not work when using a custom storage.
+        # TODO: check if new Django versions fix this, and get rid of mock.
+        self.path_patcher = patch.object(
+            FileSystemStorage, 'path',
+            lambda instance, name: os.path.join(self.tmp_media_root, name))
+        self.mock_path = self.path_patcher.start()
+
+    def tearDown(self):
+        # Stop the mocker.
+        self.path_patcher.stop()
+        # Remove the temporary MEDIA_ROOT file.
+        shutil.rmtree(self.tmp_media_root)
+
+    def _copy_to_newtmp(self, epubs, rename=False):
+        """Create a new temporary file, and copy `epubs` there, optionally
+        renaming them.
+        Returns the temporary dir.
+        """
+        new_dir = tempfile.mkdtemp()
+        get_random_string
+        for epub in epubs:
+            if rename:
+                new_name = '%s.epub' % get_random_string()
+            else:
+                new_name = epub.filename
+            # Copy the file.
+            shutil.copy2(epub.fullpath, os.path.join(new_dir, new_name))
+
+        print 'Working on %s ...' % new_dir
+        return new_dir
+
+    def test_addepub_nolink(self):
+        """Test the `resync` command.
+        """
+        # Import the valid epubs, in copy mode.
+        src_epubs = [epub.fullpath for epub in sample_epubs.EPUBS_VALID]
+        call_command('addepub', *src_epubs)
+
+        # Hand pick some epubs for convenience.
+        epub_a = sample_epubs.EPUBS_VALID[0]
+        epub_b = sample_epubs.EPUBS_VALID[1]
+        test_epubs = [epub_a, epub_b]
+
+        # Test always-link strategy with epub_a.
+        new_source_dir = self._copy_to_newtmp(test_epubs)
+        call_command('resync',
+                     os.path.join(new_source_dir, epub_a.filename),
+                     replace_strategy='always-link')
+
+        # Check that original_path has been updated, and file is a link
+        book = models.Book.objects.get(book_file__endswith=epub_a.filename)
+        self.assertEqual(book.original_path,
+                         os.path.join(new_source_dir, epub_a.filename))
+        self.assertTrue(os.path.islink(os.path.join(self.tmp_media_root,
+                                                    book.book_file.path)))
+
+        # Test always-copy strategy with epub_a (which now is a link).
+        call_command('resync',
+                     os.path.join(new_source_dir, epub_a.filename),
+                     replace_strategy='always-copy')
+        # Check that original_path has been updated, and file is *not* a link
+        book = models.Book.objects.get(book_file__endswith=epub_a.filename)
+        self.assertEqual(book.original_path,
+                         os.path.join(new_source_dir, epub_a.filename))
+        self.assertFalse(os.path.islink(os.path.join(self.tmp_media_root,
+                                                     book.book_file.path)))
+
+        # Set epub_b to a link, and delete tmp_dir.
+        call_command('resync',
+                     os.path.join(new_source_dir, epub_b.filename),
+                     replace_strategy='always-link')
+        shutil.rmtree(new_source_dir)
+
+        # Test original strategy with both epubs. At this stage, epub_a->copy,
+        # epub_b->link, and it should stay that way after the resync.
+        new_source_dir = self._copy_to_newtmp(test_epubs)
+        call_command('resync', new_source_dir)
+        # Check original_paths and copies/links.
+        models.Book.objects.update()
+        book_a = models.Book.objects.get(book_file__endswith=epub_a.filename)
+        book_b = models.Book.objects.get(book_file__endswith=epub_b.filename)
+        book_b = models.Book.objects.get(pk=book_b.pk)
+        self.assertEqual(book_a.original_path,
+                         os.path.join(new_source_dir, epub_a.filename))
+        self.assertEqual(book_b.original_path,
+                         os.path.join(new_source_dir, epub_b.filename))
+        self.assertFalse(os.path.islink(os.path.join(self.tmp_media_root,
+                                                     book_a.book_file.path)))
+        self.assertTrue(os.path.islink(os.path.join(self.tmp_media_root,
+                                                    book_b.book_file.path)))
+
+        # Cleanup.
+        shutil.rmtree(new_source_dir)
