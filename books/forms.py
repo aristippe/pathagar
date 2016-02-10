@@ -76,7 +76,7 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = models.Book
-        exclude = ('mimetype', 'file_sha256sum',)
+        exclude = ('original_path', 'mimetype', 'file_sha256sum',)
 
     def save(self, commit=True):
         """
@@ -88,7 +88,10 @@ class BookForm(forms.ModelForm):
         instance = super(BookForm, self).save(commit=False)
         book_file = self.cleaned_data['book_file']
         if instance.mimetype is None:
-            instance.mimetype = book_file.content_type
+            try:
+                instance.mimetype = book_file.content_type
+            except:
+                pass
         if commit:
             instance.save()
         return instance
