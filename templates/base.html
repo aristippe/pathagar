@@ -111,9 +111,9 @@
                 <a href="{% url "logout" %}?next=/">{% trans "Log Out" %}</a>
             {% else %}
                 {% if allow_public_add_book %}
-                    <a href="{% url "book_add" %}">Add Book</a>&nbsp;&nbsp;
+                    <a href="{% url "book_add" %}">{% trans "Add Book" %}</a>&nbsp;&nbsp;
                 {% endif %}
-                <a href="{% url "login" %}?next=/">Log In</a>
+                <a href="{% url "login" %}?next=/">{% trans "Log In" %}</a>
             {% endif %}
         </div>
 
