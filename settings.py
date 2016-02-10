@@ -83,7 +83,7 @@ INSTALLED_APPS = (
     'django.contrib.formtools',
     'tagging',  # TODO old
     'taggit',
-    'django.contrib.comments',
+    'django_comments',
     'pathagar.books'
 )
 
