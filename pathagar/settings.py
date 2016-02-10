@@ -30,7 +30,7 @@ ALLOW_PUBLIC_ADD_BOOKS = False
 SENDFILE_BACKEND = 'sendfile.backends.development'
 
 # Get current directory to get media and templates while developing:
-CUR_DIR = os.path.dirname(__file__)
+CUR_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 TIME_ZONE = 'America/Los_Angeles'
 
@@ -84,7 +84,7 @@ INSTALLED_APPS = (
     'tagging',  # TODO old
     'taggit',
     'django_comments',
-    'pathagar.books'
+    'books.apps.BooksConfig'
 )
 
 LOGIN_REDIRECT_URL = '/'
