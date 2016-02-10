@@ -134,18 +134,59 @@ class EpubInfo:  # TODO: Cover the entire DC range
         return subjectlist
 
     def _get_cover_image(self):
-        # TODO check if cover is image
+        cover = None
         meta_content_cover = None
         for element in self._e_metadata.iterfind(
                 '{http://www.idpf.org/2007/opf}meta'):
             if element.get('name') == 'cover':
                 meta_content_cover = element.get('content')
 
+        # ePub 2 metadata
         if meta_content_cover:
             for node in self._tree.iter():
                 if node.tag == '{http://www.idpf.org/2007/opf}item':
                     if node.attrib['id'] == meta_content_cover:
                         cover = node.attrib['href']
+            # In case meta tag refers to cover itself
+            if cover is None:
+                cover = meta_content_cover
+
+        # Guide
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}reference':
+                    if node.attrib['type'] == 'cover':
+                        cover = node.attrib['href']
+
+        # ePub 3
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}item':
+                    if node.get('properties') == 'cover-image':
+                        cover = node.attrib['href']
+
+        # Guide, non-standard as title attribute
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}reference':
+                    if node.attrib['title'] == 'Cover':
+                        cover = node.attrib['href']
+
+        # Spine item with id = "cover", non-standard
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}item':
+                    if node.attrib['id'] == 'cover':
+                        cover = node.attrib['href']
+
+        # Guide title page if no cover
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}reference':
+                    if node.attrib['type'] in ['title-page', 'tp']:
+                        cover = node.attrib['href']
+
+        if cover:
             return cover
         else:
             return None

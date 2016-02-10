@@ -17,10 +17,11 @@
 
 import os.path
 import shutil
-from sys import version_info
 import tempfile
 import zipfile
+from sys import version_info
 
+import lxml.html
 from lxml import etree
 
 import epubinfo
@@ -149,12 +150,57 @@ class Epub(object):
         return self._info
 
     def get_cover_image_path(self):
-        if self._info.cover_image is not None:
-            self._unzip_file(self._basepath + self._info.cover_image)
-            return os.path.join(self._tempdir, self._basepath,
-                                self._info.cover_image)
-        else:
+        """
+        Epubinfo returns cover_image as either an image or xhtml. If xhtml,
+        parse to find image
+        """
+        if not self._info.cover_image:
             return None
+
+        self._unzip_file(self._basepath + self._info.cover_image)
+        cover_image = os.path.join(self._tempdir,
+                                   self._basepath,
+                                   self._info.cover_image)
+
+        if self._info.cover_image.endswith(('.gif', '.jpg', '.jpeg', '.png')):
+            return cover_image
+
+        # Begin XHTML handling
+        parent = lxml.html.parse(cover_image)
+
+        # img tag
+        images = parent.xpath('//img/@src')
+        if images:
+            img = images[0]
+            image_base_path = os.path.dirname(self._info.cover_image)
+            image_path = os.path.normpath(image_base_path + '/' + img)
+
+            # In case of leading or trailing slash
+            joined_path = (self._basepath + image_path).replace('//', '/')
+            self._unzip_file(joined_path)
+            return os.path.join(self._tempdir, joined_path)
+
+        # SVG image
+        svg_image = parent.xpath('//image')
+        if svg_image:
+            image_path = os.path.normpath(
+                self._basepath +
+                os.path.dirname(self._info.cover_image) + '/' +
+                svg_image[0].attrib['xlink:href']
+            )
+            self._unzip_file(image_path)
+            return os.path.join(self._tempdir, image_path)
+
+            # https://stackoverflow.com/questions/6589358/convert-svg-to-png-in-python/19718153#19718153
+            # TODO cover as svg string
+            # SVG String - cairosvg requires Python 3.4+, untested
+            # svg = parent.xpath('//svg')
+            # if svg:
+            #     logging.warning(svg[0])
+            #     image_path = open(os.path.join(self._tempdir + cover.png'),'w')
+            #     cairosvg.svg2png(bytestring=svg,write_to=fout)
+            #     image_path.close()
+            #     # return image_path
 
     def as_model_dict(self):
         """Return a tuple with:
