@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static from staticfiles %}
 {% load comments %}
 
 {% block title %}{{ book.a_title }} :: Pathagar{% endblock %}
@@ -16,7 +17,7 @@
             {% if  book.cover_img %}
                 <img src="{{ book.cover_img.url }}" alt="Cover" width=200px/>
             {% else %}
-                <img src="{{ STATIC_URL }}images/generic_cover.png" alt="Cover" width=200px/>
+                <img src="{% static "images/generic_cover.png" %}" alt="Cover" width=200px/>
             {% endif %}
             <hr class="space">
             <a class="detail_download" href="{% url "book_download" book.pk %}">Download</a>

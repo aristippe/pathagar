@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static from staticfiles %}
 
 {% block title %}Are you sure?{% endblock %}
 
@@ -15,7 +16,7 @@
 {% endblock %}
 
 {% block head %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/RelatedObjectLookups.js"></script>{% endblock %}
+    <script type="text/javascript" src="{% static "js/RelatedObjectLookups.js" %}"></script>{% endblock %}
 
 {% block content %}
     <form enctype="multipart/form-data" action="{% url "book_delete" book.pk %}"
