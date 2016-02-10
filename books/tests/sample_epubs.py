@@ -5,8 +5,8 @@ from collections import namedtuple
 
 from django.conf import settings
 
-RSRC_DIR = os.path.abspath(os.path.join(settings.CUR_DIR,
-                                        '../resources/epubsamples'))
+RSRC_DIR = os.path.abspath(os.path.join(settings.BASE_DIR,
+                                        'resources/epubsamples'))
 SampleEpub = namedtuple('SampleEpub', ('key', 'filename', 'fullpath',
                                        'is_valid', 'has_cover'))
 

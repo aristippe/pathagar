@@ -4,18 +4,17 @@ Sample deployment-specific Django settings. The variables defined in this file
 override those set on settings.py - please customize it to your needs and
 rename it to "local_settings.py".
 """
-import os
-
-CUR_DIR = os.path.dirname(__file__)
+from settings import TEMPLATES, BASE_DIR
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(CUR_DIR, 'db.sqlite'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite'),
     }
 }
 
+# Customize this variable to a unique, random string.
 SECRET_KEY = 'some random unique string'
