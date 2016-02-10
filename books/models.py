@@ -148,7 +148,7 @@ class Book(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'pathagar.books.views.book_detail', [self.pk]
+        return 'book_detail', [self.pk]
 
 
 @receiver(post_delete, sender=Book)

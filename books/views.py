@@ -26,21 +26,17 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.views.generic.list_detail import object_detail
-from django.views.generic.create_update import (create_object, update_object,
-                                                delete_object)
-from django.template import RequestContext, resolve_variable
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView, UpdateView
+from django.template import RequestContext
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
-from django.contrib.formtools.wizard.views import SessionWizardView
+from formtools.wizard.views import SessionWizardView
 
 from app_settings import BOOKS_PER_PAGE
 
-# OLD ---------------
-from tagging.models import Tag
-# --------------- OLD
-from taggit.models import Tag as tTag
+from taggit.models import Tag
 
 from sendfile import sendfile
 
@@ -54,12 +50,14 @@ from opds import generate_root_catalog
 from opds import generate_tags_catalog
 from opds import generate_taggroups_catalog
 
-from pathagar.books.app_settings import BOOK_PUBLISHED
+from books.app_settings import BOOK_PUBLISHED
 
 logger = logging.getLogger(__name__)
 
 
 class AddBookWizard(SessionWizardView):
+    # TODO: allow adding books to anonymous if settings.ALLOW_PUBLIC_ADD_BOOKS
+    # This is currently prevented by the login_required decorator on urls.py.
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
                                                            'books'))
     instance = None
@@ -116,7 +114,7 @@ class AddBookWizard(SessionWizardView):
         uploaded_file = form_list[0].cleaned_data['epub_file']
         # Set file related parameters.
         self.instance.book_file = uploaded_file
-        self.instance.file_sha256sum = self.storage. \
+        self.instance.file_sha256sum = self.storage.\
             extra_data['file_sha256sum']
         self.instance.save()
 
@@ -148,53 +146,30 @@ def add_language(request):
     return handlePopAdd(request, AddLanguageForm, 'language')
 
 
-@login_required
-def add_book_old(request):
-    context_instance = RequestContext(request)
-    user = resolve_variable('user', context_instance)
-    if not settings.ALLOW_PUBLIC_ADD_BOOKS and not user.is_authenticated():
-        return redirect('/accounts/login/?next=/book/add_old')
+class BookEditView(UpdateView):
+    model = Book
+    form_class = BookForm
 
-    extra_context = {'action': 'add'}
-    return create_object(
-        request,
-        form_class=BookForm,
-        extra_context=extra_context,
-    )
+    def get_context_data(self, **kwargs):
+        context = super(BookEditView, self).get_context_data(**kwargs)
+        context.update({'action': 'edit'})
+
+        return context
 
 
-@login_required
-def edit_book(request, book_id):
-    extra_context = {'action': 'edit'}
-    return update_object(
-        request,
-        form_class=BookForm,
-        object_id=book_id,
-        template_object_name='book',
-        extra_context=extra_context,
-    )
+class BookDeleteView(DeleteView):
+    model = Book
+    success_url = '/'
 
 
-@login_required
-def remove_book(request, book_id):
-    return delete_object(
-        request,
-        model=Book,
-        object_id=book_id,
-        template_object_name='book',
-        post_delete_redirect='/',
-    )
+class BookDetailView(DetailView):
+    model = Book
 
+    def get_context_data(self, **kwargs):
+        context = super(BookDetailView, self).get_context_data(**kwargs)
+        context.update({'allow_user_comments': settings.ALLOW_USER_COMMENTS})
 
-@login_required
-def book_detail(request, book_id):
-    return object_detail(
-        request,
-        queryset=Book.objects.all(),
-        object_id=book_id,
-        template_object_name='book',
-        extra_context={'allow_user_comments': settings.ALLOW_USER_COMMENTS}
-    )
+        return context
 
 
 def download_book(request, book_id):
@@ -224,9 +199,15 @@ def tags(request, qtype=None, group_slug=None):
     if group_slug is not None:
         tag_group = get_object_or_404(TagGroup, slug=group_slug)
         context.update({'tag_group': tag_group})
-        context.update({'tag_list': Tag.objects.get_for_object(tag_group)})
+
+        # TODO: find a way of performing the previous django-tagging
+        # get_for_object(tag_group) using django-taggit. Currently it just
+        # returns all the tags, as a quick hack for avoiding problems, but it
+        # is the *wrong* behaviour.
+        # context.update({'tag_list': Tag.objects.get_for_object(tag_group)})
+        context.update({'tag_list': Tag.objects.all()})
     else:
-        context.update({'tag_list': tTag.objects.all()})
+        context.update({'tag_list': Tag.objects.all()})
 
     tag_groups = TagGroup.objects.all()
     context.update({'tag_group_list': tag_groups})
@@ -234,7 +215,7 @@ def tags(request, qtype=None, group_slug=None):
     # Return OPDS Atom Feed:
     if qtype == 'feed':
         catalog = generate_tags_catalog(context['tag_list'])
-        return HttpResponse(catalog, mimetype='application/atom+xml')
+        return HttpResponse(catalog, content_type='application/atom+xml')
 
     # Return HTML page:
     return render_to_response(
@@ -246,7 +227,7 @@ def tags(request, qtype=None, group_slug=None):
 def tags_listgroups(request):
     tag_groups = TagGroup.objects.all()
     catalog = generate_taggroups_catalog(tag_groups)
-    return HttpResponse(catalog, mimetype='application/atom+xml')
+    return HttpResponse(catalog, content_type='application/atom+xml')
 
 
 @login_required
@@ -261,9 +242,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     search_title = request.GET.get('search-title') == 'on'
     search_author = request.GET.get('search-author') == 'on'
 
-    context_instance = RequestContext(request)
-    user = resolve_variable('user', context_instance)
-    if not user.is_authenticated():
+    if not request.user.is_authenticated():
         queryset = queryset.filter(a_status=BOOK_PUBLISHED)
 
     published_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
@@ -297,7 +276,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     # Return OPDS Atom Feed:
     if qtype == 'feed':
         catalog = generate_catalog(request, page_obj)
-        return HttpResponse(catalog, mimetype='application/atom+xml')
+        return HttpResponse(catalog, content_type='application/atom+xml')
 
     # Return HTML page:
     extra_context = dict(kwargs)
@@ -328,7 +307,7 @@ def home(request):
 def root(request, qtype=None):
     """Return the root catalog for navigation"""
     root_catalog = generate_root_catalog()
-    return HttpResponse(root_catalog, mimetype='application/atom+xml')
+    return HttpResponse(root_catalog, content_type='application/atom+xml')
 
 
 @login_required
@@ -353,8 +332,7 @@ def by_author(request, qtype=None):
 def by_tag(request, tag, qtype=None):
     """ displays a book list by the tag argument """
     # get the Tag object
-    # TODO replace as Tag when django-tagging is removed
-    tag_instance = tTag.objects.get(name=tag)
+    tag_instance = Tag.objects.get(name=tag)
 
     # if the tag does not exist, return 404
     if tag_instance is None:

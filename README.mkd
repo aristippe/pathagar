@@ -100,6 +100,9 @@ Dependencies
 * Django
 * django-taggit
 * django-sendfile
+* django-contrib-comments
+* django-formtools
+* Pillow
 
 Quickstart
 ==========
@@ -108,39 +111,50 @@ Quickstart
 
 In Fedora
 
-    sudo yum install -y mysql mysql-devel
+    $ sudo yum install -y mysql mysql-devel
 
 * Install requirements
+```
+    $ pip install -r requirements.txt
+```
 
-    sudo pip install -r requirements.pip
+* In the Pathagar `pathagar/` folder copy `local_settings.py.sample` to `local_settings.py`,
+and edit it to suite your needs and environment.
+```
+    $ cd pathagar
+    pathagar$ cp local_settings.py.sample local_settings.py
+    (edit local_setting.py)
+```
 
+* In the Pathagar root folder, run the command for creating the database and importing initial data.
+```
+    $ python manage.py migrate
+    $ python manage.py loaddata books/fixtures/initial_data.json
+```
 
-* In the Pathagar folder edit settings.py to suite your needs and
-  environment.
-
-* In the Pathagar folder, run
-
-    python manage.py syncdb
-
-  You will be asked to create an admin user during this stage.
+* Add an admin user in order to be able to login into the application.
+```
+    $ python manage.py createsuperuser
+```
 
 * To run the server, run
-
-    python manage.py runserver
-
+```
+    $ python manage.py runserver
+```
   This starts a server listening on localhost, port 8000
 
   If the port 8000 is in use, can change the port (by example to 8081) running
-
-    python manage.py runserver 0.0.0.0:8081
+```
+    $ python manage.py runserver 0.0.0.0:8081
+```
 
 * With your browser, access http://localhost:8000 and see if the index
   page comes up. If it comes up, click on "Add books" in the footer to
   start adding books. You will be asked for a username/password. This is
-  the admin username/password you supplied while running syncdb.
+  the admin username/password you supplied while running `createsuperuser`.
 
   NOTE: You can also mass add books via the command line through CSV files
   or by simply pointing to a directory with a set of EPUB files.
 
 * To run the server in a production environment, look at Django deployment
-  docs at : http://docs.djangoproject.com/en/1.4/howto/deployment/
+  docs at : http://docs.djangoproject.com/en/1.9/howto/deployment/
