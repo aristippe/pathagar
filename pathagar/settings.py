@@ -82,7 +82,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # third-party apps
     'formtools',
-    'tagging',  # TODO old
     'taggit',
     'django_comments',
     # own apps
