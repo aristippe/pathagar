@@ -30,6 +30,7 @@ from django.views.generic.list_detail import object_detail
 from django.views.generic.create_update import (create_object, update_object,
                                                 delete_object)
 from django.template import RequestContext, resolve_variable
+from django.utils.translation import ugettext as _
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage

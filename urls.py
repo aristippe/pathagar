@@ -1,9 +1,11 @@
 import os
 
 from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext_lazy as _
 
 from pathagar.books.app_settings import BOOKS_STATICS_VIA_DJANGO
 

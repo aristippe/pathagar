@@ -2,6 +2,7 @@ database.db
 *pyc
 staticfiles/
 static_media/**
+*.mo
 *.pyc
 .DS_Store
 local_settings.py

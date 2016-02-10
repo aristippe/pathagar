@@ -1,0 +1,264 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-09 17:07-0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: books/models.py:61
+#, fuzzy
+msgid "language name"
+msgstr "Langage"
+
+#: books/models.py:76
+msgid "Tag group"
+msgstr ""
+
+#: books/models.py:77
+msgid "Tag groups"
+msgstr ""
+
+#: books/models.py:87 books/models.py:88 templates/books/book_form.html:61
+msgid "Status"
+msgstr ""
+
+#: books/models.py:112
+msgid "file"
+msgstr "fichier"
+
+#: books/models.py:115
+msgid "cover"
+msgstr "couverture"
+
+#: books/models.py:120
+msgid "atom:title"
+msgstr "Titre"
+
+#: books/models.py:121
+msgid "atom:author"
+msgstr "Auteur"
+
+#: books/models.py:122
+msgid "atom:updated"
+msgstr ""
+
+#: books/models.py:123
+#, fuzzy
+msgid "atom:summary"
+msgstr "Sommaire"
+
+#: books/models.py:124
+#, fuzzy
+msgid "atom:category"
+msgstr "Catégorie"
+
+#: books/models.py:126
+msgid "atom:rights"
+msgstr "Droits"
+
+#: books/models.py:131
+#, fuzzy
+msgid "dc:publisher"
+msgstr "Éditeur"
+
+#: books/models.py:133
+msgid "dc:issued"
+msgstr ""
+
+#: books/models.py:135
+msgid "dc:identifier"
+msgstr ""
+
+#: books/models.py:137
+msgid "Use ISBN for this"
+msgstr ""
+
+#: books/models.py:141
+#, fuzzy
+msgid "time added"
+msgstr "il y a %(time_added)s"
+
+#: books/models.py:146
+msgid "book"
+msgstr "livre"
+
+#: books/models.py:147
+#, fuzzy
+msgid "books"
+msgstr "livres"
+
+#: templates/base.html:109
+msgid "Welcome"
+msgstr "Bienvenue"
+
+#: templates/base.html:111 templates/base.html.py:118
+msgid "Add Book"
+msgstr "Ajouter un livre"
+
+#: templates/base.html:115
+#, fuzzy
+msgid "Log Out"
+msgstr "Déconnecter"
+
+#: templates/base.html:120
+msgid "Log In"
+msgstr "Se connecter"
+
+#: templates/admin/base_site.html:4
+msgid "Pathagar admin"
+msgstr ""
+
+#: templates/admin/base_site.html:7
+msgid "Pathagar administration"
+msgstr ""
+
+#: templates/books/book_confirm_delete.html:29
+msgid "Cancel"
+msgstr ""
+
+#: templates/books/book_detail.html:26
+#, fuzzy
+msgid "Download"
+msgstr "Télécharger"
+
+#: templates/books/book_detail.html:31
+msgid "Edit"
+msgstr "Éditer"
+
+#: templates/books/book_detail.html:33
+msgid "Remove"
+msgstr "Suprimmer"
+
+#: templates/books/book_detail.html:59 templates/books/book_form.html:89
+msgid "Publisher"
+msgstr "Éditeur"
+
+#: templates/books/book_detail.html:62
+msgid "Published"
+msgstr "Publié"
+
+#: templates/books/book_detail.html:65 templates/books/book_form.html:74
+msgid "Language"
+msgstr "Langage"
+
+#: templates/books/book_detail.html:73 templates/books/book_list.html:85
+#: templates/books/book_list.html.py:94
+msgid "Added"
+msgstr "Ajouté"
+
+#: templates/books/book_detail.html:74 templates/books/book_list.html:126
+#, python-format
+msgid " %(time_added)s ago"
+msgstr "il y a %(time_added)s"
+
+#: templates/books/book_detail.html:76 templates/books/book_form.html:98
+msgid "Downloads"
+msgstr "Téléchargments"
+
+#: templates/books/book_detail.html:80
+msgid "Path"
+msgstr "Répertoire"
+
+#: templates/books/book_detail.html:92
+msgid "Comments"
+msgstr "Commentaires"
+
+#: templates/books/book_form.html:53 templates/books/book_list.html:83
+#: templates/books/book_list.html.py:89
+msgid "Title"
+msgstr "Titre"
+
+#: templates/books/book_form.html:57 templates/books/book_list.html:84
+#: templates/books/book_list.html.py:91
+msgid "Author"
+msgstr "Auteur"
+
+#: templates/books/book_form.html:66
+msgid "Tags"
+msgstr "Étiquettes"
+
+#: templates/books/book_form.html:70
+msgid "Summary"
+msgstr "Sommaire"
+
+#: templates/books/book_form.html:81
+msgid "Optional information"
+msgstr "Information facultatif"
+
+#: templates/books/book_form.html:81
+msgid "click to expand"
+msgstr ""
+
+#: templates/books/book_form.html:83
+msgid "Category"
+msgstr "Catégorie"
+
+#: templates/books/book_form.html:86
+msgid "Rights"
+msgstr "Droits"
+
+#: templates/books/book_form.html:92
+msgid "Issued"
+msgstr ""
+
+#: templates/books/book_form.html:95
+msgid "Identifier"
+msgstr ""
+
+#: templates/books/book_form.html:101
+msgid "Cover image"
+msgstr "Couverture"
+
+#: templates/books/book_list.html:17
+msgid "Welcome to the Pathagar book server"
+msgstr ""
+
+#: templates/books/book_list.html:25
+msgid "Book Search"
+msgstr "Recherche"
+
+#: templates/books/book_list.html:56
+#, fuzzy
+msgid "Search:"
+msgstr "Recherche :"
+
+#: templates/books/book_list.html:58
+msgid "results"
+msgstr "résultats"
+
+#: templates/books/book_list.html:64 templates/books/book_list.html.py:140
+msgid "Previous"
+msgstr "Précédent"
+
+#: templates/books/book_list.html:68 templates/books/book_list.html.py:144
+msgid "of"
+msgstr "de"
+
+#: templates/books/book_list.html:73 templates/books/book_list.html.py:149
+msgid "Next"
+msgstr "Suivant"
+
+#: templates/formtools/wizard/wizard_form.html:24
+msgid "first step"
+msgstr "étape premier"
+
+#: templates/formtools/wizard/wizard_form.html:26
+msgid "prev step"
+msgstr "étape précedante"
+
+#: templates/formtools/wizard/wizard_form.html:28
+msgid "submit"
+msgstr "soumettre"

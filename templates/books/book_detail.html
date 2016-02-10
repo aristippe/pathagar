@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load tagging_tags %}
 {% load comments %}
 
@@ -13,19 +14,23 @@
 
     <div id="content">
 
-        <div class="span-6 last" id="sidebar">
+        <div class="detail_sidebar">
             {% if  book.cover_img %}
                 <img src="{{ book.cover_img.url }}" alt="Cover" width=200px/>
             {% else %}
-                <img src="{{ STATIC_URL }}images/generic_cover.png" alt="Cover" width=200px/>
+                <img src="{{ STATIC_URL }}images/generic_cover.png" alt="Cover"
+                     width=200px/>
             {% endif %}
             <hr class="space">
-            <a class="detail_download" href="{% url pathagar.books.views.download_book book.pk %}">Download</a>
+            <a class="detail_download"
+               href="{% url pathagar.books.views.download_book book.pk %}">{% trans "Download" %}</a>
             {% if user.is_authenticated %}
                 <br/><br/>
-                <div class="span-3">
-                    <a class="button" href="{% url pathagar.books.views.edit_book book.pk %}">Edit</a>
-                    <a class="button" href="{% url pathagar.books.views.remove_book book.pk %}">Remove</a>
+                <div class="span-4">
+                    <a class="button"
+                       href="{% url pathagar.books.views.edit_book book.pk %}">{% trans "Edit" %}</a>
+                    <a class="button"
+                       href="{% url pathagar.books.views.remove_book book.pk %}">{% trans "Remove" %}</a>
                 </div>
                 <hr class="space">
                 {#<hr class="space">#}
@@ -35,67 +40,64 @@
             {% endif %}
         </div>
 
-        <div class="detail_info" style="float:right">
+        <div class="detail_info">
             <h2 class="detail_title">{{ book.a_title }}</h2>
-            <h4 class="detail_author"><a href="{% url by_title %}?q={{ book.a_author }}">{{ book.a_author }}</a></h4>
-            <hr class="space">
+            <h4 class="detail_author"><a
+                    href="{% url by_title %}?q={{ book.a_author }}">{{ book.a_author }}</a>
+            </h4>
 
             {% if book.tags.count != 0 %}
                 <div class="span-2"><label>Tags:</label></div>
                 <div class="span-10">
                     {% for tag in book.tags.all %}
-                        <a class="button" href="{% url by_tag tag.name %}">{{ tag.name }}</a>
+                        <a class="button"
+                           href="{% url by_tag tag.name %}">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
-                <hr class="space">
             {% endif %}
-            <div class="span-16 colborder">
-                <div class="span-3">Publisher:</div>
-                <div class="span-6">{{ book.dc_publisher }}</div>
-                <br/>
-                <div class="span-3">Published:</div>
-                <div class="span-6">{{ book.dc_issued }}</div>
-                <br/>
-                <div class="span-3">Language:</div>
-                {% ifnotequal book.dc_language None %}
-                    <div class="span-3">{{ book.dc_language }}</div>
-                {% else %}
-                    <div class="span-6">Unknown</div>
-                {% endifnotequal %}
-                <br/>
-                <div class="detail_stats">
-                    <div class="span-3">Added:</div>
-                    <div class="span-6">{{ book.time_added|timesince }} ago</div>
-                    <br/>
-                    <div class="span-3">Downloads:</div>
-                    <div class="span-6">{{ book.downloads }}</div>
-                    {% if user.is_superuser %}
-                        <br/>
-                        <div class="span-3">Path:</div>
-                        <div>{{ book.original_path }}</div>
-                    {% endif %}
-                </div>
-                {#<hr class="space">#}
-                {#<div class="span-2"><label>Rights:</label></div>#}
-                {#<div class="span-3">{{ book.dc_rights }}</div>#}
 
-                <hr class="space">
-                <div class="detail_desc">{{ book.a_summary|safe }}</div>
-            </div> <!-- detail-info -->
-        </div>
+            <div class="span-3">{% trans "Publisher" %}:</div>
+            <div class="span-6">{{ book.dc_publisher }}</div>
+            <br/>
+            <div class="span-3">{% trans "Published" %}:</div>
+            <div class="span-6">{{ book.dc_issued }}</div>
+            <br/>
+            <div class="span-3">{% trans "Language" %}:</div>
+            {% ifnotequal book.dc_language None %}
+                <div class="span-3">{{ book.dc_language }}</div>
+            {% else %}
+                <div class="span-6">Unknown</div>
+            {% endifnotequal %}
+            <br/>
+            <div class="detail_stats">
+                <div class="span-3">{% trans "Added" %}:</div>
+                <div class="span-6">{% blocktrans with book.time_added|timesince as time_added %} {{ time_added }} ago{% endblocktrans %}</div>
+                <br/>
+                <div class="span-3">{% trans "Downloads" %}:</div>
+                <div class="span-6">{{ book.downloads }}</div>
+                {% if user.is_superuser %}
+                    <br/>
+                    <div class="span-3">{% trans "Path" %}:</div>
+                    <div>{{ book.original_path }}</div>
+                {% endif %}
+            </div>
+
+            <div class="detail_desc">{{ book.a_summary|safe }}</div>
+        </div> <!-- detail-info -->
     </div>
 
     {% if allow_user_comments %}
         <div class="detail_comments">
             <div class="span-16">
-                <h4><label>Comments:</label></h4>
+                <h4><label>{% trans "Comments" %}:</label></h4>
             </div>
             {#                <hr class="space">#}
 
             {% get_comment_list for book as comment_list %}
             {% for comment in comment_list %}
                 <div class="span-16" style="padding-left:2em">
-                    <b> {{ comment.user_name }} - {{ comment.submit_date|timesince }} ago:</b>
+                    <b> {{ comment.user_name }}
+                        - {{ comment.submit_date|timesince }} ago:</b>
                     <br/>
                     <div>{{ comment.comment }}</div>
                 </div>
@@ -116,7 +118,8 @@
                 {{ form.object_pk }}
                 {{ form.timestamp }}
                 {{ form.security_hash }}
-                <input type="hidden" name="next" value="{% url pathagar.books.views.book_detail book.pk %}"/>
+                <input type="hidden" name="next"
+                       value="{% url pathagar.books.views.book_detail book.pk %}"/>
 
                 {#<div class="span-4"><label for="id_your_name">Your name:</label></div>#}
                 {#{{ form.name }}#}
@@ -129,11 +132,10 @@
                 <input type="hidden" name="email" value="fake_emai@kfake.org"/>
                 <input type="hidden" name="url" value="http://faksite.org"/>
 
-                <input type="submit" name="submit" value="Post">
+                <input type="submit" name="submit" value="Add comment">
             </form>
         </div>
     {% endif %}
-
 
 {% endblock %}
 
