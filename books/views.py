@@ -29,6 +29,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.template import RequestContext
+from django.utils.translation import ugettext as _
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
@@ -285,6 +286,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'published_books': published_count,
         'unpublished_books': unpublished_count,
         'q': q,
+        'q_count': len(queryset),
         'paginator': paginator,
         'page_obj': page_obj,
         'search_title': search_title,
