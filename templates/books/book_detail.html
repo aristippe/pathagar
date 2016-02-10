@@ -20,7 +20,7 @@
                 <img src="{{ STATIC_URL }}images/generic_cover.png" alt="Cover" width=200px/>
             {% endif %}
             <hr class="space">
-            <a class="detail_download" href="{% url "pathagar.books.views.download_book" book.pk %}">Download</a>
+            <a class="detail_download" href="{% url "book_download" book.pk %}">Download</a>
             {% if user.is_authenticated %}
                 <br/><br/>
                 <div class="span-3">

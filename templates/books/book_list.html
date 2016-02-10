@@ -112,7 +112,7 @@
                 <td class="list_author"><a
                         href="{% url "by_title" %}?q={{ book.a_author|urlencode }}">{{ book.a_author }}</a></td>
                 <td class="list_date">{{ book.time_added|timesince }} ago</td> <!-- date:'Y-m-d H:i' -->
-                <td><a class="download" href="{% url "pathagar.books.views.download_book" book.pk %}">⬇︎</a></td>
+                <td><a class="download" href="{% url "book_download" book.pk %}">⬇︎</a></td>
             </tr>
         {% endfor %}
         </tbody>
