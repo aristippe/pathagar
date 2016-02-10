@@ -32,7 +32,7 @@ from django.template import RequestContext, resolve_variable
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
-from django.contrib.formtools.wizard.views import SessionWizardView
+from formtools.wizard.views import SessionWizardView
 
 from app_settings import BOOKS_PER_PAGE
 

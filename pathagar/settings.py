@@ -80,10 +80,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'django.contrib.formtools',
+    # third-party apps
+    'formtools',
     'tagging',  # TODO old
     'taggit',
     'django_comments',
+    # own apps
     'books.apps.BooksConfig'
 )
 
