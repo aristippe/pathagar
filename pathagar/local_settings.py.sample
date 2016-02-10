@@ -4,6 +4,7 @@ Sample deployment-specific Django settings. The variables defined in this file
 override those set on settings.py - please customize it to your needs and
 rename it to "local_settings.py".
 """
+import os
 from settings import TEMPLATES, BASE_DIR
 
 DEBUG = True
