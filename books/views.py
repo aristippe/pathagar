@@ -28,7 +28,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
-from django.template import RequestContext, resolve_variable
+from django.template import RequestContext
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
@@ -242,9 +242,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     search_title = request.GET.get('search-title') == 'on'
     search_author = request.GET.get('search-author') == 'on'
 
-    context_instance = RequestContext(request)
-    user = resolve_variable('user', context_instance)
-    if not user.is_authenticated():
+    if not request.user.is_authenticated():
         queryset = queryset.filter(a_status=BOOK_PUBLISHED)
 
     published_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
