@@ -212,7 +212,7 @@ def tags(request, qtype=None, group_slug=None):
     # Return OPDS Atom Feed:
     if qtype == 'feed':
         catalog = generate_tags_catalog(context['tag_list'])
-        return HttpResponse(catalog, mimetype='application/atom+xml')
+        return HttpResponse(catalog, content_type='application/atom+xml')
 
     # Return HTML page:
     return render_to_response(
@@ -224,7 +224,7 @@ def tags(request, qtype=None, group_slug=None):
 def tags_listgroups(request):
     tag_groups = TagGroup.objects.all()
     catalog = generate_taggroups_catalog(tag_groups)
-    return HttpResponse(catalog, mimetype='application/atom+xml')
+    return HttpResponse(catalog, content_type='application/atom+xml')
 
 
 @login_required
@@ -275,7 +275,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     # Return OPDS Atom Feed:
     if qtype == 'feed':
         catalog = generate_catalog(request, page_obj)
-        return HttpResponse(catalog, mimetype='application/atom+xml')
+        return HttpResponse(catalog, content_type='application/atom+xml')
 
     # Return HTML page:
     extra_context = dict(kwargs)
@@ -306,7 +306,7 @@ def home(request):
 def root(request, qtype=None):
     """Return the root catalog for navigation"""
     root_catalog = generate_root_catalog()
-    return HttpResponse(root_catalog, mimetype='application/atom+xml')
+    return HttpResponse(root_catalog, content_type='application/atom+xml')
 
 
 @login_required
