@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from pathagar.books.app_settings import BOOKS_STATICS_VIA_DJANGO
+from books.app_settings import BOOKS_STATICS_VIA_DJANGO
 
 from books import views
 from books import forms
@@ -15,47 +15,47 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     # Book list:
-    (r'^$', 'pathagar.books.views.home',
+    (r'^$', views.home,
      {}, 'home'),
-    (r'^latest/$', 'pathagar.books.views.latest',
+    (r'^latest/$', views.latest,
      {}, 'latest'),
-    (r'^by-title/$', 'pathagar.books.views.by_title',
+    (r'^by-title/$', views.by_title,
      {}, 'by_title'),
-    (r'^by-author/$', 'pathagar.books.views.by_author',
+    (r'^by-author/$', views.by_author,
      {}, 'by_author'),
-    (r'^tags/(?P<tag>.+)/$', 'pathagar.books.views.by_tag',
+    (r'^tags/(?P<tag>.+)/$', views.by_tag,
      {}, 'by_tag'),
-    (r'^by-popularity/$', 'pathagar.books.views.most_downloaded',
+    (r'^by-popularity/$', views.most_downloaded,
      {}, 'most_downloaded'),
 
     # Tag groups:
-    (r'^tags/groups.atom$', 'pathagar.books.views.tags_listgroups',
+    (r'^tags/groups.atom$', views.tags_listgroups,
      {}, 'tags_listgroups'),
 
     # Book list Atom:
-    (r'^catalog.atom$', 'pathagar.books.views.root',
+    (r'^catalog.atom$', views.root,
      {'qtype': u'feed'}, 'root_feed'),
-    (r'^latest.atom$', 'pathagar.books.views.latest',
+    (r'^latest.atom$', views.latest,
      {'qtype': u'feed'}, 'latest_feed'),
-    (r'^by-title.atom$', 'pathagar.books.views.by_title',
+    (r'^by-title.atom$', views.by_title,
      {'qtype': u'feed'}, 'by_title_feed'),
-    (r'^by-author.atom$', 'pathagar.books.views.by_author',
+    (r'^by-author.atom$', views.by_author,
      {'qtype': u'feed'}, 'by_author_feed'),
-    (r'^tags/(?P<tag>.+).atom$', 'pathagar.books.views.by_tag',
+    (r'^tags/(?P<tag>.+).atom$', views.by_tag,
      {'qtype': u'feed'}, 'by_tag_feed'),
-    (r'^by-popularity.atom$', 'pathagar.books.views.most_downloaded',
+    (r'^by-popularity.atom$', views.most_downloaded,
      {'qtype': u'feed'}, 'most_downloaded_feed'),
 
     # Tag groups:
-    (r'^tags/groups/(?P<group_slug>[-\w]+)/$', 'pathagar.books.views.tags',
+    (r'^tags/groups/(?P<group_slug>[-\w]+)/$', views.tags,
      {}, 'tag_groups'),
 
-    (r'^tags/groups/(?P<group_slug>[-\w]+).atom$', 'pathagar.books.views.tags',
+    (r'^tags/groups/(?P<group_slug>[-\w]+).atom$', views.tags,
      {'qtype': u'feed'}, 'tag_groups_feed'),
 
     # Tag list:
-    (r'^tags/$', 'pathagar.books.views.tags', {}, 'tags'),
-    (r'^tags.atom$', 'pathagar.books.views.tags',
+    (r'^tags/$', views.tags, {}, 'tags'),
+    (r'^tags.atom$', views.tags,
      {'qtype': u'feed'}, 'tags_feed'),
 
     # Add, view, edit and remove books:
@@ -73,14 +73,14 @@ urlpatterns = patterns(
         login_required(views.BookDeleteView.as_view()),
         name='book_delete'),
 
-    (r'^book/(?P<book_id>\d+)/download$',
-     'pathagar.books.views.download_book'),
+    url(r'^book/(?P<book_id>\d+)/download$', views.download_book,
+        name='book_download'),
 
     # Comments
     (r'^comments/', include('django_comments.urls')),
 
     # Add language:
-    (r'^add/(?:dc_language|language)/$', 'pathagar.books.views.add_language'),
+    (r'^add/(?:dc_language|language)/$', views.add_language),
 
     # Auth login and logout:
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
