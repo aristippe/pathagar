@@ -12,10 +12,6 @@ TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 
 LANGUAGE_CODE = 'en-us'
 
-LOCALE_PATHS = [
-    CUR_DIR + "/locale",
-]
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
