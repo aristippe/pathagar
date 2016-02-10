@@ -1,9 +1,10 @@
 import os
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import login, logout
 
 from books.app_settings import BOOKS_STATICS_VIA_DJANGO
 
@@ -12,51 +13,49 @@ from books import forms
 
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # Book list:
-    (r'^$', views.home,
-     {}, 'home'),
-    (r'^latest/$', views.latest,
-     {}, 'latest'),
-    (r'^by-title/$', views.by_title,
-     {}, 'by_title'),
-    (r'^by-author/$', views.by_author,
-     {}, 'by_author'),
-    (r'^tags/(?P<tag>.+)/$', views.by_tag,
-     {}, 'by_tag'),
-    (r'^by-popularity/$', views.most_downloaded,
-     {}, 'most_downloaded'),
+    url(r'^$', views.home,
+        {}, 'home'),
+    url(r'^latest/$', views.latest,
+        {}, 'latest'),
+    url(r'^by-title/$', views.by_title,
+        {}, 'by_title'),
+    url(r'^by-author/$', views.by_author,
+        {}, 'by_author'),
+    url(r'^tags/(?P<tag>.+)/$', views.by_tag,
+        {}, 'by_tag'),
+    url(r'^by-popularity/$', views.most_downloaded,
+        {}, 'most_downloaded'),
 
     # Tag groups:
-    (r'^tags/groups.atom$', views.tags_listgroups,
-     {}, 'tags_listgroups'),
+    url(r'^tags/groups.atom$', views.tags_listgroups,
+        {}, 'tags_listgroups'),
 
     # Book list Atom:
-    (r'^catalog.atom$', views.root,
-     {'qtype': u'feed'}, 'root_feed'),
-    (r'^latest.atom$', views.latest,
-     {'qtype': u'feed'}, 'latest_feed'),
-    (r'^by-title.atom$', views.by_title,
-     {'qtype': u'feed'}, 'by_title_feed'),
-    (r'^by-author.atom$', views.by_author,
-     {'qtype': u'feed'}, 'by_author_feed'),
-    (r'^tags/(?P<tag>.+).atom$', views.by_tag,
-     {'qtype': u'feed'}, 'by_tag_feed'),
-    (r'^by-popularity.atom$', views.most_downloaded,
-     {'qtype': u'feed'}, 'most_downloaded_feed'),
+    url(r'^catalog.atom$', views.root,
+        {'qtype': u'feed'}, 'root_feed'),
+    url(r'^latest.atom$', views.latest,
+        {'qtype': u'feed'}, 'latest_feed'),
+    url(r'^by-title.atom$', views.by_title,
+        {'qtype': u'feed'}, 'by_title_feed'),
+    url(r'^by-author.atom$', views.by_author,
+        {'qtype': u'feed'}, 'by_author_feed'),
+    url(r'^tags/(?P<tag>.+).atom$', views.by_tag,
+        {'qtype': u'feed'}, 'by_tag_feed'),
+    url(r'^by-popularity.atom$', views.most_downloaded,
+        {'qtype': u'feed'}, 'most_downloaded_feed'),
 
     # Tag groups:
-    (r'^tags/groups/(?P<group_slug>[-\w]+)/$', views.tags,
-     {}, 'tag_groups'),
+    url(r'^tags/groups/(?P<group_slug>[-\w]+)/$', views.tags,
+        {}, 'tag_groups'),
 
-    (r'^tags/groups/(?P<group_slug>[-\w]+).atom$', views.tags,
-     {'qtype': u'feed'}, 'tag_groups_feed'),
+    url(r'^tags/groups/(?P<group_slug>[-\w]+).atom$', views.tags,
+        {'qtype': u'feed'}, 'tag_groups_feed'),
 
     # Tag list:
-    (r'^tags/$', views.tags, {}, 'tags'),
-    (r'^tags.atom$', views.tags,
-     {'qtype': u'feed'}, 'tags_feed'),
+    url(r'^tags/$', views.tags, {}, 'tags'),
+    url(r'^tags.atom$', views.tags, {'qtype': u'feed'}, 'tags_feed'),
 
     # Add, view, edit and remove books:
     url(r'^book/add$',
@@ -77,29 +76,28 @@ urlpatterns = patterns(
         name='book_download'),
 
     # Comments
-    (r'^comments/', include('django_comments.urls')),
+    url(r'^comments/', include('django_comments.urls')),
 
     # Add language:
-    (r'^add/(?:dc_language|language)/$', views.add_language),
+    url(r'^add/(?:dc_language|language)/$', views.add_language),
 
     # Auth login and logout:
-    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    (r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
+    url(r'^accounts/login/$', login, name='login'),
+    url(r'^accounts/logout/$', logout, name='logout'),
 
     # Admin:
-    (r'^admin/', include(admin.site.urls)),
-)
+    url(r'^admin/', include(admin.site.urls)),
+]
 
 if BOOKS_STATICS_VIA_DJANGO:
     from django.views.static import serve
 
     # Serve static media:
-    urlpatterns += patterns(
-        '',
+    urlpatterns += [
         url(r'^static_media/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 
         # Book covers:
         url(r'^covers/(?P<path>.*)$', serve,
             {'document_root': os.path.join(settings.MEDIA_ROOT, 'covers')}),
-    )
+    ]
