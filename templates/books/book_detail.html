@@ -32,11 +32,8 @@
                     <a class="button"
                        href="{% url pathagar.books.views.remove_book book.pk %}">{% trans "Remove" %}</a>
                 </div>
-                <hr class="space">
-                {#<hr class="space">#}
-                {#<div class="span-2"><label>Status:</label></div>#}
-                {#<div class="span-3">{{ book.a_status }}</div>#}
-                {#<hr class="space">#}
+{#                <div class="span-2"><label>Status:</label></div>#}
+{#                <div class="span-3">{{ book.a_status }}</div>#}
             {% endif %}
         </div>
 
@@ -66,10 +63,9 @@
             {% ifnotequal book.dc_language None %}
                 <div class="span-3">{{ book.dc_language }}</div>
             {% else %}
-                <div class="span-6">Unknown</div>
+                <div class="span-6">{% trans "Unknown" %}</div>
             {% endifnotequal %}
-            <br/>
-            <div class="detail_stats">
+            <br/><br/>
                 <div class="span-3">{% trans "Added" %}:</div>
                 <div class="span-6">{% blocktrans with book.time_added|timesince as time_added %} {{ time_added }} ago{% endblocktrans %}</div>
                 <br/>
@@ -78,11 +74,11 @@
                 {% if user.is_superuser %}
                     <br/>
                     <div class="span-3">{% trans "Path" %}:</div>
-                    <div>{{ book.original_path }}</div>
+                    <div class="detail_path">{{ book.original_path }}</div>
                 {% endif %}
-            </div>
-
-            <div class="detail_desc">{{ book.a_summary|safe }}</div>
+            {% ifnotequal book.a_summary None %}
+                <div class="detail_desc">{{ book.a_summary|safe }}</div>
+            {% endifnotequal %}
         </div> <!-- detail-info -->
     </div>
 

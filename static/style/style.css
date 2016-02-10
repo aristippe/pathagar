@@ -359,16 +359,23 @@ tbody {
 
 .detail_info {
     padding-top: 2em;
+    display:block;
+    overflow:hidden;
 }
 
 .detail_stats {
-    padding-top: 1em
+    padding-top: 1em;
+    display: table-cell;
 }
 
 .detail_desc {
     font-size: 110%;
     padding-top: 2em;
     margin-right: 10%;
+}
+
+.detail_path {
+    display: table-cell;
 }
 
 .detail_comments {

@@ -62,6 +62,10 @@ class Language(models.Model):
                              unique=False)
     code = models.CharField(max_length=5, blank=True, unique=True)
 
+    class Meta:
+        verbose_name = _("Language")
+        verbose_name_plural = _("Languages")
+
     def __unicode__(self):
         return self.label
 

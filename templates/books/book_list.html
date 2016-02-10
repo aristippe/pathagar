@@ -54,7 +54,7 @@
 
     {% if q != None %}
         <h4 class="search_query">{% trans "Search:" %} "{{ q }}"
-            ({{ book_list.count }}
+            ({{ q_count }}
             {% trans "results" %})</h4>
     {% endif %}
 
