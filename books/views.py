@@ -58,7 +58,7 @@ class AddBookWizard(SessionWizardView):
     # TODO: allow adding books to anonymous if settings.ALLOW_PUBLIC_ADD_BOOKS
     # This is currently prevented by the login_required decorator on urls.py.
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
-                                                           'books'))
+                                                           'upload'))
     instance = None
 
     def get_form_instance(self, step):
@@ -67,7 +67,7 @@ class AddBookWizard(SessionWizardView):
         return self.instance
 
     def process_step_files(self, form):
-        """Append the values appended by the first form to storarge.extra_data.
+        """Append the values appended by the first form to storage.extra_data.
         """
         if self.steps.current == '0':
             self.storage.extra_data = {
