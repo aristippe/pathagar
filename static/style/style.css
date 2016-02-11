@@ -245,7 +245,7 @@ body {
 /* List view */
 
 a {
-    color: gray
+    color: inherit;
 }
 
 table.book_list th, table.book_list thead th {
@@ -290,8 +290,9 @@ table.book_list th.th_date_added {
     width: 20%;
 }
 
-.list_tag {
+.list_tags {
     font-size: 90%;
+    padding-left:1em;
     color: gray;
 }
 

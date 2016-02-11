@@ -51,7 +51,7 @@ class LanguageManager(models.Manager):
             language, _ = self.get_or_create(
                 code=code, label=langs_by_code[code])
             return language
-        raise ValueError('%s is not a valid language code' % code)  # TODO lang
+        raise ValueError('%s is not a valid language code' % code)
 
 
 class Language(models.Model):
@@ -141,7 +141,8 @@ class Book(models.Model):
                                      help_text=_('Use ISBN for this'))
 
     # Other fields.
-    a_status = models.ForeignKey(Status, blank=False, null=True)
+    # TODO a_status null=True?
+    a_status = models.ForeignKey(Status, blank=False, null=False)
     time_added = models.DateTimeField(_('time added'), auto_now_add=True)
     tags = TaggableManager(blank=True)
     downloads = models.IntegerField(default=0)

@@ -3,14 +3,20 @@
 {% load static from staticfiles %}
 
 {% block head %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" type="text/css"/>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"
           type="text/css"/>
-    <script type="text/javascript" src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
 
-    <script type="text/javascript" src="{% static "js/book_list.js" %}"></script>
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
+          type="text/css"/>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
+
+    <script type="text/javascript"
+            src="{% static "js/book_list.js" %}"></script>
 {% endblock %}
 
 {% block title %} {% trans "Welcome to the Pathagar book server" %}
@@ -46,7 +52,8 @@
             {% if list_by == 'most-downloaded' %}
        href="{% url "most_downloaded_feed" %}{{ qstring }}"
             {% endif %}
-    ><img src="{% static "images/feed.png" %}" alt="Feed Icon"/><!--Subscribe to Feed--></a>
+    ><img src="{% static "images/feed.png" %}" alt="Feed Icon"/>
+        <!--Subscribe to Feed--></a>
 {% endblock %}
 
 {% block content %}
@@ -62,16 +69,19 @@
     <div class="prepend-12 pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
+            <a href="?page=
+                    {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
 
-        <span class="current-page" style="font-size:100%;font-weight:normal;top:0">
+        <span class="current-page"
+              style="font-size:100%;font-weight:normal;top:0">
             &nbsp;{{ page_obj.number }} {% trans "of" %}
             {{ paginator.num_pages }}&nbsp;
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
+            <a href="?page=
+                    {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
         {% endif %}
     </span>
     </div>
@@ -81,19 +91,29 @@
         <tr>
             <th/>
             {% if q != None %}
-                <th><a data-name="by-title" href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a></th>
-                <th><a data-name="by-author" href="{% url "by_author" %}?q={{ q|urlencode }}">{% trans "Author" %}</a></th>
-                <th><a data-name="latest" href="{% url "latest" %}?q={{ q|urlencode }}">{% trans "Added" %}</a></th>
-                <th class="list_downloads"><a data-name="by-author" href="{% url "most_downloaded" %}?q={{ q|urlencode }}">⬇</a></th>
+                <th><a data-name="by-title"
+                       href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a>
+                </th>
+                <th><a data-name="by-author"
+                       href="{% url "by_author" %}?q={{ q|urlencode }}">{% trans "Author" %}</a>
+                </th>
+                <th><a data-name="latest"
+                       href="{% url "latest" %}?q={{ q|urlencode }}">{% trans "Added" %}</a>
+                </th>
+                <th class="list_downloads"><a data-name="by-author"
+                                              href="{% url "most_downloaded" %}?q={{ q|urlencode }}">⬇</a>
+                </th>
             {% else %}
                 <th><a data-name="by-title" href="{% url "by_title" %}">
                     {% trans "Title" %}</a></th>
-                <th> <a data-name="by-author" href="{% url "by_author" %}">
+                <th><a data-name="by-author" href="{% url "by_author" %}">
                     {% trans "Author" %}</a></th>
                 <th class="th_date_added"><a data-name="latest" href=
                         "{% url "latest" %}">
-                {% trans "Added" %}</a></th>
-                <th class="list_downloads"><a data-name="by-author" href="{% url "most_downloaded" %}">⬇</a></th>
+                    {% trans "Added" %}</a></th>
+                <th class="list_downloads"><a data-name="by-author"
+                                              href="{% url "most_downloaded" %}">⬇</a>
+                </th>
             {% endif %}
             <th/>
         </tr>
@@ -104,9 +124,11 @@
                 <td>
                     <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
-                            <img src="{{ book.cover_img.url }}" alt="Cover" width="24px"/>
+                            <img src="{{ book.cover_img.url }}" alt="Cover"
+                                 width="24px"/>
                         {% else %}
-                            <img src="{% static "images/generic_cover.png" %}" alt="Cover" height="24px"/>
+                            <img src="{% static "images/generic_cover.png" %}"
+                                 alt="Cover" height="24px"/>
                         {% endif %}
                     </a>
                 </td>
@@ -115,7 +137,19 @@
                     {% if book.tags.count != 0 %}
                         <div class="list_tags">
                             {% for tag in book.tags.all %}
-                                <a class="list_tag" href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
+
+                                {% if forloop.first %}
+                                    <a class="list_tag" href="
+                        {% url "by_tag" tag.name %}">{{ tag.name }}</a>,
+                                {% endif %}
+
+                                <a class="list_tag" href="
+                    {% url "by_tag" tag.name %}">{{ tag.name }}</a>,
+
+                                {% if forloop.last or booktags.count == 1 %}
+                                    <a class="list_tag"
+                                       href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
+                                {% endif %}
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -124,10 +158,15 @@
                         href="{% url "by_title" %}?q={{ book.a_author|urlencode }}">{{ book.a_author }}</a>
                 </td>
                 <td class="list_date">
-                    {% blocktrans with book.time_added|timesince as time_added %} {{ time_added }} ago{% endblocktrans %}</td> <!-- date:'Y-m-d H:i' -->
+                    {% blocktrans with book.time_added|timesince as time_added %}
+                        {{ time_added }} ago{% endblocktrans %}</td>
+                <!-- date:'Y-m-d H:i' -->
                 <td class="list_downloads"><a
-                        href="{% url "most_downloaded" %}?q={{ book.downloads }}">{{ book.downloads }}</a></td>
-                <td class="list_download_link"><a class="download" href="{% url "book_download" book.pk %}">⬇︎</a></td>
+                        href="{% url "most_downloaded" %}?q={{ book.downloads }}">{{ book.downloads }}</a>
+                </td>
+                <td class="list_download_link"><a class="download"
+                                                  href="{% url "book_download" book.pk %}">⬇︎</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -138,16 +177,19 @@
     <div class="prepend-12 pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
+            <a href="?page=
+                    {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
 
-        <span class="current-page" style="font-size:100%;font-weight:normal;top:0">
+        <span class="current-page"
+              style="font-size:100%;font-weight:normal;top:0">
             &nbsp;{{ page_obj.number }} {% trans "of" %}
             {{ paginator.num_pages }}&nbsp;
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
+            <a href="?page=
+                    {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
         {% endif %}
     </span>
     </div>
@@ -165,22 +207,22 @@
                         {{ unpublished_books }}</em></li>
                 {% endif %}
             </ul>
-{#            <hr>#}
-{#            {% if tag %}#}
-{#                <ul class="stats">#}
-{#                    <li>Showing books with tag <em>{{ tag.name }}</em></li>#}
-{#                </ul>#}
-{#            {% endif %}#}
-{#            {% ifnotequal book_list.count total_books %}#}
-{#                <ul class="stats">#}
-{#                    <li>Number of ebooks in search result: <em>{{ book_list.count }}</em></li>#}
-{#                    <li>Showing matches <em>{{ page_obj.start_index }}</em> to <em>{{ page_obj.end_index }}</em></li>#}
-{#                </ul>#}
-{#            {% else %}#}
-{#                <ul class="stats">#}
-{#                    <li>Showing entire collection.</li>#}
-{#                </ul>#}
-{#            {% endifnotequal %}#}
+            {#            <hr>#}
+            {#            {% if tag %}#}
+            {#                <ul class="stats">#}
+            {#                    <li>Showing books with tag <em>{{ tag.name }}</em></li>#}
+            {#                </ul>#}
+            {#            {% endif %}#}
+            {#            {% ifnotequal book_list.count total_books %}#}
+            {#                <ul class="stats">#}
+            {#                    <li>Number of ebooks in search result: <em>{{ book_list.count }}</em></li>#}
+            {#                    <li>Showing matches <em>{{ page_obj.start_index }}</em> to <em>{{ page_obj.end_index }}</em></li>#}
+            {#                </ul>#}
+            {#            {% else %}#}
+            {#                <ul class="stats">#}
+            {#                    <li>Showing entire collection.</li>#}
+            {#                </ul>#}
+            {#            {% endifnotequal %}#}
         </div>
     </div>
     {#    </div>#}
