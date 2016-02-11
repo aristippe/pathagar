@@ -19,8 +19,8 @@ from lxml import etree
 
 
 class EpubInfo:  # TODO: Cover the entire DC range
-    def __init__(self, opffile):
-        self._tree = etree.parse(opffile)
+    def __init__(self, opf_file):
+        self._tree = etree.parse(opf_file)
         self._root = self._tree.getroot()
         self._e_metadata = self._root.find(
             '{http://www.idpf.org/2007/opf}metadata')
@@ -134,7 +134,41 @@ class EpubInfo:  # TODO: Cover the entire DC range
         return subjectlist
 
     def _get_cover_image(self):
-        # TODO check if cover is image
+        cover = None
+
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}reference':
+                    # Guide, EPUB 2 spec
+                    if node.attrib['type'] == 'cover':
+                        cover = node.attrib['href']
+                        break
+                    # Guide, non-standard as title attribute
+                    if node.attrib['title'] == 'Cover':
+                        cover = node.attrib['href']
+                        break
+                    # Guide title page if no cover
+                    if node.attrib['type'] in ['title-page', 'tp']:
+                        cover = node.attrib['href']
+                        break
+
+        if cover is None:
+            for node in self._tree.iter():
+                if node.tag == '{http://www.idpf.org/2007/opf}item':
+                    # Spine item with id = "cover-image"
+                    if node.attrib['id'] == 'cover-image':
+                        cover = node.attrib['href']
+                        break
+                    # Spine item with id = "cover"
+                    if node.attrib['id'] == 'cover':
+                        cover = node.attrib['href']
+                        break
+                    # ePub 3
+                    if node.get('properties') == 'cover-image':
+                        cover = node.attrib['href']
+                        break
+
+        # ePub 2 metadata
         meta_content_cover = None
         for element in self._e_metadata.iterfind(
                 '{http://www.idpf.org/2007/opf}meta'):
@@ -146,6 +180,12 @@ class EpubInfo:  # TODO: Cover the entire DC range
                 if node.tag == '{http://www.idpf.org/2007/opf}item':
                     if node.attrib['id'] == meta_content_cover:
                         cover = node.attrib['href']
+                        break
+            # In case meta tag refers to cover itself
+            if cover is None:
+                cover = meta_content_cover
+
+        if cover:
             return cover
         else:
             return None
