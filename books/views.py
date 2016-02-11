@@ -116,6 +116,8 @@ class AddBookWizard(SessionWizardView):
         self.instance.file_sha256sum = self.storage.\
             extra_data['file_sha256sum']
         self.instance.save()
+        # Save the tags.
+        self.instance.tags.add(*form_list[1].cleaned_data['tags'])
 
         # Set the cover image.
         tmp_cover_path = self.storage.extra_data['cover_path']
