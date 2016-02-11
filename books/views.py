@@ -21,14 +21,13 @@ import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.http import Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
-from django.template import RequestContext
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
@@ -218,10 +217,7 @@ def tags(request, qtype=None, group_slug=None):
         return HttpResponse(catalog, content_type='application/atom+xml')
 
     # Return HTML page:
-    return render_to_response(
-        'books/tag_list.html', context,
-        context_instance=RequestContext(request),
-    )
+    return render(request, 'books/tag_list.html', context)
 
 
 def tags_listgroups(request):
@@ -292,11 +288,8 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'qstring': qstring,
         'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS
     })
-    return render_to_response(
-        'books/book_list.html',
-        extra_context,
-        context_instance=RequestContext(request),
-    )
+
+    return render(request, 'books/book_list.html', extra_context)
 
 
 @login_required
