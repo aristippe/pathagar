@@ -1,4 +1,3 @@
-from optparse import make_option
 import os
 
 from django.conf import settings
@@ -12,32 +11,34 @@ from addepub import get_epubs_paths
 
 
 class Command(BaseCommand):
-    # TODO: on Django 1.8+, optparse should be used.
     help = ("Update the database files information, replacing the pointers "
             "to the original files and the symbolic links to match the "
-            "specified ITEMs if the database contains a Book that is "
-            "considered a duplicate (having the same sha256 hash). ITEMs "
-            "can be either:\n"
-            "- a single file with '.epub' extension.\n"
-            "- a directory (in which case it is traversed recursively, "
-            "checking the files with '.epub' extension).")
-    args = '<ITEM ITEM ...>'
+            "specified items if the database contains a Book that is "
+            "considered a duplicate (having the same sha256 hash).")
 
-    option_list = BaseCommand.option_list + (
-        make_option('-r', '--replace-strategy',
-                    choices=['original', 'always-link', 'always-copy'],
-                    dest='replace_strategy',
-                    default='original',
-                    help=('Select the strategy to use when replacing. Allowed '
-                          'values: "always-link" (always replace the file with'
-                          ' a symlink), "always-copy" (always use a copy of '
-                          'the file), "original" (default, use the same as '
-                          'the original Book is using).')
-                    ),
-    )
+    def add_arguments(self, parser):
+        # Positional arguments
+        parser.add_argument('item', nargs='+', type=unicode,
+                            help=("A file with '.epub' extension or a "
+                                  "directory (in which case it is traversed "
+                                  "recursively, checking all the files with "
+                                  "'.epub' extension)."))
+
+        # Named (optional) arguments
+        parser.add_argument(
+            '--replace-strategy', '-r',
+            choices=['original', 'always-link', 'always-copy'],
+            dest='replace_strategy',
+            default='original',
+            help=('Select the strategy to use when replacing. Allowed '
+                  'values: "always-link" (always replace the file with'
+                  ' a symlink), "always-copy" (always use a copy of '
+                  'the file), "original" (default, use the same as '
+                  'the original Book is using).')
+        )
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(args)
+        epub_filenames = get_epubs_paths(options['item'])
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')

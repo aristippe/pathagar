@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
 from django.core.exceptions import ValidationError
 
-from optparse import make_option
 import os
 
 from books import models
@@ -41,24 +40,26 @@ def get_epubs_paths(paths):
 
 
 class Command(BaseCommand):
-    # TODO: on Django 1.8+, optparse should be used.
-    help = ("Import EPUBs from the local file system into the database. ITEMs "
-            "can be either:\n"
-            "- a single file with '.epub' extension.\n"
-            "- a directory (in which case it is traversed recursively, "
-            "adding all the files with '.epub' extension).")
-    args = '<ITEM ITEM ...>'
+    help = 'Import ePubs from the local file system into the database.'
 
-    option_list = BaseCommand.option_list + (
-        make_option('-l', '--link',
-                    action='store_true',
-                    dest='use_symlink',
-                    default=False,
-                    help='Use symbolic links instead of copying the files.'),
-    )
+    def add_arguments(self, parser):
+        # Positional arguments.
+        parser.add_argument('item', nargs='+', type=unicode,
+                            help=("A file with '.epub' extension or a "
+                                  "directory (in which case it is traversed "
+                                  "recursively, adding all the files with "
+                                  "'.epub' extension)."))
+
+        # Named (optional) arguments.
+        parser.add_argument(
+            '--link', '-l',
+            action='store_true',
+            dest='use_symlink',
+            default=False,
+            help='Use symbolic links instead of copying the files.')
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(args)
+        epub_filenames = get_epubs_paths(options['item'])
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')
