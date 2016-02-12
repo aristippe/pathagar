@@ -1,5 +1,6 @@
 database.db
 *pyc
+books/migrations/*
 staticfiles/
 static_media/**
 *.mo

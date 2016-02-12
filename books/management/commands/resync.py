@@ -1,4 +1,3 @@
-from optparse import make_option
 import os
 
 from django.conf import settings
@@ -12,52 +11,79 @@ from addepub import get_epubs_paths
 
 
 class Command(BaseCommand):
-    # TODO: on Django 1.8+, optparse should be used.
     help = ("Update the database files information, replacing the pointers "
             "to the original files and the symbolic links to match the "
-            "specified ITEMs if the database contains a Book that is "
-            "considered a duplicate (having the same sha256 hash). ITEMs "
-            "can be either:\n"
-            "- a single file with '.epub' extension.\n"
-            "- a directory (in which case it is traversed recursively, "
-            "checking the files with '.epub' extension).")
-    args = '<ITEM ITEM ...>'
+            "specified items if the database contains a Book that is "
+            "considered a duplicate (having the same sha256 hash).")
 
-    option_list = BaseCommand.option_list + (
-        make_option('-r', '--replace-strategy',
-                    choices=['original', 'always-link', 'always-copy'],
-                    dest='replace_strategy',
-                    default='original',
-                    help=('Select the strategy to use when replacing. Allowed '
-                          'values: "always-link" (always replace the file with'
-                          ' a symlink), "always-copy" (always use a copy of '
-                          'the file), "original" (default, use the same as '
-                          'the original Book is using).')
-                    ),
-    )
+    def add_arguments(self, parser):
+        # Positional arguments
+        parser.add_argument('item', nargs='+', type=unicode,
+                            help=("A file with '.epub' extension or a "
+                                  "directory (in which case it is traversed "
+                                  "recursively, checking all the files with "
+                                  "'.epub' extension)."))
+
+        # Named (optional) arguments
+        parser.add_argument(
+            '--replace-strategy', '-r',
+            choices=['original', 'always-link', 'always-copy'],
+            dest='replace_strategy',
+            default='original',
+            help=('Select the strategy to use when replacing. Allowed '
+                  'values: "always-link" (always replace the file with'
+                  ' a symlink), "always-copy" (always use a copy of '
+                  'the file), "original" (default, use the same as '
+                  'the original Book is using).')
+        )
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(args)
+        epub_filenames = get_epubs_paths(options['item'])
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')
 
-        for filename in epub_filenames:
+        # Keep track of some basic stats.
+        counter = {'success': 0, 'fail': 0, 'not_found': 0}
+        width = len(str(len(epub_filenames)))
+        self.stdout.write('Importing %s items ...' % len(epub_filenames))
+
+        for i, filename in enumerate(epub_filenames):
+            self.stdout.write(self.style.HTTP_INFO(
+                '[{i: {width}}/{total: {width}}] {f}'.format(
+                    i=i,
+                    total=len(epub_filenames),
+                    width=width,
+                    f=filename)))
+
             book, success = (None, False)
             try:
                 book, success = self.process_epub(filename,
                                                   options['replace_strategy'])
             except Exception as e:
-                print 'Unhandled exception while processing: %s' % e
+                self.stdout.write(self.style.ERROR(
+                    'Unhandled exception while importing:\n%s' % e))
 
             if book:
                 if success:
-                    print 'Book #%s (%s) modified (%s).' % (book.pk, book,
-                                                            book.original_path)
+                    counter['success'] = counter['success'] + 1
+                    self.stdout.write(self.style.SUCCESS(
+                        'Book #%s (%s) modified (%s).' % (book.pk, book,
+                                                          book.original_path)))
                 else:
-                    print 'Book #%s (%s) NOT modified.' % (book.pk, book)
+                    counter['fail'] = counter['fail'] + 1
+                    self.stdout.write(self.style.NOTICE(
+                        'Book #%s (%s) NOT modified.' % (book.pk, book)))
             else:
-                print 'No match found.'
+                counter['not_found'] = counter['not_found'] + 1
+                self.stdout.write(self.style.NOTICE(
+                    'No match found.'))
+            self.stdout.write('')
+
+        self.stdout.write('{} books updated, {} books failed to update,'
+                          '{} items not mached.'.format(counter['success'],
+                                                        counter['fail'],
+                                                        counter['not_found']))
 
     def process_epub(self, filename, replace_strategy='original'):
         """Parse a single EPUB from `filename`, updating `Book` if `filename`
@@ -68,9 +94,6 @@ class Command(BaseCommand):
 
         Returns a tuple (Book, success), where Book will be None if not found.
         """
-        # TODO: move prints to logging.
-        print '\nReimporting %s' % filename
-
         # Check the sha256sum and try to find the Book.
         file_sha256sum = models.sha256_sum(File(open(filename)))
         try:
@@ -107,9 +130,9 @@ class Command(BaseCommand):
                 book.book_file.save(os.path.basename(filename),
                                     info_dict['book_file'],
                                     save=False)
-                print 'book saved at %s' % book.book_file
             book.original_path = info_dict['original_path']
             book.save()
+            book.refresh_from_db()
 
             return book, True
         except Exception as e:

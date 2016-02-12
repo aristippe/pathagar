@@ -21,7 +21,7 @@ import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.http import Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -60,7 +60,7 @@ class AddBookWizard(SessionWizardView):
     # TODO: allow adding books to anonymous if settings.ALLOW_PUBLIC_ADD_BOOKS
     # This is currently prevented by the login_required decorator on urls.py.
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
-                                                           'books'))
+                                                           'upload'))
     instance = None
 
     def get_form_instance(self, step):
@@ -69,7 +69,7 @@ class AddBookWizard(SessionWizardView):
         return self.instance
 
     def process_step_files(self, form):
-        """Append the values appended by the first form to storarge.extra_data.
+        """Append the values appended by the first form to storage.extra_data.
         """
         if self.steps.current == '0':
             self.storage.extra_data = {
@@ -118,6 +118,8 @@ class AddBookWizard(SessionWizardView):
         self.instance.file_sha256sum = self.storage.\
             extra_data['file_sha256sum']
         self.instance.save()
+        # Save the tags.
+        self.instance.tags.add(*form_list[1].cleaned_data['tags'])
 
         # Set the cover image.
         tmp_cover_path = self.storage.extra_data['cover_path']
@@ -219,10 +221,7 @@ def tags(request, qtype=None, group_slug=None):
         return HttpResponse(catalog, content_type='application/atom+xml')
 
     # Return HTML page:
-    return render_to_response(
-        'books/tag_list.html', context,
-        context_instance=RequestContext(request),
-    )
+    return render(request, 'books/tag_list.html', context)
 
 
 def tags_listgroups(request):
@@ -294,11 +293,8 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'qstring': qstring,
         'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS
     })
-    return render_to_response(
-        'books/book_list.html',
-        extra_context,
-        context_instance=RequestContext(request),
-    )
+
+    return render(request, 'books/book_list.html', extra_context)
 
 
 @login_required

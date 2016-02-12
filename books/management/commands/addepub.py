@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
 from django.core.exceptions import ValidationError
 
-from optparse import make_option
 import os
 
 from books import models
@@ -41,48 +40,66 @@ def get_epubs_paths(paths):
 
 
 class Command(BaseCommand):
-    # TODO: on Django 1.8+, optparse should be used.
-    help = ("Import EPUBs from the local file system into the database. ITEMs "
-            "can be either:\n"
-            "- a single file with '.epub' extension.\n"
-            "- a directory (in which case it is traversed recursively, "
-            "adding all the files with '.epub' extension).")
-    args = '<ITEM ITEM ...>'
+    help = 'Import ePubs from the local file system into the database.'
 
-    option_list = BaseCommand.option_list + (
-        make_option('-l', '--link',
-                    action='store_true',
-                    dest='use_symlink',
-                    default=False,
-                    help='Use symbolic links instead of copying the files.'),
-    )
+    def add_arguments(self, parser):
+        # Positional arguments.
+        parser.add_argument('item', nargs='+', type=unicode,
+                            help=("A file with '.epub' extension or a "
+                                  "directory (in which case it is traversed "
+                                  "recursively, adding all the files with "
+                                  "'.epub' extension)."))
+
+        # Named (optional) arguments.
+        parser.add_argument(
+            '--link', '-l',
+            action='store_true',
+            dest='use_symlink',
+            default=False,
+            help='Use symbolic links instead of copying the files.')
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(args)
+        epub_filenames = get_epubs_paths(options['item'])
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')
 
-        for filename in epub_filenames:
+        # Keep track of some basic stats.
+        counter = {'success': 0, 'fail': 0}
+        width = len(str(len(epub_filenames)))
+        self.stdout.write('Importing %s items ...' % len(epub_filenames))
+
+        for i, filename in enumerate(epub_filenames):
+            self.stdout.write(self.style.HTTP_INFO(
+                '[{i: {width}}/{total: {width}}] {f}'.format(
+                    i=i,
+                    total=len(epub_filenames),
+                    width=width,
+                    f=filename)))
+
             success = True
             try:
                 success = self.process_epub(filename, options['use_symlink'])
             except Exception as e:
-                print 'Unhandled exception while importing: %s' % e
+                self.stdout.write(self.style.ERROR(
+                    'Unhandled exception while importing:\n%s' % e))
                 success = False
 
             if success:
-                print 'File imported'
+                counter['success'] = counter['success'] + 1
+                self.stdout.write(self.style.SUCCESS('File imported'))
             else:
-                print 'File NOT imported'
+                counter['fail'] = counter['fail'] + 1
+                self.stdout.write(self.style.NOTICE('File NOT imported'))
+            self.stdout.write('')
+
+        self.stdout.write('{} files imported, {} files not imported.'.format(
+                counter['success'], counter['fail']))
 
     def process_epub(self, filename, use_symlink=False):
         """Import a single EPUB from `filename`, creating a new `Book` based
         on the information parsed from the epub.
         """
-        # TODO: move prints to logging.
-        print '\nImporting %s' % filename
-
         # Try to parse the epub file, extracting the relevant info.
         info_dict = {}
         tmp_cover_path = None
@@ -93,7 +110,8 @@ class Command(BaseCommand):
             info_dict, tmp_cover_path = epub.as_model_dict()
             assert info_dict
         except Exception as e:
-            print "Error while parsing '%s': %s" % (filename, unicode(e))
+            self.stdout.write(self.style.ERROR(
+                "Error while parsing '%s':\n%s" % (filename, unicode(e))))
 
             # TODO: this is not 100% reliable yet. Further modifications to
             # epub.py are needed.
@@ -149,9 +167,9 @@ class Command(BaseCommand):
                                         File(open(tmp_cover_path)),
                                         save=True)
                 except Exception as e:
-                    print 'Error while saving cover image %s: %s' % (
-                        tmp_cover_path, str(e)
-                    )
+                    self.stdout.write(self.style.WARNING(
+                        'Error while saving cover image %s:\n%s' % (
+                            tmp_cover_path, str(e))))
                     tmp_cover_path = None
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
@@ -162,8 +180,9 @@ class Command(BaseCommand):
                 pass
 
             if isinstance(e, ValidationError) and 'already exists' in str(e):
-                print ('The book (%s) was not saved because the file already '
-                       'exists in the database: %s' % (filename, str(e)))
+                self.stdout.write(self.style.WARNING(
+                    'The book (%s) was not saved because the file already '
+                    'exists in the database:\n%s' % (filename, str(e))))
                 return False
             else:
                 # TODO: check for possible risen exceptions at a finer grain.

@@ -86,6 +86,11 @@ class BookForm(forms.ModelForm):
 
         """
         instance = super(BookForm, self).save(commit=False)
+        # Save the tags.
+        self.save_m2m()
+
+        # TODO: revise, as the template currently does not allow replacing
+        # book_file, so mimetype is not really on cleaned_data.
         book_file = self.cleaned_data['book_file']
         if instance.mimetype is None:
             try:

@@ -15,12 +15,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+import logging
 import os.path
 import shutil
-from sys import version_info
 import tempfile
 import zipfile
+from sys import version_info
 
+import lxml.html
 from lxml import etree
 
 import epubinfo
@@ -33,9 +35,9 @@ class Epub(object):
         """
         self._file = _file
         self._zobject = None
-        self._opfpath = None
-        self._ncxpath = None
-        self._basepath = None
+        self._opf_path = None
+        self._ncx_path = None
+        self._base_path = None
         self._mimetype = None
 
         try:
@@ -48,8 +50,8 @@ class Epub(object):
             self._get_opf()
             self._get_ncx()
 
-            opffile = self._zobject.open(self._opfpath)
-            self._info = epubinfo.EpubInfo(opffile)
+            opf_file = self._zobject.open(self._opf_path)
+            self._info = epubinfo.EpubInfo(opf_file)
         except Exception as e:
             self.close()
             raise e
@@ -80,25 +82,25 @@ class Epub(object):
             os.chdir(orig_cwd)
 
     def _get_opf(self):
-        containerfile = self._zobject.open('META-INF/container.xml')
+        container_file = self._zobject.open('META-INF/container.xml')
 
-        tree = etree.parse(containerfile)
+        tree = etree.parse(container_file)
         root = tree.getroot()
 
         rfile = './/{urn:oasis:names:tc:opendocument:xmlns:container}rootfile'
         for element in root.iterfind(rfile):
             if element.get('media-type') == 'application/oebps-package+xml':
-                self._opfpath = element.get('full-path')
+                self._opf_path = element.get('full-path')
 
-        if self._opfpath.rpartition('/')[0]:
-            self._basepath = self._opfpath.rpartition('/')[0] + '/'
+        if self._opf_path.rpartition('/')[0]:
+            self._base_path = self._opf_path.rpartition('/')[0] + '/'
         else:
-            self._basepath = ''
+            self._base_path = ''
 
-        containerfile.close()
+        container_file.close()
 
     def _get_ncx(self):
-        opffile = self._zobject.open(self._opfpath)
+        opffile = self._zobject.open(self._opf_path)
 
         tree = etree.parse(opffile)
         root = tree.getroot()
@@ -108,7 +110,7 @@ class Epub(object):
 
         for element in root.iterfind('.//{http://www.idpf.org/2007/opf}item'):
             if element.get('id') == tocid:
-                self._ncxpath = self._basepath + element.get('href')
+                self._ncx_path = self._base_path + element.get('href')
 
         opffile.close()
 
@@ -149,12 +151,73 @@ class Epub(object):
         return self._info
 
     def get_cover_image_path(self):
-        if self._info.cover_image is not None:
-            self._unzip_file(self._basepath + self._info.cover_image)
-            return os.path.join(self._tempdir, self._basepath,
-                                self._info.cover_image)
-        else:
+        """
+        Epubinfo returns cover_image as either an image or xhtml. If xhtml,
+        parse to find image
+        """
+        if not self._info.cover_image:
             return None
+
+        cover_image = os.path.join(self._tempdir,
+                                   self._base_path,
+                                   self._info.cover_image)
+
+        try:
+            self._unzip_file(self._base_path + self._info.cover_image)
+            if self._info.cover_image.lower().endswith(('.bmp',
+                                                        '.gif',
+                                                        '.jpg',
+                                                        '.jpeg',
+                                                        '.png')):
+                return cover_image
+        except Exception as e:
+            logging.exception(e)
+            return None
+
+        # Begin XHTML handling
+        parent = lxml.html.parse(cover_image)
+
+        # img tag
+        images = parent.xpath('//img/@src')
+        if images:
+            img = images[0]
+            image_base_path = os.path.dirname(self._info.cover_image)
+            image_path = os.path.normpath(image_base_path + '/' + img)
+
+            # In case of leading or trailing slash
+            joined_path = (self._base_path + image_path).replace('//', '/')
+            try:
+                self._unzip_file(joined_path)
+                return os.path.join(self._tempdir, joined_path)
+            except Exception as e:
+                logging.exception(e)
+                return None
+
+        # SVG image
+        svg_image = parent.xpath('//image')
+        if svg_image:
+            image_path = os.path.normpath(
+                self._base_path +
+                os.path.dirname(self._info.cover_image) + '/' +
+                svg_image[0].attrib['xlink:href']
+            )
+            try:
+                self._unzip_file(image_path)
+                return os.path.join(self._tempdir, image_path)
+            except Exception as e:
+                logging.exception(e)
+                return None
+
+        # https://stackoverflow.com/questions/2932408
+        # TODO cover as svg string
+        # SVG String - cairosvg requires Python 3.4+, untested
+        # svg = parent.xpath('//svg')
+        # if svg:
+        #     logging.warning(svg[0])
+        #     image_path = open(os.path.join(self._tempdir + cover.png'),'w')
+        #     cairosvg.svg2png(bytestring=svg,write_to=fout)
+        #     image_path.close()
+        #     # return image_path
 
     def as_model_dict(self):
         """Return a tuple with:

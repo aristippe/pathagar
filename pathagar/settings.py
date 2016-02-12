@@ -137,6 +137,7 @@ INTERNAL_IPS = ['127.0.0.1']
 # -- Third-party apps settings.
 SENDFILE_BACKEND = 'sendfile.backends.development'
 
+TAGGIT_CASE_INSENSITIVE = True
 
 # -- Pathagar settings.
 # Number of books shown per page in the OPDS catalogs and in the HTML pages.
