@@ -43,8 +43,14 @@ GENERATOR_ATTR = {
 
 # based on django.utils.xmlutils.SimplerXMLGenerator
 class SimplerXMLGenerator(XMLGenerator):
-    def addQuickElement(self, name, contents=None, attrs=None, tabs=1):
-        "Convenience method for adding an element with no children"
+    def add_quick_element(self, name, contents=None, attrs=None, tabs=1):
+        """Convenience method for adding an element with no children
+
+        :param name:
+        :param contents:
+        :param attrs:
+        :param tabs:
+        """
         if attrs is None:
             attrs = {}
         self.characters("\t" * tabs)
@@ -63,7 +69,12 @@ def rfc3339_date(date):
 # based on django.utils.feedgenerator.get_tag_uri
 def get_tag_uri(url, date):
     """Creates a TagURI. See
-    http://diveintomark.org/archives/2004/05/28/howto-atom-id"""
+    http://diveintomark.org/archives/2004/05/28/howto-atom-id
+
+    :param url:
+    :param date:
+    :returns:
+    """
     tag = re.sub('^http://', '', url)
     if date is not None:
         tag = re.sub('/', ',%s:/' % date.strftime('%Y-%m-%d'), tag, 1)
@@ -246,20 +257,20 @@ class AtomFeed(object):
                     text)  # write unescaped - it had better be well-formed XML
                 handler.endElement(element_name)
             else:
-                handler.addQuickElement(element_name, text,
-                                        {'type': text_type}, tabs=tabs)
+                handler.add_quick_element(element_name, text,
+                                          {'type': text_type}, tabs=tabs)
         else:
-            handler.addQuickElement(element_name, data, tabs=tabs)
+            handler.add_quick_element(element_name, data, tabs=tabs)
 
     def write_person_construct(self, handler, element_name, person):
         handler.characters("\t\t")
         handler.startElement(element_name, {})
         handler.characters("\n")
-        handler.addQuickElement(u'name', person['name'], tabs=3)
+        handler.add_quick_element(u'name', person['name'], tabs=3)
         if 'uri' in person:
-            handler.addQuickElement(u'uri', person['uri'], tabs=3)
+            handler.add_quick_element(u'uri', person['uri'], tabs=3)
         if 'email' in person:
-            handler.addQuickElement(u'email', person['email'], tabs=3)
+            handler.add_quick_element(u'email', person['email'], tabs=3)
         handler.characters("\t\t")
         handler.endElement(element_name)
         handler.characters("\n")
@@ -267,25 +278,25 @@ class AtomFeed(object):
     def write_link_construct(self, handler, link, tabs=1):
         if 'length' in link:
             link['length'] = str(link['length'])
-        handler.addQuickElement(u'link', None, link, tabs=tabs)
+        handler.add_quick_element(u'link', None, link, tabs=tabs)
 
     def write_category_construct(self, handler, category):
-        handler.addQuickElement(u'category', None, category)
+        handler.add_quick_element(u'category', None, category)
 
     def write_source(self, handler, data):
         handler.startElement(u'source', {})
         if data.get('id'):
-            handler.addQuickElement(u'id', data['id'])
+            handler.add_quick_element(u'id', data['id'])
         if data.get('title'):
             self.write_text_construct(handler, u'title', data['title'])
         if data.get('subtitle'):
             self.write_text_construct(handler, u'subtitle', data['subtitle'])
         if data.get('icon'):
-            handler.addQuickElement(u'icon', data['icon'])
+            handler.add_quick_element(u'icon', data['icon'])
         if data.get('logo'):
-            handler.addQuickElement(u'logo', data['logo'])
+            handler.add_quick_element(u'logo', data['logo'])
         if data.get('updated'):
-            handler.addQuickElement(u'updated', rfc3339_date(data['updated']))
+            handler.add_quick_element(u'updated', rfc3339_date(data['updated']))
         for category in data.get('categories', []):
             self.write_category_construct(handler, category)
         for link in data.get('links', []):
@@ -308,11 +319,11 @@ class AtomFeed(object):
                     text)  # write unescaped - it had better be well-formed XML
                 handler.endElement(u'content')
             else:
-                handler.addQuickElement(u'content', text, content_dict)
+                handler.add_quick_element(u'content', text, content_dict)
                 handler.characters("\t")
         else:
             handler.characters("\t")
-            handler.addQuickElement(u'content', data)
+            handler.add_quick_element(u'content', data)
 
     def write(self, outfile, encoding):
         handler = SimplerXMLGenerator(outfile, encoding)
@@ -323,21 +334,21 @@ class AtomFeed(object):
         handler.characters("\t")
         handler.startElement(u'feed', feed_attrs)
         handler.characters("\n")
-        handler.addQuickElement(u'id', self.feed['id'])
+        handler.add_quick_element(u'id', self.feed['id'])
         self.write_text_construct(handler, u'title', self.feed['title'])
         if self.feed.get('subtitle'):
             self.write_text_construct(handler, u'subtitle',
                                       self.feed['subtitle'])
         if self.feed.get('icon'):
-            handler.addQuickElement(u'icon', self.feed['icon'])
+            handler.add_quick_element(u'icon', self.feed['icon'])
         if self.feed.get('logo'):
-            handler.addQuickElement(u'logo', self.feed['logo'])
+            handler.add_quick_element(u'logo', self.feed['logo'])
         if self.feed['updated']:
-            handler.addQuickElement(u'updated',
-                                    rfc3339_date(self.feed['updated']))
+            handler.add_quick_element(u'updated',
+                                      rfc3339_date(self.feed['updated']))
         else:
-            handler.addQuickElement(u'updated',
-                                    rfc3339_date(self.latest_updated()))
+            handler.add_quick_element(u'updated',
+                                      rfc3339_date(self.latest_updated()))
         for category in self.feed['categories']:
             self.write_category_construct(handler, category)
         for link in self.feed['links']:
@@ -349,8 +360,8 @@ class AtomFeed(object):
         if self.feed.get('rights'):
             self.write_text_construct(handler, u'rights', self.feed['rights'])
         if not self.feed.get('hide_generator'):
-            handler.addQuickElement(u'generator', GENERATOR_TEXT,
-                                    GENERATOR_ATTR, tabs=2)
+            handler.add_quick_element(u'generator', GENERATOR_TEXT,
+                                      GENERATOR_ATTR, tabs=2)
 
         self.write_items(handler)
 
@@ -364,14 +375,14 @@ class AtomFeed(object):
 
             handler.characters("\n")
 
-            handler.addQuickElement(u'id', item['id'], tabs=2)
+            handler.add_quick_element(u'id', item['id'], tabs=2)
             self.write_text_construct(handler, u'title', item['title'], tabs=2)
-            handler.addQuickElement(u'updated', rfc3339_date(item['updated']),
-                                    tabs=2)
+            handler.add_quick_element(u'updated', rfc3339_date(item['updated']),
+                                      tabs=2)
             if item.get('published'):
-                handler.addQuickElement(u'published',
-                                        rfc3339_date(item['published']),
-                                        tabs=2)
+                handler.add_quick_element(u'published',
+                                          rfc3339_date(item['published']),
+                                          tabs=2)
             if item.get('rights'):
                 self.write_text_construct(handler, u'rights', item['rights'],
                                           tabs=2)
@@ -393,17 +404,17 @@ class AtomFeed(object):
                 self.write_content(handler, item['content'])
 
             if item.get('dc_language'):
-                handler.addQuickElement(u'dcterms:language',
-                                        item['dc_language'], tabs=2)
+                handler.add_quick_element(u'dcterms:language',
+                                          item['dc_language'], tabs=2)
             if item.get('dc_publisher'):
-                handler.addQuickElement(u'dcterms:publisher',
-                                        item['dc_publisher'], tabs=2)
+                handler.add_quick_element(u'dcterms:publisher',
+                                          item['dc_publisher'], tabs=2)
             if item.get('dc_issued'):
-                handler.addQuickElement(u'dcterms:issued', item['dc_issued'],
-                                        tabs=2)
+                handler.add_quick_element(u'dcterms:issued', item['dc_issued'],
+                                          tabs=2)
             if item.get('dc_identifier'):
-                handler.addQuickElement(u'dcterms:identifier',
-                                        item['dc_identifier'], tabs=2)
+                handler.add_quick_element(u'dcterms:identifier',
+                                          item['dc_identifier'], tabs=2)
 
             handler.characters("\t")
             handler.endElement(u'entry')

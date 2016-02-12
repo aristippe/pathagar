@@ -3,7 +3,8 @@ $(document).ready(function () {
         paging: false,
         searching: false,
         ordering: false,
-        select: true
+        select: true,
+        bInfo: false,
     });
 
     $('#book_list tbody').on('click', 'tr', function () {
@@ -13,5 +14,13 @@ $(document).ready(function () {
     $('#button').click(function () {
         alert(table.rows('.selected').data().length + ' row(s) selected');
     });
+
+    $('#book_list').
+      on('mouseover', 'tr', function() {
+          $(this).find('.download').show();
+      }).
+      on('mouseout', 'tr', function() {
+          $(this).find('.download').hide();
+      });
 
 });

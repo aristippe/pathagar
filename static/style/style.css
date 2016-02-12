@@ -229,21 +229,10 @@ div.required:after {
 
 .download {
     display: inline-block;
-    padding: 5px 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
     font-weight: normal;
-    color: white;
-    line-height: 1;
     text-decoration: none;
-    font-size: 120%;
     font-family: serif;
-    margin: 5px;
-}
-
-.download:hover {
-    color: white;
-    background: gray;
+    display: none;
 }
 
 body {
@@ -256,16 +245,27 @@ body {
 /* List view */
 
 a {
-    color: gray
+    color: inherit;
+}
+
+table.book_list th, table.book_list thead th {
+    color: lightgray;
+    padding: 0;
+}
+
+table.book_list td {
+    color: lightgray;
+    padding: 0;
 }
 
 table.book_list td {
     /*font-size:1.5em;*/
+    padding:0;
     border-bottom: 1px solid lightgray
 }
 
-table.book_list th {
-    color: lightgray
+table.book_list th.th_date_added {
+    width: 13em;
 }
 
 .list_title {
@@ -276,18 +276,29 @@ table.book_list th {
     width: 30%;
 }
 
+.list_downloads {
+    text-align: center;
+    width: 2em;
+}
+
+.list_download_link {
+    text-align: center;
+    width: 2em;
+}
+
 .list_date {
     width: 20%;
 }
 
-.list_tag {
+.list_tags {
     font-size: 90%;
+    padding-left:1em;
     color: gray;
 }
 
 ul.stats {
     margin: 0;
-    padding-top: 0
+    padding: 0;
 }
 
 ul.stats li {
@@ -301,14 +312,16 @@ label {
     font-weight: normal
 }
 
-.search_query {
-    font-weight: normal;
-    color: gray
+.list_header {
+    margin-top:1.5em;
+    margin-bottom:0;
+    font-size:150%;
 }
 
 table.dataTable, table.dataTable thead th, table.dataTable thead td {
     padding: 0;
     border-bottom: 0 !important;
+    /*border: 1px solid black;*/
 }
 
 body {
@@ -330,18 +343,31 @@ tbody {
     height: 100%
 }
 
+#content {
+    padding: 20px 40px;
+    clear:both;
+}
+
 .detail_title, .detail_author {
     font-weight: normal;
     font-style: normal;
     padding: 0;
 }
 
+.detail_sidebar {
+    width:240px;
+    float:left;
+}
+
 .detail_info {
-    padding-top: 2em
+    padding-top: 2em;
+    display:block;
+    overflow:hidden;
 }
 
 .detail_stats {
-    padding-top: 1em
+    padding-top: 1em;
+    display: table-cell;
 }
 
 .detail_desc {
@@ -350,11 +376,21 @@ tbody {
     margin-right: 10%;
 }
 
+.detail_path {
+    display: table-cell;
+}
+
 .detail_comments {
+    clear:both;
     padding-top: 2em;
-    padding-bottom: 3em;
+    padding-bottom: 2em;
 }
 
 .comment_box {
     width: 80%
+}
+
+#id_comment {
+    width:120%;
+    height:10em;
 }

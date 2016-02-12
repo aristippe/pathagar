@@ -28,6 +28,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
+from django.utils.translation import ugettext as _
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
@@ -42,7 +43,7 @@ from sendfile import sendfile
 from search import simple_search, advanced_search
 from forms import BookForm, AddLanguageForm
 from models import TagGroup, Book, Language, Status
-from popuphandler import handlePopAdd
+from popuphandler import handle_pop_add
 from opds import page_qstring
 from opds import generate_catalog
 from opds import generate_root_catalog
@@ -68,6 +69,9 @@ class AddBookWizard(SessionWizardView):
 
     def process_step_files(self, form):
         """Append the values appended by the first form to storage.extra_data.
+
+        :param form:
+        :returns:
         """
         if self.steps.current == '0':
             self.storage.extra_data = {
@@ -82,6 +86,9 @@ class AddBookWizard(SessionWizardView):
     def get_form_initial(self, step):
         """Use the values parsed from the uploaded Epub as the initial values
         (on step 0) as the initial values for the form on step 1.
+
+        :param step:
+        :returns:
         """
         ret = super(AddBookWizard, self).get_form_initial(step)
 
@@ -109,6 +116,9 @@ class AddBookWizard(SessionWizardView):
         """Create a new Book when all the forms have been submitted. The file
         uploaded on step 0 is added to the Book along with its sha256 hash, and
         the temporary cover filed (if applicable) is copied and deleted.
+
+        :param form_list:
+        :returns:
         """
         uploaded_file = form_list[0].cleaned_data['epub_file']
         # Set file related parameters.
@@ -121,6 +131,7 @@ class AddBookWizard(SessionWizardView):
 
         # Set the cover image.
         tmp_cover_path = self.storage.extra_data['cover_path']
+        cover_filename = None
         if tmp_cover_path:
             try:
                 cover_filename = '%s%s' % (self.instance.pk,
@@ -144,7 +155,7 @@ class AddBookWizard(SessionWizardView):
 
 @login_required
 def add_language(request):
-    return handlePopAdd(request, AddLanguageForm, 'language')
+    return handle_pop_add(request, AddLanguageForm, 'language')
 
 
 class BookEditView(UpdateView):
@@ -179,6 +190,10 @@ def download_book(request, book_id):
     TODO: decide if in some cases the original file should be returned instead.
     TODO: currently the downloaded file name is the same as the stored file.
     Decide if it should be standardized to something else instead.
+
+    :param request:
+    :param book_id:
+    :returns:
     """
     book = get_object_or_404(Book, pk=book_id)
     # filename = os.path.join(settings.MEDIA_ROOT, book.original_path.name)
@@ -233,7 +248,6 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     """
     Filter the books, paginate the result, and return either a HTML
     book list, or a atom+xml OPDS catalog.
-
     """
     q = request.GET.get('q')
     search_all = request.GET.get('search-all') == 'on'
@@ -283,6 +297,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'published_books': published_count,
         'unpublished_books': unpublished_count,
         'q': q,
+        'q_count': len(queryset),
         'paginator': paginator,
         'page_obj': page_obj,
         'search_title': search_title,
@@ -300,7 +315,12 @@ def home(request):
 
 
 def root(request, qtype=None):
-    """Return the root catalog for navigation"""
+    """Return the root catalog for navigation
+
+    :param request:
+    :param qtype:
+    :returns:
+    """
     root_catalog = generate_root_catalog()
     return HttpResponse(root_catalog, content_type='application/atom+xml')
 
@@ -325,7 +345,12 @@ def by_author(request, qtype=None):
 
 @login_required
 def by_tag(request, tag, qtype=None):
-    """ displays a book list by the tag argument """
+    """ displays a book list by the tag argument
+    :param request:
+    :param tag:
+    :param qtype:
+    :returns:
+    """
     # get the Tag object
     tag_instance = Tag.objects.get(name=tag)
 

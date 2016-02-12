@@ -3,6 +3,7 @@ database.db
 books/migrations/*
 staticfiles/
 static_media/**
+*.mo
 *.pyc
 .DS_Store
 local_settings.py

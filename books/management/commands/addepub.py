@@ -13,12 +13,18 @@ def get_epubs_paths(paths):
     """Return a list of paths for potential EPUB(s) from a list of file and
     directory names. The returned list contains only files with the '.epub'
     extension, traversing the directories recursively.
+
+    :param paths:
+    :return:
     """
 
     def validate_and_add(path, filenames):
         """Check that the `path` has an '.epub' extension, convert it to
         absolute and add it to `filenames` if not present already in order to
         preserve the ordering.
+
+        :param path:
+        :param filenames:
         """
         if os.path.splitext(path)[1] == '.epub':
             filename = os.path.abspath(path)
@@ -99,6 +105,10 @@ class Command(BaseCommand):
     def process_epub(self, filename, use_symlink=False):
         """Import a single EPUB from `filename`, creating a new `Book` based
         on the information parsed from the epub.
+
+        :param filename:
+        :param use_symlink:
+        :return:
         """
         # Try to parse the epub file, extracting the relevant info.
         info_dict = {}

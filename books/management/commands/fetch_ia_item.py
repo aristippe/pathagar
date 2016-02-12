@@ -37,7 +37,11 @@ should_download_cover = True
 
 def load_user_bookmarks(user):
     """Return an array of bookmarked items for a given user.
-    An example of user bookmarks: http://archive.org/bookmarks/sverma"""
+    An example of user bookmarks: http://archive.org/bookmarks/sverma
+
+    :param user:
+    :return:
+    """
 
     print user
     url = 'http://archive.org/bookmarks/%s?output=json' % user
@@ -46,7 +50,11 @@ def load_user_bookmarks(user):
 
 
 def get_item_meatadata(item_id):
-    """Returns an object from the archive.org Metadata API"""
+    """Returns an object from the archive.org Metadata API
+
+    :param item_id:
+    :return:
+    """
 
     url = 'http://archive.org/metadata/%s' % item_id
     f = urllib.urlopen(url)
@@ -54,11 +62,23 @@ def get_item_meatadata(item_id):
 
 
 def get_download_url(item_id, file_):
+    """
+
+    :param item_id:
+    :param file_:
+    :return:
+    """
     prefix = 'http://archive.org/download/'
     return prefix + os.path.join(item_id, file_)
 
 
 def download_files(item_id, matching_files, item_dir):
+    """
+
+    :param item_id:
+    :param matching_files:
+    :param item_dir:
+    """
     for file_ in matching_files:
         download_path = os.path.join(item_dir, file_)
 
@@ -84,7 +104,15 @@ def download_files(item_id, matching_files, item_dir):
 
 
 def download_item(item_id, mediatype, metadata, out_dir, formats):
-    """Download an archive.org item into the specified directory"""
+    """Download an archive.org item into the specified directory
+
+    :param item_id:
+    :param mediatype:
+    :param metadata:
+    :param out_dir:
+    :param formats:
+    :return:
+    """
 
     print "Downloading", item_id
 
@@ -115,6 +143,13 @@ def download_item(item_id, mediatype, metadata, out_dir, formats):
 
 
 def download_cover(item_id, metadata, download_directory):
+    """
+
+    :param item_id:
+    :param metadata:
+    :param download_directory:
+    :return:
+    """
     files_list = metadata['files']
 
     item_dir = os.path.join(download_directory, item_id)
@@ -131,6 +166,13 @@ def download_cover(item_id, metadata, download_directory):
 
 
 def add_to_pathagar(pathagar_books, mdata, cover_image):
+    """
+
+    :param pathagar_books:
+    :param mdata:
+    :param cover_image:
+    :return:
+    """
     pathagar_formats = []
     if 'epub' in requested_formats:
         pathagar_formats += requested_formats['epub']

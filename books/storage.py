@@ -13,6 +13,11 @@ def file_symlink_safe(old_file_name, new_file_name, allow_overwrite=False):
 
     Might raise NotImplemented if the system does not support symbolic links,
     and IOError or other Exceptions thrown by os.symlink.
+
+    :param old_file_name:
+    :param new_file_name:
+    :param allow_overwrite:
+    :return:
     """
     # Make sure the system has support for symbolic links.
     # TODO: detect it with more precision, check for other platforms.
@@ -130,6 +135,8 @@ class LinkOrFileSystemStorage(FileSystemStorage):
         TODO: delete() relies on os.remove(), which seems to be fine, but might
         be worth checking if under ancient Python versions or similar it causes
         the *original* file to be removed.
+
+        :param name:
         """
         name = self.path(name)
         # If the file exists, delete it from the filesystem.

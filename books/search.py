@@ -40,6 +40,10 @@ def simple_search(queryset, searchterms,
 def advanced_search(queryset, searchterms):
     """
     Does an advanced search in several fields of the books.
+
+    :param queryset:
+    :param searchterms:
+    :return:
     """
     q_objects = []
     results = queryset

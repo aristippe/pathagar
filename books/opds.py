@@ -49,6 +49,10 @@ def page_qstring(request, page_number=None):
     Return the query string for the URL.
 
     If page_number is given, modify the query for that page.
+
+    :param request:
+    :param page_number:
+    :returns:
     """
     qdict = dict(request.GET.items())
     if page_number is not None:

@@ -12,7 +12,7 @@ class UUIDVersionError(Exception):
 
 class UUIDField(CharField):
     """ UUIDField for Django, supports all uuid versions which are natively
-        suported by the uuid python module.
+        supported by the uuid python module.
     """
 
     def __init__(self, verbose_name=None, name=None, auto=True, version=1,
