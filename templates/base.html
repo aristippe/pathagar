@@ -80,7 +80,7 @@
                 <li><a data-name="by-title" href="{% url "by_title" %}">{% trans "By Title" %}</a></li>
                 <li><a data-name="by-author" href="{% url "by_author" %}">{% trans "By Author" %}</a></li>
                 <li><a data-name="most-downloaded" href="{% url "most_downloaded" %}">{% trans "Most Downloaded" %}</a></li>
-                <li><a data-name="by-tag" href="{% url "tags" %}">Tags</a></li>
+                <li><a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a></li>
                 <li class="searchbox">
                     <input id="search" type="text" name="q"/>
                     <input id="submit" type="submit" value="Submit"/>
@@ -125,14 +125,21 @@
 
 <div class="container">
     {% block content %}{% endblock %}
-    {% block footer %}{% endblock %}
-    {#    <div class="span-12 prepend-6 footer">#}
-    {#        <small>#}
-    {#        This is the <em>Pathagar</em> book server..#}
-    {#        </small>#}
-    {#    </div>#}
-    <div>
 
+    {% block footer %}
+{#        <hr class="space">#}
+{#        <div class="linkbox2">#}
+{#            <div class="box">#}
+{#                <ul class="stats">#}
+{#                    <li>Published eBooks: <em>{{ published_books }}</em></li>#}
+{#                    {% if user.is_authenticated %}#}
+{#                        <li>Unpublished eBooks: <em>#}
+{#                            {{ unpublished_books }}</em></li>#}
+{#                    {% endif %}#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+    {% endblock %}
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static from staticfiles %}
+{% load comments %}
 
 {% block head %}
     <link rel="stylesheet"
@@ -59,7 +60,8 @@
 {% block content %}
 
     {% if q != None %}
-        <h4 class="list_header">{% trans "Search:" %} "{{ q }}"
+        <h4 class="list_header">{% trans "Search:" %}
+            {% blocktrans with query=q %}"{{ query }}"{% endblocktrans %}
             ({{ paginator.count }}
             {% trans "results" %})</h4>
     {% endif %}
@@ -122,8 +124,9 @@
                 <th><a data-name="latest"
                        href="{% url "latest" %}?q={{ q|urlencode }}">{% trans "Added" %}</a>
                 </th>
-                <th class="list_downloads"><a data-name="by-author"
-                                              href="{% url "most_downloaded" %}?q={{ q|urlencode }}">⬇</a>
+                <th class="list_number">❝</th>
+                <th class="list_number"><a data-name="by-author"
+                                              href="{% url "most_downloaded" %}?q={{ q|urlencode }}">⬇❝</a>
                 </th>
             {% else %}
                 <th><a data-name="by-title" href="{% url "by_title" %}">
@@ -133,7 +136,8 @@
                 <th class="th_date_added"><a data-name="latest" href=
                         "{% url "latest" %}">
                     {% trans "Added" %}</a></th>
-                <th class="list_downloads"><a data-name="by-author"
+                <th class="list_number">❝</th>
+                <th class="list_number"><a data-name="by-author"
                                               href="{% url "most_downloaded" %}">⬇</a>
                 </th>
             {% endif %}
@@ -170,12 +174,11 @@
                         href="{% url "by_title" %}?q={{ book.a_author|urlencode }}">{{ book.a_author }}</a>
                 </td>
                 <td class="list_date">
-                    {% blocktrans with time_added=book.time_added|timesince %}
-                        {{ time_added }} ago{% endblocktrans %}</td>
+                    {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago{% endblocktrans %}</td>
                 <!-- date:'Y-m-d H:i' -->
-                <td class="list_downloads"><a
-                        href="{% url "most_downloaded" %}?q={{ book.downloads }}">{{ book.downloads }}</a>
-                </td>
+                {% get_comment_count for book as comment_count %}
+                <td class="list_number">{{ comment_count }}</td>
+                <td class="list_number">{{ book.downloads }}</td>
                 <td class="list_download_link"><a class="download"
                                                   href="{% url "book_download" book.pk %}">⬇︎</a>
                 </td>
@@ -203,18 +206,14 @@
         {% endif %}
     </span>
     </div>
-    {#    </div>#}
 
-    {#    <div class="span-6 last" id="sidebar2">#}
-    <hr class="space">
-    <div class="linkbox2">
-        <h3 class="caps">Statistics</h3>
+        <hr class="space">
         <div class="box">
             <ul class="stats">
-                <li>Published eBooks: <em>{{ published_books }}</em></li>
+                <li>{% trans "Published eBooks:" %} {{ published_books }}</li>
                 {% if user.is_authenticated %}
-                    <li>Unpublished eBooks: <em>
-                        {{ unpublished_books }}</em></li>
+                    <li>{% trans "Unpublished eBooks:" %}
+                        {{ unpublished_books }}</li>
                 {% endif %}
             </ul>
             {#            <hr>#}
@@ -234,6 +233,5 @@
             {#                </ul>#}
             {#            {% endifnotequal %}#}
         </div>
-    </div>
 
 {% endblock %}
