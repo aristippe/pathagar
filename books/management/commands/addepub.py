@@ -1,8 +1,11 @@
+from __future__ import unicode_literals
+
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
 from django.core.exceptions import ValidationError
 
 import os
+import sys
 
 from books import models
 from books.epub import Epub
@@ -50,11 +53,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional arguments.
-        parser.add_argument('item', nargs='+', type=unicode,
-                            help=("A file with '.epub' extension or a "
-                                  "directory (in which case it is traversed "
-                                  "recursively, adding all the files with "
-                                  "'.epub' extension)."))
+        parser.add_argument(
+            'item', nargs='+',
+            type=lambda s: s.decode(sys.getfilesystemencoding()),
+            help=("A file with '.epub' extension or a directory (in which "
+                  "case it is traversed recursively, adding all the files "
+                  "with '.epub' extension)."))
 
         # Named (optional) arguments.
         parser.add_argument(

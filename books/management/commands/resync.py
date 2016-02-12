@@ -1,4 +1,7 @@
+from __future__ import unicode_literals
+
 import os
+import sys
 
 from django.conf import settings
 from django.core.files import File
@@ -18,11 +21,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional arguments
-        parser.add_argument('item', nargs='+', type=unicode,
-                            help=("A file with '.epub' extension or a "
-                                  "directory (in which case it is traversed "
-                                  "recursively, checking all the files with "
-                                  "'.epub' extension)."))
+        parser.add_argument(
+            'item', nargs='+',
+            type=lambda s: s.decode(sys.getfilesystemencoding()),
+            help=("A file with '.epub' extension or a directory (in which "
+                  "case it is traversed recursively, checking all the files "
+                  "with '.epub' extension)."))
 
         # Named (optional) arguments
         parser.add_argument(
