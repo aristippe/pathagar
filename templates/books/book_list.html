@@ -69,26 +69,43 @@
         <h4 class="list_header">{% trans "Tag:" %} {{ tag }}</h4>
     {% endif %}
 
-    <div class="prepend-12 pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=
+{#    <div class="prepend-12 pagination">#}
+{#    <span class="step-links">#}
+{#        {% if page_obj.has_previous %}#}
+{#            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>#}
+{#        {% endif %}#}
+{##}
+{#        <span class="current-page"#}
+{#              style="font-size:100%;font-weight:normal;top:0">#}
+{#            &nbsp;{{ page_obj.number }} {% trans "of" %}#}
+{#            {{ paginator.num_pages }}&nbsp;#}
+{#        </span>#}
+{##}
+{#        {% if page_obj.has_next %}#}
+{#            <a href="?page=#}
+{#                    {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>#}
+{#        {% endif %}#}
+{#    </span>#}
+{#    </div>#}
 
+        <!-- new paginator -->
+        <div class="prepend-12 pagination">
+        {% if page_obj.has_previous %}
+            <a class="prev btn btn-info" href="?page=1">First</a>
+            <a href="?page=
                     {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
-
-        <span class="current-page"
-              style="font-size:100%;font-weight:normal;top:0">
-            &nbsp;{{ page_obj.number }} {% trans "of" %}
-            {{ paginator.num_pages }}&nbsp;
-        </span>
-
+                {% for pg in page_range %}
+                    {% if page_obj.number == pg %}
+                            <a href="?page={{ pg }}" class="btn btn-default">{{ pg }}</a>
+                    {% else %}
+                        <a href="?page={{ pg }}" class="btn">{{ pg }}</a>
+                    {% endif %}
+                {% endfor %}
         {% if page_obj.has_next %}
-            <a href="?page=
-
-                    {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
+            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
+            <a class="next btn btn-info" href="?page={{ paginator.num_pages }}">Last</a>
         {% endif %}
-    </span>
     </div>
 
     <table id="book_list" class="hover">
@@ -172,11 +189,7 @@
     <div class="prepend-12 pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=
-
-
-
-                    {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
 
         <span class="current-page"
@@ -186,11 +199,7 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page=
-
-
-
-                    {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
+            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
         {% endif %}
     </span>
     </div>
