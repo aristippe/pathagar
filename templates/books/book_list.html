@@ -60,7 +60,7 @@
 
     {% if q != None %}
         <h4 class="list_header">{% trans "Search:" %} "{{ q }}"
-            ({{ q_count }}
+            ({{ paginator.count }}
             {% trans "results" %})</h4>
     {% endif %}
 

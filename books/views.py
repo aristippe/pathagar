@@ -308,7 +308,6 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'published_books': published_count,
         'unpublished_books': unpublished_count,
         'q': q,
-        'q_count': len(queryset),
         'paginator': paginator,
         'page_obj': page_obj,
         'page_range': page_range,
