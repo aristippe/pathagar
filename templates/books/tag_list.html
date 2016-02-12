@@ -9,30 +9,39 @@
 
 {% block content %}
 
-    <div id="content">
+    <h4 class="list_header">Tags {% if tag_group %}
+        by {{ tag_group }}{% endif %}</h4>
 
-    <h1 class="alt">Tags {% if tag_group %} by {{ tag_group }}{% endif %}</h1>
-    <hr class="space">
+        {% if tag_list %}
+            <table id="book_list" class="hover">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Books</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tag in tag_list %}
+                    <tr>
+                        <td><a href="{% url "by_tag" tag.name %}">{{ tag.name }}</a></td>
+                    <td>{{ tag.count }}</td>
+                    </tr>
+                {% endfor %}
 
-    {% if tag_list %}
-        <div class="span-2"><label>Tags:</label></div>
-        <div class="span-10">
-            {% for tag in tag_list %}
-                <a class="button" href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
-            {% endfor %}
-        </div>
-        <hr class="space">
-    {% endif %}
+                </tbody>
+            </table>
+        {% endif %}
 
-    {% if tag_group_list %}
-        <div class="span-2"><label>Tag groups:</label></div>
-        <div class="span-10">
-            {% for tag_group in tag_group_list %}
-                <a class="button" href="{% url "tag_groups" tag_group.slug %}">{{ tag_group.name }}</a>
-            {% endfor %}
-        </div>
-        <hr class="space">
-    {% endif %}
+        {% if tag_group_list %}
+            <div class="span-2"><label>Tag groups:</label></div>
+            <div class="span-10">
+                {% for tag_group in tag_group_list %}
+                    <a class="button" href="{% url "tag_groups" tag_group.slug %}">{{ tag_group.name }}</a>
+                {% endfor %}
+            </div>
+            <hr class="space">
+        {% endif %}
+
 
 {% endblock %}
 

@@ -32,8 +32,8 @@
                     <a class="button"
                        href="{% url "book_delete" book.pk %}">{% trans "Remove" %}</a>
                 </div>
-{#                <div class="span-2"><label>Status:</label></div>#}
-{#                <div class="span-3">{{ book.a_status }}</div>#}
+                {#                <div class="span-2"><label>Status:</label></div>#}
+                {#                <div class="span-3">{{ book.a_status }}</div>#}
             {% endif %}
         </div>
 
@@ -44,12 +44,15 @@
             </h4>
 
             {% if book.tags.count != 0 %}
-                <div class="span-2"><label>Tags:</label></div>
+                <div class="span-3"><label>Tags:</label></div>
                 <div class="span-10">
+
                     {% for tag in book.tags.all %}
-                        <a class="button"
-                           href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
+                        <a class="list_tag" href="{% url "by_tag" tag.name %}">
+                            {{ tag.name }}</a>{% if not forloop.last %},
+                    {% endif %}
                     {% endfor %}
+
                 </div>
                 <hr class="space">
             {% endif %}
@@ -67,16 +70,18 @@
                 <div class="span-6">{% trans "Unknown" %}</div>
             {% endifnotequal %}
             <br/><br/>
-                <div class="span-3">{% trans "Added" %}:</div>
-                <div class="span-6">{% blocktrans with book.time_added|timesince as time_added %} {{ time_added }} ago{% endblocktrans %}</div>
+            <div class="span-3">{% trans "Added" %}:</div>
+            <div class="span-6">
+                {% blocktrans with time_added=book.time_added|timesince %}
+                    {{ time_added }} ago {% endblocktrans %}</div>
+            <br/>
+            <div class="span-3">{% trans "Downloads" %}:</div>
+            <div class="span-6">{{ book.downloads }}</div>
+            {% if user.is_superuser %}
                 <br/>
-                <div class="span-3">{% trans "Downloads" %}:</div>
-                <div class="span-6">{{ book.downloads }}</div>
-                {% if user.is_superuser %}
-                    <br/>
-                    <div class="span-3">{% trans "Path" %}:</div>
-                    <div class="detail_path">{{ book.original_path }}</div>
-                {% endif %}
+                <div class="span-3">{% trans "Path" %}:</div>
+                <div class="detail_path">{{ book.original_path }}</div>
+            {% endif %}
             {% ifnotequal book.a_summary None %}
                 <div class="detail_desc">{{ book.a_summary|safe }}</div>
             {% endifnotequal %}
@@ -85,55 +90,62 @@
 
     {% if allow_user_comments %}
         <div class="detail_comments">
-            <div class="span-16">
-                <h4><label>{% trans "Comments" %}:</label></h4>
-            </div>
-            {#                <hr class="space">#}
+            <div class="span-16" style="padding-left:2em">
+                <div class="span-16">
+                    <h4><label>{% trans "Comments:" %}</label></h4>
+                </div>
+                {#                <hr class="space">#}
 
-            {% get_comment_list for book as comment_list %}
-            {% for comment in comment_list %}
-                <div class="span-16" style="padding-left:2em">
-                    <b> {{ comment.user_name }}
-                        - {{ comment.submit_date|timesince }} ago:</b>
+                {% get_comment_list for book as comment_list %}
+                {% for comment in comment_list %}
+                    <b>
+                        {% blocktrans with user_name=comment.user_name comment_date=comment.submit_date|timesince %}
+                            {{ user_name }} - {{ comment_date }}
+                            ago {% endblocktrans %}</b>
                     <br/>
                     <div>{{ comment.comment }}</div>
-                </div>
-                <hr class="space">
-            {% endfor %}
+                    <hr class="space">
+                {% endfor %}
 
-            {#                <hr>#}
+                {#                <hr>#}
 
-            {#<div class="span-16">#}
-            {#<label>Add your comment:</label>#}
-            {#</div>#}
+                {#<div class="span-16">#}
+                {#<label>Add your comment:</label>#}
+                {#</div>#}
 
-            {% get_comment_form for book as form %}
-            <form action="{% comment_form_target %}" method="post">
-                {% csrf_token %}
+                {% get_comment_form for book as form %}
+                <form action="{% comment_form_target %}" method="post">
+                    {% csrf_token %}
 
-                {{ form.content_type }}
-                {{ form.object_pk }}
-                {{ form.timestamp }}
-                {{ form.security_hash }}
-                <input type="hidden" name="next"
-                       value="{% url "book_detail" book.pk %}"/>
+                    {{ form.content_type }}
+                    {{ form.object_pk }}
+                    {{ form.timestamp }}
+                    {{ form.security_hash }}
+                    <input type="hidden" name="next"
+                           value="{% url "book_detail" book.pk %}"/>
 
-                {#<div class="span-4"><label for="id_your_name">Your name:</label></div>#}
-                {#{{ form.name }}#}
-                {#<hr class="space">#}
+                    {#<div class="span-4"><label for="id_your_name">Your name:</label></div>#}
+                    {#{{ form.name }}#}
+                    {#<hr class="space">#}
 
-                {#                <div class="span-4" style="padding-left:2em"><label for="id_comment">Comment:</label></div>#}
-                {{ form.comment }}
-                <hr class="space">
+                    {#                <div class="span-4" style="padding-left:2em"><label for="id_comment">Comment:</label></div>#}
+                    {{ form.comment }}
+                    <hr class="space">
 
-                <input type="hidden" name="email" value="fake_emai@kfake.org"/>
-                <input type="hidden" name="url" value="http://faksite.org"/>
+                    <input type="hidden" name="email"
+                           value="fake_emai@kfake.org"/>
+                    <input type="hidden" name="url"
+                           value="http://faksite.org"/>
 
-                <input type="submit" name="submit" value="Add comment">
-            </form>
+                    <input type="submit" name="submit" value="{% trans "Add comment" %}">
+                </form>
+            </div>
+
         </div>
-    {% endif %}
+{% endif %}
 
+    <!-- not sure why margin/padding for div doesn't work -->
+    <hr class="space"><hr class="space">
 
 {% endblock %}
 

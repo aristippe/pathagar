@@ -45,6 +45,9 @@ class LanguageManager(models.Manager):
         TODO: replace with a RFC5646 compatible system.
         TODO: find the proper Exception to subclass.
         TODO: revise fixtures, some (or all) of them might be unreachable.
+
+        :param code: language code
+        :returns: language
         """
         # Add Language, discarding it if it does not have a valid code.
         if code in langs_by_code:

@@ -99,7 +99,7 @@ class Command(BaseCommand):
         try:
             book = models.Book.objects.get(file_sha256sum=file_sha256sum)
         except models.Book.DoesNotExist:
-            return (None, False)
+            return None, False
 
         # Prepare the changes.
         info_dict = {'original_path': filename}

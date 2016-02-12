@@ -312,9 +312,10 @@ label {
     font-weight: normal
 }
 
-.search_query {
-    font-weight: normal;
-    color: gray
+.list_header {
+    margin-top:1.5em;
+    margin-bottom:0;
+    font-size:150%;
 }
 
 table.dataTable, table.dataTable thead th, table.dataTable thead td {
@@ -387,4 +388,9 @@ tbody {
 
 .comment_box {
     width: 80%
+}
+
+#id_comment {
+    width:120%;
+    height:10em;
 }

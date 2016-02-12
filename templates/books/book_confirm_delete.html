@@ -23,7 +23,8 @@
     <form enctype="multipart/form-data" action="{% url "book_delete" book.pk %}"
           method="POST">{% csrf_token %}
             <legend>
-                {% blocktrans with book.a_title as book_title %} Are you sure you want to remove
+                {% blocktrans with book_title=book.a_title %} Are you sure
+                    you want to remove
                 {{ book_title }}? {% endblocktrans %}</legend>
                 <br/>
                 <a href="{% url "home" %}">

@@ -27,7 +27,7 @@ class BookUploadForm(forms.Form):
     def clean_epub_file(self):
         """Perform basic validation of the epub_file by making sure:
         - no other existing models have the same sha256 hash.
-        - it is  parseable by `Epub`.
+        - it is parseable by `Epub`.
 
         TODO: This method is called twice during the wizard (at step 0, and
         at done()), by Django design. Still, we should look for alternatives
@@ -42,6 +42,7 @@ class BookUploadForm(forms.Form):
             raise forms.ValidationError('The file is already on the database')
 
         # Validate parseability.
+        epub = None
         try:
             # Fetch information from the epub, and set it as attributes.
             epub = Epub(data)
@@ -84,6 +85,8 @@ class BookForm(forms.ModelForm):
 
         This is given by the browser in the POST request.
 
+        :param commit:
+        :returns: saved instance
         """
         instance = super(BookForm, self).save(commit=False)
         # Save the tags.

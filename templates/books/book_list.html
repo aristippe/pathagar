@@ -58,18 +58,22 @@
 
 {% block content %}
 
-    {#    <div class="span-17 colborder" id="content">#}
-
     {% if q != None %}
-        <h4 class="search_query">{% trans "Search:" %} "{{ q }}"
+        <h4 class="list_header">{% trans "Search:" %} "{{ q }}"
             ({{ q_count }}
             {% trans "results" %})</h4>
+    {% endif %}
+
+    {% url 'by_tag' tag as view_tag %}
+    {% if request.get_full_path == view_tag %}
+        <h4 class="list_header">{% trans "Tag:" %} {{ tag }}</h4>
     {% endif %}
 
     <div class="prepend-12 pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?page=
+
                     {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
 
@@ -81,6 +85,7 @@
 
         {% if page_obj.has_next %}
             <a href="?page=
+
                     {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
         {% endif %}
     </span>
@@ -89,7 +94,7 @@
     <table id="book_list" class="hover">
         <thead>
         <tr>
-            <th/>
+            <th></th>
             {% if q != None %}
                 <th><a data-name="by-title"
                        href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a>
@@ -115,7 +120,7 @@
                                               href="{% url "most_downloaded" %}">⬇</a>
                 </th>
             {% endif %}
-            <th/>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -137,19 +142,9 @@
                     {% if book.tags.count != 0 %}
                         <div class="list_tags">
                             {% for tag in book.tags.all %}
-
-                                {% if forloop.first %}
-                                    <a class="list_tag" href="
-                        {% url "by_tag" tag.name %}">{{ tag.name }}</a>,
-                                {% endif %}
-
-                                <a class="list_tag" href="
-                    {% url "by_tag" tag.name %}">{{ tag.name }}</a>,
-
-                                {% if forloop.last or booktags.count == 1 %}
                                     <a class="list_tag"
-                                       href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
-                                {% endif %}
+                                       href="{% url "by_tag" tag.name %}">
+                                        {{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -158,7 +153,7 @@
                         href="{% url "by_title" %}?q={{ book.a_author|urlencode }}">{{ book.a_author }}</a>
                 </td>
                 <td class="list_date">
-                    {% blocktrans with book.time_added|timesince as time_added %}
+                    {% blocktrans with time_added=book.time_added|timesince %}
                         {{ time_added }} ago{% endblocktrans %}</td>
                 <!-- date:'Y-m-d H:i' -->
                 <td class="list_downloads"><a
@@ -178,6 +173,9 @@
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?page=
+
+
+
                     {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
 
@@ -189,6 +187,9 @@
 
         {% if page_obj.has_next %}
             <a href="?page=
+
+
+
                     {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
         {% endif %}
     </span>
@@ -225,6 +226,5 @@
             {#            {% endifnotequal %}#}
         </div>
     </div>
-    {#    </div>#}
 
 {% endblock %}
