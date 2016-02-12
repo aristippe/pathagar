@@ -286,6 +286,13 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     except (EmptyPage, InvalidPage):
         page_obj = paginator.page(paginator.num_pages)
 
+    # pagination
+    index = page_obj.number - 1
+    max_index = len(list(paginator.page_range))
+    start_index = index - 5 if index >= 10 else 0
+    end_index = index + 5 if index <= max_index - 10 else max_index
+    page_range = list(paginator.page_range)[start_index:end_index]
+
     # Build the query string:
     qstring = page_qstring(request)
 
@@ -304,6 +311,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'q_count': len(queryset),
         'paginator': paginator,
         'page_obj': page_obj,
+        'page_range': page_range,
         'search_title': search_title,
         'search_author': search_author, 'list_by': list_by,
         'qstring': qstring,
