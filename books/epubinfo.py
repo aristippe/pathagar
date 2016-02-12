@@ -141,15 +141,15 @@ class EpubInfo:  # TODO: Cover the entire DC range
                 if node.tag == '{http://www.idpf.org/2007/opf}reference':
                     # Guide, EPUB 2 spec
                     if node.attrib['type'] == 'cover':
-                        cover = node.attrib['href']
+                        cover = node.attrib['href'].split('#')[0]
                         break
                     # Guide, non-standard as title attribute
                     if node.attrib['title'] == 'Cover':
-                        cover = node.attrib['href']
+                        cover = node.attrib['href'].split('#')[0]
                         break
                     # Guide title page if no cover
                     if node.attrib['type'] in ['title-page', 'tp']:
-                        cover = node.attrib['href']
+                        cover = node.attrib['href'].split('#')[0]
                         break
 
         if cover is None:
