@@ -19,38 +19,33 @@ import logging
 import os
 
 from django.conf import settings
-from django.http import HttpResponse
-from django.http import Http404
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView, UpdateView
-from django.utils.translation import ugettext as _
-
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.db.models import Count
+from django.http import Http404
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView, UpdateView
 from formtools.wizard.views import SessionWizardView
-
-from app_settings import BOOKS_PER_PAGE
-
+from sendfile import sendfile
 from taggit.models import Tag
 
-from sendfile import sendfile
-
-from search import simple_search, advanced_search
+from app_settings import BOOKS_PER_PAGE
+from books.app_settings import BOOK_PUBLISHED
 from forms import BookForm, AddLanguageForm
 from models import TagGroup, Book, Language, Status
-from popuphandler import handle_pop_add
-from opds import page_qstring
 from opds import generate_catalog
 from opds import generate_root_catalog
-from opds import generate_tags_catalog
 from opds import generate_taggroups_catalog
-
-from books.app_settings import BOOK_PUBLISHED
+from opds import generate_tags_catalog
+from opds import page_qstring
+from popuphandler import handle_pop_add
+from search import simple_search, advanced_search
 
 logger = logging.getLogger(__name__)
 
@@ -210,7 +205,16 @@ def download_book(request, book_id):
 
 
 def tags(request, qtype=None, group_slug=None):
+    """
+
+    :param request:
+    :param qtype:
+    :param group_slug:
+    :return:
+    """
     context = {'list_by': 'by-tag'}
+
+    tag_list = Tag.objects.all().annotate(count=Count('book'))
 
     if group_slug is not None:
         tag_group = get_object_or_404(TagGroup, slug=group_slug)
@@ -221,9 +225,9 @@ def tags(request, qtype=None, group_slug=None):
         # returns all the tags, as a quick hack for avoiding problems, but it
         # is the *wrong* behaviour.
         # context.update({'tag_list': Tag.objects.get_for_object(tag_group)})
-        context.update({'tag_list': Tag.objects.all()})
+        context.update({'tag_list': tag_list})
     else:
-        context.update({'tag_list': Tag.objects.all()})
+        context.update({'tag_list': tag_list})
 
     tag_groups = TagGroup.objects.all()
     context.update({'tag_group_list': tag_groups})

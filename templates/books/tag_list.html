@@ -1,4 +1,23 @@
 {% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"
+          type="text/css"/>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
+          type="text/css"/>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
+
+    <script type="text/javascript"
+            src="{% static "js/book_list.js" %}"></script>
+{% endblock %}
 
 {% block title %}{{ book.a_title }} :: Pathagar Book Server{% endblock %}
 
@@ -12,35 +31,40 @@
     <h4 class="list_header">Tags {% if tag_group %}
         by {{ tag_group }}{% endif %}</h4>
 
-        {% if tag_list %}
-            <table id="book_list" class="hover">
-                <thead>
+        <!-- TODO fix alignment to better match book_list -->
+    <br/>
+
+    {% if tag_list %}
+        <table id="book_list" class="hover">
+            <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Books" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tag in tag_list %}
                 <tr>
-                    <th>Name</th>
-                    <th>Books</th>
+                    <td>
+                        <a href="{% url "by_tag" tag.name %}">{{ tag.name }}</a>
+                    </td>
+                    <td><a href="{% url "by_tag" tag.name %}">{{ tag.count }}</a></td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for tag in tag_list %}
-                    <tr>
-                        <td><a href="{% url "by_tag" tag.name %}">{{ tag.name }}</a></td>
-                    <td>{{ tag.count }}</td>
-                    </tr>
-                {% endfor %}
+            {% endfor %}
 
-                </tbody>
-            </table>
-        {% endif %}
+            </tbody>
+        </table>
+    {% endif %}
 
-        {% if tag_group_list %}
-            <div class="span-2"><label>Tag groups:</label></div>
-            <div class="span-10">
-                {% for tag_group in tag_group_list %}
-                    <a class="button" href="{% url "tag_groups" tag_group.slug %}">{{ tag_group.name }}</a>
-                {% endfor %}
-            </div>
-            <hr class="space">
-        {% endif %}
+    {% if tag_group_list %}
+        <div class="span-2"><label>Tag groups:</label></div>
+        <div class="span-10">
+            {% for tag_group in tag_group_list %}
+                <a class="button" href="{% url "tag_groups" tag_group.slug %}">{{ tag_group.name }}</a>
+            {% endfor %}
+        </div>
+        <hr class="space">
+    {% endif %}
 
 
 {% endblock %}
