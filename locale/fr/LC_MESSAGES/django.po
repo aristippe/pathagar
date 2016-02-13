@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-12 15:28-0800\n"
+"POT-Creation-Date: 2016-02-12 19:46-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,13 +149,10 @@ msgstr "Se connecter"
 
 #: templates/books/book_confirm_delete.html:26
 #, python-format
-msgid ""
-" Are you sure\n"
-"                    you want to remove\n"
-"                %(book_title)s? "
+msgid "Are you sure you want to remove %(book_title)s?"
 msgstr ""
 
-#: templates/books/book_confirm_delete.html:31
+#: templates/books/book_confirm_delete.html:29
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -171,9 +168,15 @@ msgstr "Éditer"
 msgid "Remove"
 msgstr "Supprimer"
 
-#: templates/books/book_detail.html:60
+#: templates/books/book_detail.html:47
 msgid "Publisher:"
 msgstr "Éditeur :"
+
+#: templates/books/book_detail.html:51
+#, fuzzy
+#| msgid "Tags"
+msgid "Tags:"
+msgstr "Étiquettes :"
 
 #: templates/books/book_detail.html:63
 msgid "Published:"
@@ -208,26 +211,26 @@ msgstr "Téléchargments :"
 msgid "Path:"
 msgstr "Répertoire :"
 
-#: templates/books/book_detail.html:95
+#: templates/books/book_detail.html:97
 msgid "Comments:"
 msgstr "Commentaires :"
 
-#: templates/books/book_detail.html:102
+#: templates/books/book_detail.html:103
 #, python-format
 msgid "%(user_name)s | %(comment_date)s ago"
 msgstr "%(user_name)s | il y a %(comment_date)s"
 
-#: templates/books/book_detail.html:131
+#: templates/books/book_detail.html:141
 msgid "Add comment"
 msgstr "Ajouter"
 
-#: templates/books/book_form.html:55 templates/books/book_list.html.py:118
-#: templates/books/book_list.html:132
+#: templates/books/book_form.html:55 templates/books/book_list.html.py:119
+#: templates/books/book_list.html:133
 msgid "Title"
 msgstr "Titre"
 
-#: templates/books/book_form.html:59 templates/books/book_list.html.py:121
-#: templates/books/book_list.html:134
+#: templates/books/book_form.html:59 templates/books/book_list.html.py:122
+#: templates/books/book_list.html:135
 msgid "Author"
 msgstr "Auteur"
 
@@ -271,52 +274,72 @@ msgstr "Téléchargments"
 msgid "Cover image"
 msgstr "Couverture"
 
-#: templates/books/book_list.html:22
+#: templates/books/book_list.html:23
 msgid "Welcome to the Pathagar book server"
 msgstr ""
 
-#: templates/books/book_list.html:30
+#: templates/books/book_list.html:31
 msgid "Book Search"
 msgstr "Recherche"
 
-#: templates/books/book_list.html:62
+#: templates/books/book_list.html:63
 msgid "Search:"
 msgstr "Recherche :"
 
-#: templates/books/book_list.html:63
+#: templates/books/book_list.html:64
 #, python-format
 msgid "\"%(query)s\""
 msgstr "« %(query)s »"
 
-#: templates/books/book_list.html:65
+#: templates/books/book_list.html:66
 msgid "results"
 msgstr "résultats"
 
-#: templates/books/book_list.html:70
+#: templates/books/book_list.html:71
 msgid "Tag:"
 msgstr "Étiquette :"
 
-#: templates/books/book_list.html:97 templates/books/book_list.html.py:193
+#: templates/books/book_list.html:96
+msgid "First"
+msgstr "Premier"
+
+#: templates/books/book_list.html:98 templates/books/book_list.html.py:195
 msgid "Previous"
 msgstr "Précédent"
 
-#: templates/books/book_list.html:107 templates/books/book_list.html.py:203
+#: templates/books/book_list.html:108 templates/books/book_list.html.py:205
 msgid "Next"
 msgstr "Suivant"
 
-#: templates/books/book_list.html:124 templates/books/book_list.html.py:137
+#: templates/books/book_list.html:109
+msgid "Last"
+msgstr "Dernier"
+
+#: templates/books/book_list.html:125 templates/books/book_list.html.py:138
 msgid "Added"
 msgstr "Ajouté"
 
-#: templates/books/book_list.html:176
+#: templates/books/book_list.html:177
 #, fuzzy, python-format
 #| msgid "time added"
 msgid "%(time_added)s ago"
 msgstr "il y a %(time_added)s"
 
-#: templates/books/book_list.html:198
+#: templates/books/book_list.html:200
 msgid "of"
 msgstr "de"
+
+#: templates/books/book_list.html:213
+#, fuzzy
+#| msgid "Published:"
+msgid "Published eBooks:"
+msgstr "Publié :"
+
+#: templates/books/book_list.html:215
+#, fuzzy
+#| msgid "Published:"
+msgid "Unpublished eBooks:"
+msgstr "Publié :"
 
 #: templates/books/tag_list.html:41
 msgid "Name"
@@ -337,3 +360,7 @@ msgstr "étape précedante"
 #: templates/formtools/wizard/wizard_form.html:28
 msgid "submit"
 msgstr "soumettre"
+
+#: templates/registration/login.html:23
+msgid "Login"
+msgstr "Se connecter"

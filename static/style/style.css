@@ -5,6 +5,10 @@ body {
     font-size: 90%;
 }
 
+div.detail_info a {
+    color: #2e9dfd;
+}
+
 .cover {
     margin-top: 5em
 }

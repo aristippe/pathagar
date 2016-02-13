@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static from staticfiles %}
 
 {% block head %}
@@ -19,7 +20,7 @@
             <form class="login-form" method="post" action="{% url "login" %}">{% csrf_token %}
                 {{ form.username }}
                 {{ form.password }}
-                <input class="login-button" type="submit" value="login"/>
+                <input class="login-button" type="submit" value="{% trans "Login" %}"/>
                 {#<input type="hidden" name="next" value="{{ next }}" />#}
             </form>
         </div>

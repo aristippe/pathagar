@@ -93,7 +93,7 @@
         <!-- new paginator -->
         <div class="prepend-12 pagination">
         {% if page_obj.has_previous %}
-            <a class="prev btn btn-info" href="?page=1">First</a>
+            <a class="prev btn btn-info" href="?page=1">{% trans "First" %}</a>
             <a href="?page=
                     {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
         {% endif %}
@@ -106,7 +106,7 @@
                 {% endfor %}
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
-            <a class="next btn btn-info" href="?page={{ paginator.num_pages }}">Last</a>
+            <a class="next btn btn-info" href="?page={{ paginator.num_pages }}">{% trans "Last" %}</a>
         {% endif %}
     </div>
 
