@@ -71,44 +71,7 @@
         <h4 class="list_header">{% trans "Tag:" %} {{ tag }}</h4>
     {% endif %}
 
-{#    <div class="prepend-12 pagination">#}
-{#    <span class="step-links">#}
-{#        {% if page_obj.has_previous %}#}
-{#            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>#}
-{#        {% endif %}#}
-{##}
-{#        <span class="current-page"#}
-{#              style="font-size:100%;font-weight:normal;top:0">#}
-{#            &nbsp;{{ page_obj.number }} {% trans "of" %}#}
-{#            {{ paginator.num_pages }}&nbsp;#}
-{#        </span>#}
-{##}
-{#        {% if page_obj.has_next %}#}
-{#            <a href="?page=#}
-{#                    {{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#    </div>#}
-
-        <!-- new paginator -->
-        <div class="prepend-12 pagination">
-        {% if page_obj.has_previous %}
-            <a class="prev btn btn-info" href="?page=1">{% trans "First" %}</a>
-            <a href="?page=
-                    {{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
-        {% endif %}
-                {% for pg in page_range %}
-                    {% if page_obj.number == pg %}
-                            <a href="?page={{ pg }}" class="btn btn-default">{{ pg }}</a>
-                    {% else %}
-                        <a href="?page={{ pg }}" class="btn">{{ pg }}</a>
-                    {% endif %}
-                {% endfor %}
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
-            <a class="next btn btn-info" href="?page={{ paginator.num_pages }}">{% trans "Last" %}</a>
-        {% endif %}
-    </div>
+    {% include "pagination.html" %}
 
     <table id="book_list" class="hover">
         <thead>
@@ -189,49 +152,33 @@
 
     {#<li>Showing matches <em>{{ page_obj.start_index }}</em> to <em>{{ page_obj.end_index }}</em></li>#}
 
-    <div class="prepend-12 pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Previous" %}</a>
-        {% endif %}
+    {% include "pagination.html" %}
 
-        <span class="current-page"
-              style="font-size:100%;font-weight:normal;top:0">
-            &nbsp;{{ page_obj.number }} {% trans "of" %}
-            {{ paginator.num_pages }}&nbsp;
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }} {% endif %}">{% trans "Next" %}</a>
-        {% endif %}
-    </span>
+    <hr class="space">
+    <div class="box">
+        <ul class="stats">
+            <li>{% trans "Published eBooks:" %} {{ published_books }}</li>
+            {% if user.is_authenticated %}
+                <li>{% trans "Unpublished eBooks:" %}
+                    {{ unpublished_books }}</li>
+            {% endif %}
+        </ul>
+        {#            <hr>#}
+        {#            {% if tag %}#}
+        {#                <ul class="stats">#}
+        {#                    <li>Showing books with tag <em>{{ tag.name }}</em></li>#}
+        {#                </ul>#}
+        {#            {% endif %}#}
+        {#            {% ifnotequal book_list.count total_books %}#}
+        {#                <ul class="stats">#}
+        {#                    <li>Number of ebooks in search result: <em>{{ book_list.count }}</em></li>#}
+        {#                    <li>Showing matches <em>{{ page_obj.start_index }}</em> to <em>{{ page_obj.end_index }}</em></li>#}
+        {#                </ul>#}
+        {#            {% else %}#}
+        {#                <ul class="stats">#}
+        {#                    <li>Showing entire collection.</li>#}
+        {#                </ul>#}
+        {#            {% endifnotequal %}#}
     </div>
-
-        <hr class="space">
-        <div class="box">
-            <ul class="stats">
-                <li>{% trans "Published eBooks:" %} {{ published_books }}</li>
-                {% if user.is_authenticated %}
-                    <li>{% trans "Unpublished eBooks:" %}
-                        {{ unpublished_books }}</li>
-                {% endif %}
-            </ul>
-            {#            <hr>#}
-            {#            {% if tag %}#}
-            {#                <ul class="stats">#}
-            {#                    <li>Showing books with tag <em>{{ tag.name }}</em></li>#}
-            {#                </ul>#}
-            {#            {% endif %}#}
-            {#            {% ifnotequal book_list.count total_books %}#}
-            {#                <ul class="stats">#}
-            {#                    <li>Number of ebooks in search result: <em>{{ book_list.count }}</em></li>#}
-            {#                    <li>Showing matches <em>{{ page_obj.start_index }}</em> to <em>{{ page_obj.end_index }}</em></li>#}
-            {#                </ul>#}
-            {#            {% else %}#}
-            {#                <ul class="stats">#}
-            {#                    <li>Showing entire collection.</li>#}
-            {#                </ul>#}
-            {#            {% endifnotequal %}#}
-        </div>
 
 {% endblock %}

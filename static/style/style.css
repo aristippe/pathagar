@@ -17,9 +17,8 @@ a[href$=".epub"] {
     background-image: url(blueprint/plugins/link-icons/icons/epub.png);
 }
 
-.pagination {
+div.paginator {
     text-align: right;
-    padding: 5px;
 }
 
 .current-page {
@@ -417,3 +416,43 @@ hr.comment {
     margin-bottom: 1em;
     height: 1px;
 }
+
+
+
+/*div.pagination {*/
+	/*background-color:#fff;*/
+	/*color:#48b9ef;*/
+	/*padding:10px 0 10px 0;*/
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	/*font-size: 13px;*/
+	/*text-align:center;*/
+/*}*/
+
+/*div.pagination span.other {*/
+	/*color:gray;*/
+	/*text-decoration:none;*/
+/*}*/
+
+/*div.pagination a {*/
+	/*color:gray;*/
+	/*padding:7px 7px;*/
+	/*margin:0 2px;*/
+	/*text-decoration:none;*/
+	/*border:2px solid #f0f0f0;*/
+/*}*/
+
+/*div.pagination a:hover, div.pagination a:active {*/
+	/*border:2px solid #2e9dfd;*/
+	/*color:#2e9dfd;*/
+/*}*/
+
+/*div.pagination span.current {*/
+	/*padding:7px 7px;*/
+	/*border:2px solid #ff5a00;*/
+	/*color:#fff;*/
+	/*font-weight:bold;*/
+	/*background-color:#ff6c16;*/
+/*}*/
+/*div.pagination span.disabled {*/
+	/*display:none;*/
+/*}*/
