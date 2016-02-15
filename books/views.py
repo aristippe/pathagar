@@ -307,7 +307,8 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'search_title': search_title,
         'search_author': search_author, 'list_by': list_by,
         'qstring': qstring,
-        'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS
+        'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS,
+        'allow_user_comments': settings.ALLOW_USER_COMMENTS,
     })
 
     return render(request, 'books/book_list.html', extra_context)
