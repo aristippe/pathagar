@@ -6,3 +6,4 @@ django-taggit==0.18.0
 Pillow==2.9.0  # https://github.com/python-pillow/Pillow/issues/1457
 django-contrib-comments==1.6.2
 django-formtools==1.0
+django-pure-pagination==0.3.0

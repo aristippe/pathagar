@@ -45,7 +45,7 @@
 
             <div class="detail_info">
                 <div class="span-4">{% trans "Publisher:" %}</div>
-                <div class="span-6">{{ book.dc_publisher }}</div>
+                <div class="span-6"><a href="{% url "by_title" %}?q={{ book.dc_publisher }}">{{ book.dc_publisher }}</a></div>
                 <br/>
                 {% if book.tags.count != 0 %}
                     <div class="span-4">{% trans "Tags:" %}</div>
@@ -58,8 +58,8 @@
                         {% endfor %}
 
                     </div>
-                {% endif %}
                 <br/>
+                {% endif %}
                 <div class="span-4">{% trans "Published:" %}</div>
                 <div class="span-6">{{ book.dc_issued }}</div>
                 <br/>
@@ -73,9 +73,9 @@
                 <div class="span-4">{% trans "Added:" %}</div>
                 <div class="span-6">
                     {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago {% endblocktrans %}</div>
-                <br/>
-                <div class="span-4">{% trans "Size:" %}</div>
-                <div class="span-6">{{ book.book_file.size|filesizeformat }}</div>
+{#                <br/>#}
+{#                <div class="span-4">{% trans "Size:" %}</div>#}
+{#                <div class="span-6">{{ book.book_file.size|filesizeformat }}</div>#}
                 <br/>
                 <div class="span-4">{% trans "Downloads:" %}</div>
                 <div class="span-6">{{ book.downloads }}</div>

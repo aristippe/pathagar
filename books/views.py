@@ -22,7 +22,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.paginator import InvalidPage
 from django.db.models import Count
 from django.http import Http404
 from django.http import HttpResponse
@@ -32,6 +32,7 @@ from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from formtools.wizard.views import SessionWizardView
+from pure_pagination import Paginator, EmptyPage
 from sendfile import sendfile
 from taggit.models import Tag
 
@@ -286,13 +287,6 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     except (EmptyPage, InvalidPage):
         page_obj = paginator.page(paginator.num_pages)
 
-    # pagination
-    index = page_obj.number - 1
-    max_index = len(list(paginator.page_range))
-    start_index = index - 5 if index >= 10 else 0
-    end_index = index + 5 if index <= max_index - 10 else max_index
-    page_range = list(paginator.page_range)[start_index:end_index]
-
     # Build the query string:
     qstring = page_qstring(request)
 
@@ -310,11 +304,11 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'q': q,
         'paginator': paginator,
         'page_obj': page_obj,
-        'page_range': page_range,
         'search_title': search_title,
         'search_author': search_author, 'list_by': list_by,
         'qstring': qstring,
-        'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS
+        'allow_public_add_book': settings.ALLOW_PUBLIC_ADD_BOOKS,
+        'allow_user_comments': settings.ALLOW_USER_COMMENTS,
     })
 
     return render(request, 'books/book_list.html', extra_context)

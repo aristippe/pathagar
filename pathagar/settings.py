@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'formtools',
     'taggit',
     'django_comments',
+    'pure_pagination',
     # pathagar apps
     'books.apps.BooksConfig',
 ]
@@ -153,6 +154,11 @@ ALLOW_PUBLIC_ADD_BOOKS = False
 
 ALLOW_USER_COMMENTS = True
 
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 5,
+    'MARGIN_PAGES_DISPLAYED': 1,
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}
 
 # -- Local settings.
 # Deployment-specific variables are imported from local_settings.py
