@@ -1,0 +1,48 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n %}
+{% load static from staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "style/login.css" %}" type="text/css">
+{% endblock %}
+
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        <div class="error">
+            <p>Your username and password didn't match. Please try again.</p>
+        </div>
+    {% endif %}
+
+    <div class="login-page">
+        <div class="form">
+            <form action="" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <legend>{% trans "Signin" %}</legend>
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    {{ field.errors }}
+                    {% if field.name == 'remember_me' %}
+                        <p class="checkbox">
+                            <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
+                        </p>
+                    {% else %}
+                        <p>
+                            {{ field }}
+                        </p>
+                    {% endif %}
+                {% endfor %}
+            </fieldset>
+            <input type="submit" value="{% trans "Signin" %}"/>
+            <p class="forgot-password">
+                <a href="{% url 'userena_password_reset' %}" title="{% trans 'Forgot your password?' %}">{% trans "Forgot your password?" %}</a>
+            </p>
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

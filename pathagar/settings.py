@@ -26,11 +26,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # third-party apps
+    'bootstrap3',
     'formtools',
     'taggit',
     'django_comments',
     'pure_pagination',
+    'userena',
+    'guardian',
+    'easy_thumbnails',
     # pathagar apps
+    'accounts',
     'books.apps.BooksConfig',
 ]
 
@@ -44,6 +49,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'userena.middleware.UserenaLocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'pathagar.urls'
@@ -74,6 +80,27 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Authentication
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SESSION_INVALIDATION_ON_PASSWORD_CHANGE = False
+
+ANONYMOUS_USER_ID = -1
+
+AUTH_PROFILE_MODULE = 'accounts.Profile'
+
+USERENA_ACTIVATION_DAYS = 10
+USERENA_PROFILE_DETAIL_TEMPLATE = 'accounts/profile_detail.html'
+USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

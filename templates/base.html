@@ -1,146 +1,117 @@
 {% load i18n %}
 {% load static from staticfiles %}
+
+{% load bootstrap3 %}
+{% bootstrap_css %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset=utf-8/>
     <head>
-        <link rel="stylesheet" href="{% static "style/blueprint/screen.css" %}" type="text/css"
-              media="screen, projection">
-        <link rel="stylesheet" href="{% static "style/blueprint/print.css" %}" type="text/css" media="print">
-        <link rel="stylesheet" href="{% static "style/blueprint/plugins/fancy-type/screen.css" %}" type="text/css"
-              media="screen, projection">
-        <link rel="stylesheet" href="{% static "style/blueprint/plugins/link-icons/screen.css" %}" type="text/css"
-              media="screen, projection">
-        <!--[if lt IE 8]>
-            <link rel="stylesheet" href="{% static "style/blueprint/ie.css" %}" type="text/css" media="screen, projection">
-        <![endif]-->
         <link rel="stylesheet" href="{% static "style/bootstrap/bootstrap.css" %}" type="text/css">
         <link rel="stylesheet" href="{% static "style/style.css" %}" type="text/css">
 
         <title>{% block title %}{% endblock %}</title>
 
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        {#        <script type="text/javascript" src="{% static "js/jquery.example.min.js" %}"></script>#}
         <script type="text/javascript"
                 src=" https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+        {% bootstrap_javascript %}
 
         {% block head %}{% endblock %}
     </head>
+
+    <style>
+        body {
+            background-image: url({% static "images/nuage_site.jpg" %});
+        }
+    </style>
 <body>
 
 <!-- hide header to show only login page -->
 {% if user.is_authenticated %}
 
-    {#    <script type="text/javascript">#}
-    {#        $(document).ready(function () {#}
-    {#            $('.searchbox').hover(#}
-    {#// handle in:#}
-    {#                    function () {#}
-    {#                        $('.search-ops').show();#}
-    {#                    },#}
-    {#// handle out:#}
-    {#                    function () {#}
-    {#                        $('.search-ops').hide();#}
-    {#                    }#}
-    {#            );#}
-    {#            {% if list_by != None %}#}
-    {#                $(".navbar a[data-name='{{ list_by }}']").addClass("active");#}
-    {#            {% endif %}#}
-    {#            {% block script %}{% endblock %}#}
-    {#        });#}
-    {#    </script>#}
-    <div class="header">
-        <a href="{% url "latest" %}"><h1>Pathagar</h1></a>
-        <form
-                {% if list_by %}
-                    {% if list_by == 'latest' %}
-                        action="{% url "latest" %}"
-                    {% endif %}
-                    {% if list_by == 'by-title' %}
-                        action="{% url "by_title" %}"
-                    {% endif %}
-                    {% if list_by == 'by-author' %}
-                        action="{% url "by_author" %}"
-                    {% endif %}
-                    {% if list_by == 'by-tag' %}
-                        {% if tag %}
-                        action="{% url "by_tag" tag.name %}"
-                        {% endif %}
-                    {% endif %}
-                    {% if list_by == 'most-downloaded' %}
-                        action="{% url "most_downloaded" %}"
-                    {% endif %}
-                {% endif %}
-                        method="get">
-
-            <ul class="navbar">
-                <li><a data-name="latest" href="
-                {% url "latest" %}">{% trans "Latest" %}</a></li>
-                <li><a data-name="by-title" href="{% url "by_title" %}">{% trans "By Title" %}</a></li>
-                <li><a data-name="by-author" href="{% url "by_author" %}">{% trans "By Author" %}</a></li>
-                <li><a data-name="most-downloaded" href="{% url "most_downloaded" %}">{% trans "Most Downloaded" %}</a></li>
-                <li><a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a></li>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url "latest" %}">Pathagar</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="nav-item"><a data-name="latest" href="
+                {% url "latest" %}">{% trans "Books" %}</a></li>
+                <li class="nav-item">
+                    <a data-name="by-author" href="{% url "by_author" %}">
+                        {% trans "Authors" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "latest_feed" %}">{% trans "RSS" %}</a>
+                </li>
                 <li class="searchbox">
-                    <input id="search" type="text" name="q"/>
-                    <input id="submit" type="submit" value="Submit"/>
-                    <ul class="search-ops">
-                        <li>
-                            <input name="search-all" id="search-all" type="checkbox"
-                                   {% if search_all %}checked{% endif %}/>
-                            <label for="search-all">Search All</label>
-                        </li>
-                        <li>
-                            <input name="search-title" id="search-title" type="checkbox"
-                                   {% if search_title %}checked{% endif %}/>
-                            <label for="search-title">Search Title</label>
-                        </li>
-                        <li>
-                            <input name="search-author" id="search-author" type="checkbox"
-                                   {% if search_author %}checked{% endif %}/>
-                            <label for="search-author">Search Author</label>
-                        </li>
+                    <form
+                            {% if list_by %}
+                                {% if list_by == 'latest' %}
+                                    action="{% url "latest" %}"
+                                {% endif %}
+                                {% if list_by == 'by-title' %}
+                                    action="{% url "by_title" %}"
+                                {% endif %}
+                                {% if list_by == 'by-author' %}
+                                    action="{% url "by_author" %}"
+                                {% endif %}
+                                {% if list_by == 'by-tag' %}
+                                    {% if tag %}
+                                        action="{% url "by_tag" tag.name %}"
+                                    {% endif %}
+                                {% endif %}
+                                {% if list_by == 'most-downloaded' %}
+                                    action="{% url "most_downloaded" %}"
+                                {% endif %}
+                            {% endif %}
+                            method="get" class="navbar-form">
+                        <input id="search" class="form-control input-sm" type="text"
+                                name="q"/>
+                        <input id="submit" type="submit" value="Submit"/>
+                    </form>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img width="20px" src="{{ user.profile.get_mugshot_url }}" alt="{% trans "Your mugshot" %}"/><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        {% if user.is_authenticated %}
+                            <li>
+                                <a href="{% url 'userena_profile_detail' user.username %}">{{ user.username }}</a>
+                            </li>
+                            <li><a href="{% url "book_add" %}"
+                            >{% trans "Add Book" %}</a></li>
+                            {% if user.is_superuser %}
+                                <li>
+                                    <a href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+                                </li>
+                            {% endif %}
+                            <li><a href="{% url "userena_signout" %}?next=/"
+                            >{% trans "Log Out" %}</a></li>
+                        {% else %}
+                            {% if allow_public_add_book %}
+                                <a href="{% url "book_add" %}">{% trans "Add Book" %}</a>&nbsp;&nbsp;
+                                <a href="{% url "login" %}?next=/">{% trans "Log In" %}</a>
+                            {% endif %}
+                        {% endif %}
                     </ul>
                 </li>
             </ul>
-        </form>
-
-        <div class="loginbox">
-            {% if user.is_authenticated %}
-                <span>{% trans "Welcome" %}, {{ user.username }}&nbsp;&nbsp;</span>
-                <a href="{% url "book_add" %}">{% trans "Add Book" %}</a>&nbsp;&nbsp;
-                <a href="{% url "logout" %}?next=/">{% trans "Log Out" %}</a>
-            {% else %}
-                {% if allow_public_add_book %}
-                    <a href="{% url "book_add" %}">{% trans "Add Book" %}</a>&nbsp;&nbsp;
-                {% endif %}
-                <a href="{% url "login" %}?next=/">{% trans "Log In" %}</a>
-            {% endif %}
         </div>
-
-        {% block feed_link %}{% endblock %}
-
-    </div> <!-- header -->
+    </nav> <!-- header -->
 {% endif %} <!-- hide header if not authenticated -->
 
 <div class="container">
     {% block content %}{% endblock %}
 
     {% block footer %}
-{#        <hr class="space">#}
-{#        <div class="linkbox2">#}
-{#            <div class="box">#}
-{#                <ul class="stats">#}
-{#                    <li>Published eBooks: <em>{{ published_books }}</em></li>#}
-{#                    {% if user.is_authenticated %}#}
-{#                        <li>Unpublished eBooks: <em>#}
-{#                            {{ unpublished_books }}</em></li>#}
-{#                    {% endif %}#}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
     {% endblock %}
+</div>
 
 </body>
 </html>
-

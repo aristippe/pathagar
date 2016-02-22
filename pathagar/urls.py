@@ -81,8 +81,10 @@ urlpatterns = [
     url(r'^add/(?:dc_language|language)/$', views.add_language),
 
     # Auth login and logout:
-    url(r'^accounts/login/$', login, name='login'),
-    url(r'^accounts/logout/$', logout, name='logout'),
+    url(r'^accounts/', include('userena.urls')),
+    url(r'^signin/', 'userena.views.signin', {'template_name': 'signin_form.html'}, name="signin"),
+    # url(r'^accounts/login/$', login, name='login'),
+    # url(r'^accounts/logout/$', logout, name='logout'),
 
     # Admin:
     url(r'^admin/', include(admin.site.urls)),
