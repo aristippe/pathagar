@@ -19,6 +19,55 @@ from django import forms
 
 import models
 from epub import Epub
+from dal import autocomplete
+
+
+class AuthorCreateMultipleField(autocomplete.CreateModelMultipleField):
+    def create_value(self, value):
+        return models.Author.objects.create(name=value).pk
+
+
+class BookEditForm(forms.ModelForm):
+    # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
+
+    authors = AuthorCreateMultipleField(
+        # required=False,
+        queryset=models.Author.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+    )
+    # tags = autocomplete.TaggitField(
+    #     required=False,
+    #     widget=autocomplete.TagSelect2(url='tags-autocomplete'),
+    # )
+
+    class Meta:
+        model = models.Book
+        exclude = ('original_path', 'mimetype', 'file_sha256sum',)
+
+    def save(self, commit=True):
+        """
+        Store the MIME type of the uploaded book in the database.
+
+        This is given by the browser in the POST request.
+
+        :param commit:
+        :returns: saved instance
+        """
+        instance = super(BookEditForm, self).save(commit=False)
+        # Save the tags.
+        self.save_m2m()
+
+        # TODO: revise, as the template currently does not allow replacing
+        # book_file, so mimetype is not really on cleaned_data.
+        book_file = self.cleaned_data['book_file']
+        if instance.mimetype is None:
+            try:
+                instance.mimetype = book_file.content_type
+            except:
+                pass
+        if commit:
+            instance.save()
+        return instance
 
 
 class BookUploadForm(forms.Form):
@@ -70,39 +119,6 @@ class BookMetadataForm(forms.ModelForm):
         model = models.Book
         exclude = ('book_file', 'original_path', 'mimetype',
                    'file_sha256sum', 'cover_img')
-
-
-class BookForm(forms.ModelForm):
-    # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
-
-    class Meta:
-        model = models.Book
-        exclude = ('original_path', 'mimetype', 'file_sha256sum',)
-
-    def save(self, commit=True):
-        """
-        Store the MIME type of the uploaded book in the database.
-
-        This is given by the browser in the POST request.
-
-        :param commit:
-        :returns: saved instance
-        """
-        instance = super(BookForm, self).save(commit=False)
-        # Save the tags.
-        self.save_m2m()
-
-        # TODO: revise, as the template currently does not allow replacing
-        # book_file, so mimetype is not really on cleaned_data.
-        book_file = self.cleaned_data['book_file']
-        if instance.mimetype is None:
-            try:
-                instance.mimetype = book_file.content_type
-            except:
-                pass
-        if commit:
-            instance.save()
-        return instance
 
 
 class AddLanguageForm(forms.ModelForm):

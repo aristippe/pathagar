@@ -36,9 +36,11 @@ from pure_pagination import Paginator, EmptyPage
 from sendfile import sendfile
 from taggit.models import Tag
 
+from dal import autocomplete
+
 from app_settings import BOOKS_PER_PAGE
 from books.app_settings import BOOK_PUBLISHED
-from forms import BookForm, AddLanguageForm
+from forms import BookEditForm, AddLanguageForm
 from models import Author, Book, Language, Status, TagGroup
 from opds import generate_catalog
 from opds import generate_root_catalog
@@ -49,6 +51,34 @@ from popuphandler import handle_pop_add
 from search import simple_search, advanced_search
 
 logger = logging.getLogger(__name__)
+
+
+class AuthorAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Author.objects.none()
+
+        qs = Author.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
+class TagAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Tag.objects.none()
+
+        qs = Tag.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 
 class AddBookWizard(SessionWizardView):
@@ -119,7 +149,7 @@ class AddBookWizard(SessionWizardView):
         uploaded_file = form_list[0].cleaned_data['epub_file']
         # Set file related parameters.
         self.instance.book_file = uploaded_file
-        self.instance.file_sha256sum = self.storage.\
+        self.instance.file_sha256sum = self.storage. \
             extra_data['file_sha256sum']
         self.instance.save()
         # Save the tags.
@@ -154,9 +184,12 @@ def add_language(request):
     return handle_pop_add(request, AddLanguageForm, 'language')
 
 
+# https://stackoverflow.com/questions/16937076/how-does-one-use-a-custom-widget-with-a-generic-updateview-without-having-to-red
+# https://stackoverflow.com/questions/17052701/problems-integrating-django-autocomplete-light-with-django-taggit
+
 class BookEditView(UpdateView):
     model = Book
-    form_class = BookForm
+    form_class = BookEditForm
 
     def get_context_data(self, **kwargs):
         context = super(BookEditView, self).get_context_data(**kwargs)

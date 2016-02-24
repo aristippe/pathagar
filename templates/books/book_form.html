@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static from staticfiles %}
+{% load bootstrap3 %}
 
 {% block title %}{% if action == 'add' %}
     Add Book
@@ -25,14 +26,22 @@
     <script type="text/javascript" src="{% static "js/RelatedObjectLookups.js" %}"></script>{% endblock %}
 
 {% block content %}
-{{ form.errors }}
+    {{ form.errors }}
     <form enctype="multipart/form-data"
             {% if action == 'add' %}
-          action="{% url "book_add" %}"
+                action="{% url "book_add" %}"
             {% else %}
-          action="{% url "book_edit" book.pk %}"
+                action="{% url "book_edit" book.pk %}"
             {% endif %}
-          method="POST">{% csrf_token %}
+            method="POST">
+        {% csrf_token %}
+        {{ form.media }}
+
+        <div class="detail_sidebar">
+            <img src="{{ book.cover_img.url }}" alt="Cover" width=180px/>
+            {% bootstrap_field form.cover_img show_label=False %}
+        </div>
+
         <fieldset>
             <legend>
                 {% if action == 'add' %}
@@ -48,78 +57,84 @@
                 </div>
             {% endif %}
 
-            {#<div class="col-sm-3 required"><label for="id_original_path">File:</div>#}
-            {#<div class="col-sm-4">{{ form.original_path }}</div>#}
-{#            {{ form.original_path.errors }}#}
-            <br/>
-            <div class="col-sm-3 required">{% trans "Title" %}:</div>
-            <div class="col-sm-9">{{ form.a_title }}</div>
-            {{ form.a_title.errors }}
-            <br/>
-            <div class="col-sm-3 required">{% trans "Author" %}:</div>
-            <div class="col-sm-9">
-{#                {{ form.authors.all|join:',' }}#}
-                {% for author in form.authors.all %}
-                    {{ author.name }}
-                    {% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </div>
-            {{ form.authors.errors }}
-            <br/>
-            <div class="col-sm-3 required">{% trans "Status" %}:</div>
-            <div class="col-sm-4">{{ form.a_status }}</div>
-            {{ form.a_status.errors }}
-            <br/>
-            <div class="col-sm-3">
-                {% trans "Tags" %}:</div>
-            <div class="col-sm-9 last">{{ form.tags }}</div>
-            <br/>
-            <div class="col-sm-3">
-                {% trans "Summary" %}:</div>
-            <div class="col-sm-8"><textarea>{{ form.a_summary }}</textarea></div>
-            <br/>
-            <div class="col-sm-3">
-                {% trans "Language" %}:</div>
-            <div class="col-sm-4">
-                {{ form.dc_language }}
-            </div>
-            <br/>
-
-            <div>
-                <p class="hidden_head">{% trans "Optional information" %} <a href="#">({% trans "click to expand" %})</a></p>
-                <div class="hidden_body">
-                    <div class="col-sm-3">{% trans "Category" %}:</div>
-                    <div class="col-sm-4">{{ form.a_category }}</div>
-                    <br/>
-                    <div class="col-sm-3">{% trans "Rights" %}:</div>
-                    <div class="col-sm-4">{{ form.a_rights }}</div>
-                    <br/>
-                    <div class="col-sm-3">{% trans "Publisher" %}:</div>
-                    <div class="col-sm-4">{{ form.dc_publisher }}</div>
-                    <br/>
-                    <div class="col-sm-3">{% trans "Issued" %}: </div>
-                    <div class="col-sm-4">{{ form.dc_issued }}</div>
-                    <br/>
-                    <div class="col-sm-3">{% trans "Identifier" %}: </div>
-                    <div class="col-sm-4">{{ form.dc_identifier }}</div>
-                    <br/>
-                    <div class="col-sm-3">{% trans "Downloads" %}:</div>
-                    <div class="col-sm-4 last">{{ form.downloads }}</div>
-                    <br/>
-                    <div class="col-sm-3">{% trans "Cover image" %}: </div>
-                    <div class="col-sm-4">{{ form.cover_img }}</div>
-                    <br/>
+            <div class="row">
+                <div class="col-sm-3 required">{% trans "Title:" %}</div>
+                <div class="col-sm-8">
+                    {% bootstrap_field form.a_title show_label=False %}
+                    {{ form.a_title.errors }}
                 </div>
             </div>
 
-            <div class="col-sm-4 prepend-21 last">
-                <input type="submit"
+            <div class="row">
+                <div class="col-sm-3 required">{% trans "Authors:" %}</div>
+                <div class="col-sm-8">
+                    {% bootstrap_field form.authors show_label=False %}
+                    {{ form.authors.errors }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">{% trans "Publisher:" %}</div>
+                <div class="col-sm-8">
+                    {% bootstrap_field form.dc_publisher show_label=False %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">{% trans "Language:" %}</div>
+                <div class="col-sm-5">
+                    {% bootstrap_field form.dc_language show_label=False %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">{% trans "Issued" %}:</div>
+                <div class="col-sm-3">
+                    {% bootstrap_field form.dc_issued show_label=False %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3 required">{% trans "Status:" %}</div>
+                <div class="col-sm-3">
+                    {% bootstrap_field form.a_status show_label=False %}
+                    {{ form.a_status.errors }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">{% trans "Tags:" %}</div>
+                <div class="col-sm-8">
+                    {% bootstrap_field form.tags show_label=False %}
+                </div>
+            </div>
+
+            {% if user.is_superuser %}
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Downloads" %}:</div>
+                    <div class="col-sm-2">
+                        {% bootstrap_field form.downloads show_label=False %}
+                    </div>
+                </div>    {% endif %}
+
+            <div class="row">
+                <div class="col-sm-11">
+                    {% bootstrap_field form.a_summary %}
+                    </div>
+            </div>
+
+            <div class="col-sm-4 last">
+                <input type="submit" class="btn btn-sm btn-default"
                         {% if action == 'add' %}
-                       value="Add">
+                            value="Add">
                         {% else %}
                             value="{% trans "Edit" %}">
                         {% endif %}
             </div>
         </fieldset>
     </form>
+{% endblock %}
+
+{% block footer %}
+
 {% endblock %}

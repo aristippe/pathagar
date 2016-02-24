@@ -116,8 +116,7 @@
                 </td>
                 <td class="list_author">
                     {% for author in book.authors.all %}
-                        <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>
-                        {% if not forloop.last %}, {% endif %}
+                        <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 <td class="list_date">

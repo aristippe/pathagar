@@ -20,23 +20,23 @@
                         width=180px/>
             {% endif %}
             <br/><br/>
-                <div class="col-sm-5">
-                    <a href="{% url "book_download" book.pk %}"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"/><!--{% trans "Download" %}--></a>
-            {% if user.is_superuser %}
+            <div class="col-sm-5">
+                <a href="{% url "book_download" book.pk %}"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"/><!--{% trans "Download" %}--></a>
+               {% if user.is_superuser %}
                     <a href="{% url "book_edit" book.pk %}"><span class="glyphicon glyphicon-edit" aria-hidden="true"/></a>
                     <a href="{% url "book_delete" book.pk %}"><span class="glyphicon glyphicon-trash" aria-hidden="true"/></a>
-                </div>
+                {% endif %}
+            </div>
                 {#                <div class="col-sm-2"><label>Status:</label></div>#}
                 {#                <div class="col-sm-3">{{ book.a_status }}</div>#}
-            {% endif %}
         </div>
 
         <div class="details">
             <h2 class="detail_title">{{ book.a_title }}</h2>
             <h4 class="detail_author">
                 {% for author in book.authors.all %}
-                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>
-                    {% if not forloop.last %}, {% endif %}
+                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">
+                        {{ author.name }}</a>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </h4>
 
@@ -44,19 +44,7 @@
                 <div class="col-sm-3">{% trans "Publisher:" %}</div>
                 <div class="col-sm-8"><a href="{% url "by_title" %}?q={{ book.dc_publisher }}">{{ book.dc_publisher }}</a></div>
                 <br/>
-                {% if book.tags.count != 0 %}
-                    <div class="col-sm-3">{% trans "Tags:" %}</div>
-                    <div class="col-sm-10">
 
-                        {% for tag in book.tags.all %}
-                            <a class="list_tag" href="{% url "by_tag" tag.name %}">
-                                {{ tag.name }}</a>{% if not forloop.last %},
-                        {% endif %}
-                        {% endfor %}
-
-                    </div>
-                <br/>
-                {% endif %}
                 <div class="col-sm-3">{% trans "Published:" %}</div>
                 <div class="col-sm-8">{{ book.dc_issued }}</div>
                 <br/>
@@ -67,6 +55,19 @@
                     <div class="col-sm-8">{% trans "Unknown" %}</div>
                 {% endifnotequal %}
                 <br/><br/>
+
+                {% if book.tags.count != 0 %}
+                    <div class="col-sm-3">{% trans "Tags:" %}</div>
+                    <div class="col-sm-8">
+                        {% for tag in book.tags.all %}
+                            <a class="list_tag" href="{% url "by_tag" tag.name %}">
+                                {{ tag.name }}</a>{% if not forloop.last %},
+                        {% endif %}
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+
                 <div class="col-sm-3">{% trans "Added:" %}</div>
                 <div class="col-sm-8">
                     {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago {% endblocktrans %}</div>

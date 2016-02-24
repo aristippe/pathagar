@@ -74,6 +74,18 @@ urlpatterns = [
     url(r'^book/(?P<book_id>\d+)/download$', views.download_book,
         name='book_download'),
 
+    # Author edit auto-complete
+    url(
+        'author-autocomplete/$',
+        views.AuthorAutocomplete.as_view(),
+        name='author-autocomplete',
+    ),
+    url(
+        'tags-autocomplete/$',
+        views.TagAutocomplete.as_view(),
+        name='tags-autocomplete',
+    ),
+
     # Comments
     url(r'^comments/', include('django_comments.urls')),
 
