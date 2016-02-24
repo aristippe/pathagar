@@ -25,7 +25,7 @@ class BookAdmin(admin.ModelAdmin):
             'fields': ['book_file', 'original_path', 'file_sha256sum',
                        'mimetype', 'cover_img']}),
         ('Basic information',
-         {'fields': ['a_title', 'a_author', 'a_status', 'tags']}),
+         {'fields': ['a_title', 'authors', 'a_status', 'tags']}),
         ('Extended information', {
             'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
                        'dc_language', 'dc_publisher', 'dc_issued',
@@ -33,7 +33,16 @@ class BookAdmin(admin.ModelAdmin):
                        'downloads'],
             'classes': ['collapse']}),
     ]
-    list_display = ('a_title', 'a_author', 'time_added', 'original_path')
+
+    def authors(self, user):
+        authors = []
+        for author in user.author.all():
+            authors.append(author.name)
+        return ', '.join(authors)
+
+    authors.short_description = 'Authors'
+
+    list_display = ('a_title', 'authors', 'time_added', 'original_path')
 
     readonly_fields = ('time_added', 'a_updated', 'a_id')
 

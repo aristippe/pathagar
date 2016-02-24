@@ -35,6 +35,15 @@ def sha256_sum(_file):  # used to generate sha256 sum of book files
         s.update(chunk)
     return s.hexdigest()
 
+class Author(models.Model):
+    name = models.CharField(_('author'), unique=True, max_length=255)
+
+    # __unicode__ on Python 2
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
 
 class LanguageManager(models.Manager):
     def get_or_create_by_code(self, code):
@@ -122,10 +131,12 @@ class Book(models.Model):
     cover_img = models.ImageField(_('cover'), upload_to='covers',
                                   blank=True, null=True)
 
+    authors = models.ManyToManyField(Author, related_name='books')
+    # a_author = models.CharField(_('atom:author'), max_length=200)
+
     # Atom fields.
     a_id = UUIDField('atom:id')
     a_title = models.CharField(_('atom:title'), max_length=200, null=False)
-    a_author = models.CharField(_('atom:author'), max_length=200)
     a_updated = models.DateTimeField(_('atom:updated'), auto_now=True)
     a_summary = models.TextField(_('atom:summary'), blank=True, null=True)
     a_category = models.CharField(_('atom:category'),

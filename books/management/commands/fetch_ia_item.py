@@ -207,7 +207,7 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
     book = {
         "book_path": os.path.abspath(book_path),
         "a_title": metadata['title'],
-        "a_author": author,
+        "authors": author,
         "a_status": "Published",
         "a_summary": summary,
     }

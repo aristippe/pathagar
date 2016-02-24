@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
             if success:
                 counter['success'] = counter['success'] + 1
-                self.stdout.write(self.style.SUCCESS('File imported'))
+                self.stdout.write(self.style.NOTICE('File imported'))
             else:
                 counter['fail'] = counter['fail'] + 1
                 self.stdout.write(self.style.NOTICE('File NOT imported'))

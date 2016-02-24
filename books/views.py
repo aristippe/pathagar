@@ -39,7 +39,7 @@ from taggit.models import Tag
 from app_settings import BOOKS_PER_PAGE
 from books.app_settings import BOOK_PUBLISHED
 from forms import BookForm, AddLanguageForm
-from models import TagGroup, Book, Language, Status
+from models import Author, Book, Language, Status, TagGroup
 from opds import generate_catalog
 from opds import generate_root_catalog
 from opds import generate_taggroups_catalog
@@ -344,7 +344,7 @@ def by_title(request, qtype=None):
 
 @login_required
 def by_author(request, qtype=None):
-    queryset = Book.objects.all().order_by('a_author')
+    queryset = Book.objects.all().order_by('authors')
     return _book_list(request, queryset, qtype, list_by='by-author')
 
 
