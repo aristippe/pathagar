@@ -171,6 +171,9 @@ SENDFILE_BACKEND = 'sendfile.backends.development'
 
 TAGGIT_CASE_INSENSITIVE = True
 
+TAGGIT_STRING_FROM_TAGS = 'books.utils.comma_joiner'
+TAGGIT_TAGS_FROM_STRING = 'books.utils.comma_splitter'
+
 # -- Pathagar settings.
 # Number of books shown per page in the OPDS catalogs and in the HTML pages.
 BOOKS_PER_PAGE = 50

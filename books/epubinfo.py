@@ -26,9 +26,9 @@ class EpubInfo:  # TODO: Cover the entire DC range
             '{http://www.idpf.org/2007/opf}metadata')
 
         self.title = self._get_title()
-        self.creator = self._get_creator()
+        self.creators = self._get_creators()
         self.date = self._get_date()
-        self.subject = self._get_subject()
+        self.subjects = self._get_subject()
         self.source = self._get_source()
         self.rights = self._get_rights()
         self.identifier = self._get_identifier()
@@ -58,13 +58,17 @@ class EpubInfo:  # TODO: Cover the entire DC range
 
         return ret
 
-    def _get_creator(self):
+    def _get_creators(self):
         try:
-            ret = self._get_data(
-                './/{http://purl.org/dc/elements/1.1/}creator')
+            # ret = self._get_data(
+            #     './/{http://purl.org/dc/elements/1.1/}creator')
+            creators = []
+            for element in self._e_metadata.iterfind(
+                    './/{http://purl.org/dc/elements/1.1/}creator'):
+                creators.append(element.text)
         except AttributeError:
             return None
-        return ret
+        return creators
 
     def _get_date(self):
         # TODO: iter
@@ -124,14 +128,14 @@ class EpubInfo:  # TODO: Cover the entire DC range
 
     def _get_subject(self):
         try:
-            subjectlist = []
+            subject_list = []
             for element in self._e_metadata.iterfind(
                     './/{http://purl.org/dc/elements/1.1/}subject'):
-                subjectlist.append(element.text)
+                subject_list.append(element.text)
         except AttributeError:
             return None
 
-        return subjectlist
+        return subject_list
 
     def _get_cover_image(self):
         cover = None

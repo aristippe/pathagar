@@ -16,10 +16,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from django import forms
+import os
 
 import models
 from epub import Epub
 from dal import autocomplete
+from django.utils.translation import ugettext_lazy as _
 
 
 class AuthorCreateMultipleField(autocomplete.CreateModelMultipleField):
@@ -39,6 +41,12 @@ class BookEditForm(forms.ModelForm):
     #     required=False,
     #     widget=autocomplete.TagSelect2(url='tags-autocomplete'),
     # )
+
+    # hide current value for cover_img
+    # TODO add remove option
+    # https://stackoverflow.com/questions/14336925/how-to-not-render-django-image-field-currently-and-clear-stuff
+    cover_img = forms.ImageField(required=False, widget=forms.FileInput)
+    remove_cover_img = forms.BooleanField(required=False)
 
     class Meta:
         model = models.Book
@@ -60,12 +68,22 @@ class BookEditForm(forms.ModelForm):
         # TODO: revise, as the template currently does not allow replacing
         # book_file, so mimetype is not really on cleaned_data.
         book_file = self.cleaned_data['book_file']
+
+        # Delete cover_img if checked
+        if self.cleaned_data.get('remove_cover_img'):
+            try:
+                os.unlink(instance.cover_img.path)
+            except OSError:
+                pass
+            instance.cover_img = None
+
         if instance.mimetype is None:
             try:
                 instance.mimetype = book_file.content_type
             except:
                 pass
         if commit:
+            # TODO cleanup old authors and tags if no longer used
             instance.save()
         return instance
 

@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 import os
 import sys
 
+from django.conf import settings
+
 from books import models
 from books.epub import Epub
 from books.storage import LinkableFile
@@ -41,7 +43,7 @@ def get_epubs_paths(paths):
             for root, _, files in os.walk(path):
                 for name in files:
                     validate_and_add(os.path.join(root, name), filenames)
-        elif os.path.isfile(path):  # Implicitely checks that 'path' exists.
+        elif os.path.isfile(path):  # Implicitly checks that 'path' exists.
             # path is a file: add if *.epub.
             validate_and_add(path, filenames)
 
@@ -96,24 +98,25 @@ class Command(BaseCommand):
                 success = False
 
             if success:
-                counter['success'] = counter['success'] + 1
+                counter['success'] += 1
                 self.stdout.write(self.style.NOTICE('File imported'))
             else:
-                counter['fail'] = counter['fail'] + 1
+                counter['fail'] += 1
                 self.stdout.write(self.style.NOTICE('File NOT imported'))
             self.stdout.write('')
 
         self.stdout.write('{} files imported, {} files not imported.'.format(
-                counter['success'], counter['fail']))
+            counter['success'], counter['fail']))
 
     def process_epub(self, filename, use_symlink=False):
         """Import a single EPUB from `filename`, creating a new `Book` based
         on the information parsed from the epub.
 
-        :param filename:
-        :param use_symlink:
-        :return:
+        :param filename: ePub file to process
+        :param use_symlink: symlink ePub to FileField or process normally
+        :return: success result
         """
+
         # Try to parse the epub file, extracting the relevant info.
         info_dict = {}
         tmp_cover_path = None
@@ -121,7 +124,8 @@ class Command(BaseCommand):
             epub = Epub(filename)
             epub.get_info()
             # Get the information we need for creating the Model.
-            info_dict, tmp_cover_path = epub.as_model_dict()
+            info_dict, authors, tmp_cover_path, subjects = \
+                epub.as_model_dict()
             assert info_dict
         except Exception as e:
             self.stdout.write(self.style.ERROR(
@@ -151,8 +155,8 @@ class Command(BaseCommand):
         # Original filename (original_path).
         info_dict['original_path'] = filename
         # Published status (a_status).
-        # TODO: use DEFAULT_BOOK_STATUS instead of hard-coding.
-        info_dict['a_status'] = models.Status.objects.get(status='Published')
+        info_dict['a_status'] = models.Status.objects.get(
+            status=settings.DEFAULT_BOOK_STATUS)
 
         # Create and save the Book.
         try:
@@ -170,6 +174,21 @@ class Command(BaseCommand):
             book.full_clean()
             book.save()
 
+            # Handle info that needs existing book instance thru book.save.
+            # Authors, cover, and tags
+
+            # Add authors
+            if authors:
+                for author in authors:
+                    try:
+                        author = models.Author.objects.get(name=author)
+                    except:
+                        author = models.Author(name=author)
+                        author.save()
+                    self.stdout.write(self.style.NOTICE(
+                        'Found author: %s' % author))
+                    book.authors.add(author)
+
             # Add cover image (cover_image). It is handled here as the filename
             # depends on instance.pk (which is only present after Book.save()).
             if tmp_cover_path:
@@ -185,6 +204,23 @@ class Command(BaseCommand):
                         'Error while saving cover image %s:\n%s' % (
                             tmp_cover_path, str(e))))
                     tmp_cover_path = None
+
+            # Add subjects as tags
+            if subjects:
+                for subject in subjects:
+                    # workaround for ePubs with description as subject
+                    if len(subject) <= 80:
+                        subject_split = subject.replace('/', ',') \
+                            .replace(';', ',').replace(' ,', ',').split(',')
+                        for tag in subject_split:
+                            # TODO tags with spaces, see books.utils
+                            self.stdout.write(self.style.NOTICE(
+                                'Found subject (tag): %s'
+                                % tag.lower().encode("utf-8").strip()))
+                            if " " not in tag.strip():
+                                book.tags.add(tag.lower().encode(
+                                    "utf-8").strip())
+
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
             try:

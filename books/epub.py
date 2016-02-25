@@ -260,7 +260,7 @@ class Epub(object):
                 print '  [ ] %s not found' % name
 
         return ({'a_title': info.title,
-                 'authors': info.creator,
+#                 'authors': info.creators,
                  'a_summary': info.summary,
                  'a_rights': info.rights,
                  'dc_language': info.language,
@@ -269,7 +269,7 @@ class Epub(object):
                  'dc_issued': info.date,
                  'mimetype': self._mimetype
                  },
-                ret_cover_path)
+                info.creators, ret_cover_path, info.subjects)
 
     def close(self):
         """

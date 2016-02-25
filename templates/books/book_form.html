@@ -38,7 +38,14 @@
         {{ form.media }}
 
         <div class="detail_sidebar">
-            <img src="{{ book.cover_img.url }}" alt="Cover" width=180px/>
+            {% if book.cover_img %}
+                <img src="{{ book.cover_img.url }}" alt="Cover" width=180px/>
+                {% bootstrap_field form.remove_cover_img %}
+            {% else %}
+                <img src="{% static "images/generic_cover.png" %}" alt="Cover"
+                        width=180px/>
+                <br/><br/>
+            {% endif %}
             {% bootstrap_field form.cover_img show_label=False %}
         </div>
 
