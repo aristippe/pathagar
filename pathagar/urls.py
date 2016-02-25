@@ -22,6 +22,8 @@ urlpatterns = [
         {}, 'by_title'),
     url(r'^by-author/$', views.by_author,
         {}, 'by_author'),
+    url(r'^authors/(?P<tag>.+)/$', views.authors,
+        {}, 'authors'),
     url(r'^tags/(?P<tag>.+)/$', views.by_tag,
         {}, 'by_tag'),
     url(r'^by-popularity/$', views.most_downloaded,

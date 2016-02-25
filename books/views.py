@@ -364,6 +364,12 @@ def root(request, qtype=None):
 
 
 @login_required
+def authors(request, qtype=None):
+    queryset = authors.books.all()
+    return _book_list(request, queryset, qtype, list_by='authors')
+
+
+@login_required
 def latest(request, qtype=None):
     queryset = Book.objects.all()
     return _book_list(request, queryset, qtype, list_by='latest')

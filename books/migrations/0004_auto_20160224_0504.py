@@ -17,7 +17,7 @@ def make_many_authors(apps, schema_editor):
         try:
             author = Author.objects.get(name=book.a_author)
         except Author.DoesNotExist:
-            author = Author(name = book.a_author)
+            author = Author(name=book.a_author)
             author.save()
         book.authors.add(author)
 

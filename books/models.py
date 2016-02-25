@@ -20,9 +20,9 @@ from hashlib import sha256
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
-from taggit.managers import TaggableManager  # NEW
+from taggit.managers import TaggableManager
 
 from langlist import langs_by_code
 from storage import LinkOrFileSystemStorage
@@ -35,6 +35,8 @@ def sha256_sum(_file):  # used to generate sha256 sum of book files
         s.update(chunk)
     return s.hexdigest()
 
+
+@python_2_unicode_compatible
 class Author(models.Model):
     name = models.CharField(_('author'), unique=True, max_length=255)
 
@@ -44,6 +46,7 @@ class Author(models.Model):
 
     class Meta:
         ordering = ('name',)
+
 
 class LanguageManager(models.Manager):
     def get_or_create_by_code(self, code):
