@@ -252,7 +252,7 @@ class Epub(object):
         # Print some info about the info found.
         # TODO: move to logging.
         for name, obj in [('Cover image', ret_cover_path),
-                          ('Identifier', identifier),
+                          ('Authors', info.creators),
                           ('Language', info.language)]:
             if obj:
                 print '  [o] %s found: %s' % (name, obj)
@@ -260,7 +260,6 @@ class Epub(object):
                 print '  [ ] %s not found' % name
 
         return ({'a_title': info.title,
-                 'authors': info.creator,
                  'a_summary': info.summary,
                  'a_rights': info.rights,
                  'dc_language': info.language,
@@ -269,7 +268,7 @@ class Epub(object):
                  'dc_issued': info.date,
                  'mimetype': self._mimetype
                  },
-                ret_cover_path)
+                info.creators, ret_cover_path, info.subjects)
 
     def close(self):
         """

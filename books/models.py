@@ -135,26 +135,25 @@ class Book(models.Model):
                                   blank=True, null=True)
 
     authors = models.ManyToManyField(Author, related_name='books')
-    # a_author = models.CharField(_('atom:author'), max_length=200)
 
     # Atom fields.
     a_id = UUIDField('atom:id')
-    a_title = models.CharField(_('atom:title'), max_length=200, null=False)
+    a_title = models.CharField(_('atom:title'), max_length=255, null=False)
     a_updated = models.DateTimeField(_('atom:updated'), auto_now=True)
     a_summary = models.TextField(_('atom:summary'), blank=True, null=True)
     a_category = models.CharField(_('atom:category'),
                                   max_length=200, blank=True, null=True)
-    a_rights = models.CharField(_('atom:rights'),
-                                max_length=200, blank=True, null=True)
+    a_rights = models.CharField(_('atom:rights'), max_length=255, blank=True,
+                                null=True)
 
     # Info fields.
     dc_language = models.ForeignKey(Language, blank=True, null=True)
     dc_publisher = models.CharField(_('dc:publisher'),
-                                    max_length=200, blank=True, null=True)
+                                    max_length=255, blank=True, null=True)
     dc_issued = models.CharField(_('dc:issued'),
                                  max_length=100, blank=True, null=True)
     dc_identifier = models.CharField(_('dc:identifier'),
-                                     max_length=50, blank=True, null=True,
+                                     max_length=100, blank=True, null=True,
                                      help_text=_('Use ISBN for this'))
 
     # Other fields.
