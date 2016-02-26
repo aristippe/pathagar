@@ -84,9 +84,14 @@
                 <div class="col-sm-3">{% trans "Downloads:" %}</div>
                 <div class="col-sm-8">{{ book.downloads }}</div>
                 {% if user.is_superuser %}
+{#                    <div class="col-sm-3"><a href="#more" class="" data-toggle="collapse">Toggle#}
+{#                        Foo</a></div>#}
+{#                    <div class="col-sm-8"></div>#}
+{#                    <div id="more" class="collapse">#}
                     <br/>
                     <div class="col-sm-3">{% trans "Path:" %}</div>
                     <div class="col-sm-9">{{ book.original_path }}</div>
+{#                    </div>#}
                 {% endif %}
             </div>
 

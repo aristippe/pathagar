@@ -97,10 +97,10 @@
                     <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
                             <img src="{{ book.cover_img.url }}" alt="Cover"
-                                 width="50px"/>
+                                 height="80px"/>
                         {% else %}
                             <img src="{% static "images/book-icon.png" %}"
-                                 alt="Cover" width="50px"/>
+                                 alt="Cover" height="80px"/>
                         {% endif %}
                     </a>
                 </td>
@@ -117,7 +117,7 @@
 
                     {% if book.publishers.all %}
                     | {% for publisher in book.publishers.all %}
-                    <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% endfor %}
+                    <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
                     {% endif %}
 
 {#                    {%  if book.dc_issued %}#}
@@ -154,19 +154,4 @@
 
     {% include "pagination.html" %}
 
-{% endblock %}
-
-{# TODO footer https://stackoverflow.com/questions/17966140/twitter-bootstrap-3-sticky-footer#}
-{% block footer %}
-    <div id="footer navbar-fixed-bottom">
-        <div class="container">
-            <ul class="stats">
-                <li>{% trans "Books:" %} {{ published_books }}</li>
-                {% if user.is_superuser %}
-                    <li>{% trans "Unpublished eBooks:" %}
-                        {{ unpublished_books }}</li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
 {% endblock %}

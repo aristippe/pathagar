@@ -1,3 +1,5 @@
+/* bootstrap 3 for sticky footer */
+
 body {
     /*font-family: "Trebuchet MS", "Segoe UI", Arial, Verdana, "lucida sans unicode", tahoma, sans-serif;*/
     color: #222222; /* gray; */
@@ -11,7 +13,7 @@ a {
     color: inherit;
 }
 
-a:hover, h4.detail_author a {
+a:hover, h4.detail_author a, div.footer a {
     text-decoration: none;
     color: #2e9dfd;
 }
@@ -25,7 +27,7 @@ div.detail_info a {
 }
 
 /*a[href$=".epub"] {*/
-    /*background-image: url(blueprint/plugins/link-icons/icons/epub.png);*/
+/*background-image: url(blueprint/plugins/link-icons/icons/epub.png);*/
 /*}*/
 
 div.paginator {
@@ -209,8 +211,6 @@ div.required:after {
     font-family: serif;
     display: none;
 }
-
-
 
 /* footer */
 

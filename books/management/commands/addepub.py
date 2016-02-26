@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 import os
 import sys
+import logging
 
 from django.conf import settings
 
@@ -13,6 +14,8 @@ from books import models
 from books.epub import Epub
 from books.storage import LinkableFile
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def get_epubs_paths(paths):
     """Return a list of paths for potential EPUB(s) from a list of file and
@@ -25,8 +28,8 @@ def get_epubs_paths(paths):
 
     def validate_and_add(path, filenames):
         """Check that the `path` has an '.epub' extension, convert it to
-        absolute and add it to `filenames` if not present already in order to
-        preserve the ordering.
+        absolute and add it to `filenames` if not already imported and not
+        present already in order to preserve the ordering.
 
         :param path:
         :param filenames:
@@ -34,8 +37,11 @@ def get_epubs_paths(paths):
         if os.path.splitext(path)[1] == '.epub':
             filename = os.path.abspath(path)
             if filename not in filenames:
-                filenames.append(filename)
+                if not models.Book.objects.filter(
+                        original_path=filename).exists():
+                    filenames.append(filename)
 
+    print "Finding new ePubs ..."
     filenames = []
     for path in paths:
         if os.path.isdir(path):

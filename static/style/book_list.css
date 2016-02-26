@@ -42,6 +42,7 @@ table#book_list th.th_date_added {
 
 td.list_cover {
     width: 7%;
+    text-align: center;
 }
 
 .list_number {

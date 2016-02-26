@@ -155,8 +155,7 @@ class Book(models.Model):
     a_summary = models.TextField(_('atom:summary'), blank=True, null=True)
     a_category = models.CharField(_('atom:category'),
                                   max_length=200, blank=True, null=True)
-    a_rights = models.CharField(_('atom:rights'), max_length=255, blank=True,
-                                null=True)
+    a_rights = models.TextField(_('atom:rights'), blank=True, null=True)
 
     # ePub info fields.
     dc_issued = models.CharField(_('dc:issued'),

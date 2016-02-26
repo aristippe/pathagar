@@ -11,6 +11,7 @@
     <head>
         <link rel="stylesheet" href="{% static "style/bootstrap/bootstrap.css" %}" type="text/css">
         <link rel="stylesheet" href="{% static "style/style.css" %}" type="text/css">
+        <link rel="stylesheet" href="{% static "style/sticky-footer.css" %}" type="text/css">
 
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -28,11 +29,11 @@
 
     </head>
 
-    <style>
-        body {
-            background-image: url({% static "images/nuage_site.jpg" %});
-        }
-    </style>
+{#    <style>#}
+{#        body {#}
+{#            background-image: url({% static "images/nuage_site.jpg" %});#}
+{#        }#}
+{#    </style>#}
 <body>
 
 <!-- hide header to show only login page -->
@@ -49,9 +50,6 @@
                 <li class="nav-item">
                     <a data-name="by-author" href="{% url "by_author" %}">
                         {% trans "Authors" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
                 </li>
                 {% if user.is_superuser %}
                     <li class="nav-item">
@@ -121,7 +119,26 @@
     {% block content %}{% endblock %}
 
     {% block footer %}
+        <hr/>
+        <div class="footer">
+            <div class="row">
+                <div class="col-sm-5">{% trans "Books:" %}
+                    {{ books.count }}</div>
+                {% if user.is_superuser %}
+                    <div class="col-sm-5">
+                    {% trans "Unpublished eBooks:" %}
+                        {{ unpublished_books }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
+                </div>
+            </div>
+        </div>
     {% endblock %}
+
 </div>
 
 </body>
