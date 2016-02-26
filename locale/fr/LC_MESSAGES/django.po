@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-26 04:10-0800\n"
+"POT-Creation-Date: 2016-02-26 08:38-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,7 +43,7 @@ msgstr ""
 msgid "Accounts"
 msgstr ""
 
-#: accounts/templates/accounts/profile_detail.html:17 templates/base.html:90
+#: accounts/templates/accounts/profile_detail.html:17 templates/base.html:94
 msgid "Your mugshot"
 msgstr ""
 
@@ -182,39 +182,39 @@ msgstr ""
 msgid "Pathagar administration"
 msgstr ""
 
-#: templates/base.html:46 templates/books/tag_list.html:43
+#: templates/base.html:48 templates/books/tag_list.html:43
 msgid "Books"
 msgstr "Livres"
 
-#: templates/base.html:49
+#: templates/base.html:51
 msgid "Authors"
 msgstr "Auteurs"
 
-#: templates/base.html:52 templates/books/tag_list.html:32
+#: templates/base.html:54 templates/books/tag_list.html:32
 msgid "Tags"
 msgstr "Étiquettes"
 
-#: templates/base.html:55
+#: templates/base.html:58
 msgid "RSS"
 msgstr ""
 
-#: templates/base.html:59
+#: templates/base.html:63
 msgid "Upload"
 msgstr "Téléverser"
 
-#: templates/base.html:98
+#: templates/base.html:102
 msgid "Admin"
 msgstr ""
 
-#: templates/base.html:102
+#: templates/base.html:106
 msgid "Log Out"
 msgstr "Déconnecter"
 
-#: templates/base.html:105
+#: templates/base.html:109
 msgid "Add Book"
 msgstr "Ajouter un livre"
 
-#: templates/base.html:106
+#: templates/base.html:110
 msgid "Log In"
 msgstr "Se connecter"
 
@@ -290,6 +290,12 @@ msgstr "%(user_name)s | il y a %(comment_date)s"
 msgid "Add comment"
 msgstr "Ajouter"
 
+#: templates/books/book_form.html:9
+#, fuzzy
+#| msgid "Edit"
+msgid "Editing"
+msgstr "Éditer"
+
 #: templates/books/book_form.html:54
 msgid "Edit"
 msgstr "Éditer"
@@ -359,18 +365,23 @@ msgid "Added"
 msgstr "Ajouté"
 
 #: templates/books/book_list.html:126 templates/books/book_list2.html:140
-#, fuzzy, python-format
-#| msgid "time added"
+#, python-format
 msgid "%(time_added)s ago"
 msgstr "il y a %(time_added)s"
 
-#: templates/books/book_list.html:146 templates/books/book_list2.html:160
+#: templates/books/book_list.html:146
 msgid "Published eBooks:"
 msgstr "Publié :"
 
-#: templates/books/book_list.html:148 templates/books/book_list2.html:162
+#: templates/books/book_list.html:148 templates/books/book_list2.html:166
 msgid "Unpublished eBooks:"
 msgstr "Publié :"
+
+#: templates/books/book_list2.html:164
+#, fuzzy
+#| msgid "Books"
+msgid "Books:"
+msgstr "Livres"
 
 #: templates/formtools/wizard/wizard_form.html:25
 msgid "first step"

@@ -24,6 +24,7 @@ table#book_list {
 
 table#book_list tbody td {
     padding-bottom: 0.75em;
+    color: gray;
 }
 
 table#book_list th.th_date_added {
@@ -61,6 +62,7 @@ td.list_cover {
 
 .list_tags {
     font-size: 90%;
+    padding-top: 0.25em;
     padding-left: 1em;
     color: gray;
 }

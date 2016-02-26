@@ -1,6 +1,6 @@
 body {
     /*font-family: "Trebuchet MS", "Segoe UI", Arial, Verdana, "lucida sans unicode", tahoma, sans-serif;*/
-    color: gray;
+    color: #222222; /* gray; */
 }
 
 h1, h2, h3, h4, h5, h6 {
