@@ -58,7 +58,7 @@ def advanced_search(queryset, searchterms):
             if key == 'author':
                 q_objects.append(Q(authors__name__icontains=word))
             if key == 'publisher':
-                q_objects.append(Q(dc_publisher__icontains=word))
+                q_objects.append(Q(publishers__name__icontains=word))
             if key == 'identifier':
                 q_objects.append(Q(dc_identifier__icontains=word))
             if key == 'summary':
@@ -68,7 +68,7 @@ def advanced_search(queryset, searchterms):
             try:
                 results = results.filter(Q(a_title__icontains=word) |
                                          Q(authors__name__icontains=word) |
-                                         Q(dc_publisher__icontains=word) |
+                                         Q(publishers__name__icontains=word) |
                                          Q(dc_identifier__icontains=word) |
                                          Q(a_summary__icontains=word))
             except Book.DoesNotExist:

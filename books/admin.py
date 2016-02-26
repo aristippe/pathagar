@@ -28,7 +28,7 @@ class BookAdmin(admin.ModelAdmin):
          {'fields': ['a_title', 'authors', 'a_status', 'tags']}),
         ('Extended information', {
             'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
-                       'dc_language', 'dc_publisher', 'dc_issued',
+                       'dc_language', 'publishers', 'dc_issued',
                        'dc_identifier', 'time_added', 'a_updated',
                        'downloads'],
             'classes': ['collapse']}),
@@ -40,7 +40,14 @@ class BookAdmin(admin.ModelAdmin):
             authors.append(author.name)
         return ', '.join(authors)
 
+    def publishers(self, user):
+        publishers = []
+        for publishers in user.publisher.all():
+            publishers.append(publishers.name)
+        return ', '.join(publishers)
+
     authors.short_description = 'Authors'
+    publishers.short_description = 'Publishers'
 
     list_display = ('a_title', 'authors', 'time_added', 'original_path')
 

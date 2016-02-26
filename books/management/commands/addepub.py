@@ -124,7 +124,7 @@ class Command(BaseCommand):
             epub = Epub(filename)
             epub.get_info()
             # Get the information we need for creating the Model.
-            info_dict, authors, tmp_cover_path, subjects = \
+            info_dict, authors, publishers, tmp_cover_path, subjects = \
                 epub.as_model_dict()
             assert info_dict
         except Exception as e:
@@ -175,19 +175,37 @@ class Command(BaseCommand):
             book.save()
 
             # Handle info that needs existing book instance thru book.save.
-            # Authors, cover, and tags
+            # authors, publishers, cover, and tags
 
             # Add authors
             if authors:
                 for author in authors:
-                    try:
-                        author = models.Author.objects.get(name=author)
-                    except:
-                        author = models.Author(name=author)
-                        author.save()
+                    if author is not None:
+                        author_split = author.replace(
+                            ' and ',';').replace('&',';').split(';')
+                        for auth in author_split:
+                            auth = auth.strip()
+                            self.stdout.write(self.style.NOTICE(
+                                'Found author: %s' % auth))
+                            try:
+                                author = models.Author.objects.get(name=auth)
+                            except:
+                                author = models.Author(name=auth)
+                                author.save()
+                            book.authors.add(author)
+
+            # Add publishers
+            if publishers:
+                for publisher in publishers:
                     self.stdout.write(self.style.NOTICE(
-                        'Found author: %s' % author))
-                    book.authors.add(author)
+                        'Found publisher: "%s"' % publisher))
+                    try:
+                        publisher = models.Publisher.objects.get(
+                            name=publisher)
+                    except:
+                        publisher = models.Publisher(name=publisher)
+                        publisher.save()
+                    book.publishers.add(publisher)
 
             # Add cover image (cover_image). It is handled here as the filename
             # depends on instance.pk (which is only present after Book.save()).
@@ -213,14 +231,15 @@ class Command(BaseCommand):
                         subject_split = subject.replace('/', ',') \
                             .replace(';', ',').replace(' ,', ',').split(',')
                         for tag in subject_split:
-                            # TODO tags with spaces, see books.utils
+                            tag = tag.lower().encode("utf-8").strip()
                             self.stdout.write(self.style.NOTICE(
                                 'Found subject (tag): %s'
-                                % tag.lower().encode("utf-8").strip()))
-                            if " " not in tag.strip():
-                                book.tags.add(tag.lower().encode(
-                                    "utf-8").strip())
-
+                                % tag))
+                            # surround multi-word tags in quotes
+                            if " " not in tag:
+                                book.tags.add(tag)
+                            else:
+                                book.tags.add('"' + tag + '"')
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
             try:

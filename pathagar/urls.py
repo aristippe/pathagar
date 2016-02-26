@@ -76,11 +76,16 @@ urlpatterns = [
     url(r'^book/(?P<book_id>\d+)/download$', views.download_book,
         name='book_download'),
 
-    # Author edit auto-complete
+    # Auto-complete for book model m2m fields
     url(
         'author-autocomplete/$',
         views.AuthorAutocomplete.as_view(),
         name='author-autocomplete',
+    ),
+    url(
+        'publisher-autocomplete/$',
+        views.PublisherAutocomplete.as_view(),
+        name='publisher-autocomplete',
     ),
     url(
         'tags-autocomplete/$',

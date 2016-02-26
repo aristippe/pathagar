@@ -41,7 +41,7 @@ from dal import autocomplete
 from app_settings import BOOKS_PER_PAGE
 from books.app_settings import BOOK_PUBLISHED
 from forms import BookEditForm, AddLanguageForm
-from models import Author, Book, Language, Status, TagGroup
+from models import Author, Book, Language, Publisher, Status, TagGroup
 from opds import generate_catalog
 from opds import generate_root_catalog
 from opds import generate_taggroups_catalog
@@ -60,6 +60,20 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
             return Author.objects.none()
 
         qs = Author.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
+class PublisherAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Publisher.objects.none()
+
+        qs = Publisher.objects.all()
 
         if self.q:
             qs = qs.filter(name__istartswith=self.q)

@@ -10,3 +10,4 @@ django-pure-pagination==0.3.0
 django-userena==1.5.1
 django-guardian==1.4.1
 django-bootstrap3==6.2.2
+django-autocomplete-light==3.0.4

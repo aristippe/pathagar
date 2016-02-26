@@ -263,12 +263,11 @@ class Epub(object):
                  'a_summary': info.summary,
                  'a_rights': info.rights,
                  'dc_language': info.language,
-                 'dc_publisher': info.publisher,
                  'dc_identifier': identifier,
                  'dc_issued': info.date,
                  'mimetype': self._mimetype
                  },
-                info.creators, ret_cover_path, info.subjects)
+                info.creators, info.publishers, ret_cover_path, info.subjects)
 
     def close(self):
         """

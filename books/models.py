@@ -85,6 +85,18 @@ class Language(models.Model):
         return self.label
 
 
+@python_2_unicode_compatible
+class Publisher(models.Model):
+    name = models.CharField(_('publisher'), unique=True, max_length=255)
+
+    # __unicode__ on Python 2
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+
+
 class TagGroup(models.Model):
     name = models.CharField(max_length=200, blank=False)
     slug = models.SlugField(max_length=200, blank=False)
@@ -120,10 +132,6 @@ class Book(models.Model):
 
     """
 
-    # https://stackoverflow.com/questions/8332443/set-djangos-filefield-to-an-existing-file
-    # https://stackoverflow.com/questions/10905674/django-how-to-save-original-filename-in-filefield
-    # get model instance you want to set the value on...set the value..save it
-
     # File related fields.
     book_file = models.FileField(upload_to='books', null=False,
                                  storage=LinkOrFileSystemStorage())
@@ -134,11 +142,14 @@ class Book(models.Model):
     cover_img = models.ImageField(_('cover'), upload_to='covers',
                                   blank=True, null=True)
 
-    authors = models.ManyToManyField(Author, related_name='books')
-
-    # Atom fields.
-    a_id = UUIDField('atom:id')
+    # General fields
     a_title = models.CharField(_('atom:title'), max_length=255, null=False)
+    authors = models.ManyToManyField(Author, related_name='books')
+    publishers = models.ManyToManyField(Publisher, related_name='books')
+    dc_language = models.ForeignKey(Language, blank=True, null=True)
+
+    # ePub atom fields
+    a_id = UUIDField('atom:id')
     a_updated = models.DateTimeField(_('atom:updated'), auto_now=True)
     a_summary = models.TextField(_('atom:summary'), blank=True, null=True)
     a_category = models.CharField(_('atom:category'),
@@ -146,10 +157,7 @@ class Book(models.Model):
     a_rights = models.CharField(_('atom:rights'), max_length=255, blank=True,
                                 null=True)
 
-    # Info fields.
-    dc_language = models.ForeignKey(Language, blank=True, null=True)
-    dc_publisher = models.CharField(_('dc:publisher'),
-                                    max_length=255, blank=True, null=True)
+    # ePub info fields.
     dc_issued = models.CharField(_('dc:issued'),
                                  max_length=100, blank=True, null=True)
     dc_identifier = models.CharField(_('dc:identifier'),

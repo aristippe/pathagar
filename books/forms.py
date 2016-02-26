@@ -29,13 +29,23 @@ class AuthorCreateMultipleField(autocomplete.CreateModelMultipleField):
         return models.Author.objects.create(name=value).pk
 
 
+class PublisherCreateMultipleField(autocomplete.CreateModelMultipleField):
+    def create_value(self, value):
+        return models.Publisher.objects.create(name=value).pk
+
+
 class BookEditForm(forms.ModelForm):
     # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
 
     authors = AuthorCreateMultipleField(
-        # required=False,
+        required=False,
         queryset=models.Author.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+    )
+    publishers = PublisherCreateMultipleField(
+        required=False,
+        queryset=models.Publisher.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(url='publisher-autocomplete'),
     )
     # tags = autocomplete.TaggitField(
     #     required=False,
@@ -43,8 +53,6 @@ class BookEditForm(forms.ModelForm):
     # )
 
     # hide current value for cover_img
-    # TODO add remove option
-    # https://stackoverflow.com/questions/14336925/how-to-not-render-django-image-field-currently-and-clear-stuff
     cover_img = forms.ImageField(required=False, widget=forms.FileInput)
     remove_cover_img = forms.BooleanField(required=False)
 
@@ -113,7 +121,8 @@ class BookUploadForm(forms.Form):
         try:
             # Fetch information from the epub, and set it as attributes.
             epub = Epub(data)
-            info_dict, authors, cover_path, tags = epub.as_model_dict()
+            info_dict, authors, publishers, cover_path, tags = \
+                epub.as_model_dict()
 
             # TODO: pass this info via a cleaner way.
             # self.cleaned_data['authors'] = ",".join(authors)

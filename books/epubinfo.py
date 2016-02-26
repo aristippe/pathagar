@@ -27,13 +27,14 @@ class EpubInfo:  # TODO: Cover the entire DC range
 
         self.title = self._get_title()
         self.creators = self._get_creators()
+        self.publishers = self._get_publishers()
+
         self.date = self._get_date()
         self.subjects = self._get_subject()
         self.source = self._get_source()
         self.rights = self._get_rights()
         self.identifier = self._get_identifier()
         self.language = self._get_language()
-        self.publisher = self._get_publisher()
         self.summary = self._get_description()
         self.cover_image = self._get_cover_image()
 
@@ -60,8 +61,6 @@ class EpubInfo:  # TODO: Cover the entire DC range
 
     def _get_creators(self):
         try:
-            # ret = self._get_data(
-            #     './/{http://purl.org/dc/elements/1.1/}creator')
             creators = []
             for element in self._e_metadata.iterfind(
                     './/{http://purl.org/dc/elements/1.1/}creator'):
@@ -69,6 +68,16 @@ class EpubInfo:  # TODO: Cover the entire DC range
         except AttributeError:
             return None
         return creators
+
+    def _get_publishers(self):
+        try:
+            publishers = []
+            for element in self._e_metadata.iterfind(
+                    './/{http://purl.org/dc/elements/1.1/}publisher'):
+                publishers.append(element.text)
+        except AttributeError:
+            return None
+        return publishers
 
     def _get_date(self):
         # TODO: iter
@@ -114,16 +123,6 @@ class EpubInfo:  # TODO: Cover the entire DC range
         except AttributeError:
             return None
 
-        return ret
-
-    def _get_publisher(self):
-        # print "Publisher: %" %
-        #     self._get_data('.//{http://purl.org/dc/elements/1.1/}creator')
-        try:
-            ret = self._get_data(
-                './/{http://purl.org/dc/elements/1.1/}publisher')
-        except AttributeError:
-            return None
         return ret
 
     def _get_subject(self):

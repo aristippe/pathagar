@@ -73,7 +73,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-3 required">{% trans "Authors:" %}</div>
+                <div class="col-sm-3 required">{% trans "Author(s):" %}</div>
                 <div class="col-sm-8">
                     {% bootstrap_field form.authors show_label=False %}
                     {{ form.authors.errors }}
@@ -81,9 +81,10 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-3">{% trans "Publisher:" %}</div>
+                <div class="col-sm-3 required">{% trans "Publisher(s):" %}</div>
                 <div class="col-sm-8">
-                    {% bootstrap_field form.dc_publisher show_label=False %}
+                    {% bootstrap_field form.publishers show_label=False %}
+{#                    set_required=False#}
                 </div>
             </div>
 

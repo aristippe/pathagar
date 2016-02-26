@@ -54,6 +54,11 @@
                 <li class="nav-item">
                     <a href="{% url "latest_feed" %}">{% trans "RSS" %}</a>
                 </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url "book_add" %}">{% trans "Upload" %}</a>
+                    </li>
+                {% endif %}
                 <li class="searchbox">
                     <form
                             {% if list_by %}
@@ -88,8 +93,6 @@
                             <li>
                                 <a href="{% url 'userena_profile_detail' user.username %}">{{ user.username }}</a>
                             </li>
-                            <li><a href="{% url "book_add" %}"
-                            >{% trans "Add Book" %}</a></li>
                             {% if user.is_superuser %}
                                 <li>
                                     <a href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
