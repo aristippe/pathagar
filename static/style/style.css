@@ -3,6 +3,10 @@ body {
     color: gray;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: "HelveticaNeue-CondensedBold", HelveticaNeue, "Oswald", Helvetica, Arial, sans-serif;
+}
+
 a {
     color: inherit;
 }
@@ -252,7 +256,8 @@ tbody {
     clear: both;
 }
 
-.detail_title, .detail_author {
+.detail_author {
+    font-family: Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-style: normal;
     padding: 0;

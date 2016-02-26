@@ -18,6 +18,8 @@
         <script type="text/javascript"
                 src=" https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
+        <link href='https://fonts.googleapis.com/css?family=Oswald:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
         {% bootstrap_javascript %}
 
         {% block head %}{% endblock %}
@@ -51,9 +53,11 @@
                 <li class="nav-item">
                     <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
                 </li>
-                <li class="nav-item">
-                    <a href="{% url "latest_feed" %}">{% trans "RSS" %}</a>
-                </li>
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url "latest_feed" %}">{% trans "RSS" %}</a>
+                    </li>
+                {% endif %}
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a href="{% url "book_add" %}">{% trans "Upload" %}</a>

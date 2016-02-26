@@ -186,6 +186,9 @@ class Book(models.Model):
     def get_absolute_url(self):
         return 'book_detail', [self.pk]
 
+    def get_authors(self):
+        return ", ".join([str(p) for p in self.authors.all()])
+
 
 @receiver(post_delete, sender=Book)
 def book_post_delete_handler(**kwargs):

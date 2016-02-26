@@ -16,49 +16,87 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from django.contrib import admin
+from django.db.models import Count
 import models as books_models
+
+from django.utils.translation import ugettext_lazy as _
+
+
+class AuthorsInline(admin.TabularInline):
+    model = books_models.Book.authors.through
+
+
+class PublishersInline(admin.TabularInline):
+    model = books_models.Book.publishers.through
+
+
+class AuthorAdmin(admin.ModelAdmin):
+    inlines = [
+        AuthorsInline,
+    ]
+
+    search_fields = ['name']
+
+    list_display = ('name', 'book_count')
+
+    def get_queryset(self, request):
+        return books_models.Author.objects.annotate(book_count=Count('books'))
+
+    def book_count(self, inst):
+        return inst.book_count
+
+    book_count.admin_order_field = 'book_count'
 
 
 class BookAdmin(admin.ModelAdmin):
     fieldsets = [
         ('File information', {
-            'fields': ['book_file', 'original_path', 'file_sha256sum',
-                       'mimetype', 'cover_img']}),
+            'fields': ['book_file', 'original_path',
+                       'cover_img']}),
         ('Basic information',
-         {'fields': ['a_title', 'authors', 'a_status', 'tags']}),
+         {'fields': ['a_title', 'a_status', 'tags']}),
         ('Extended information', {
             'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
-                       'dc_language', 'publishers', 'dc_issued',
+                       'dc_language', 'dc_issued',
                        'dc_identifier', 'time_added', 'a_updated',
                        'downloads'],
             'classes': ['collapse']}),
     ]
 
-    def authors(self, user):
-        authors = []
-        for author in user.author.all():
-            authors.append(author.name)
-        return ', '.join(authors)
+    inlines = [
+        AuthorsInline, PublishersInline
+    ]
 
-    def publishers(self, user):
-        publishers = []
-        for publishers in user.publisher.all():
-            publishers.append(publishers.name)
-        return ', '.join(publishers)
-
-    authors.short_description = 'Authors'
-    publishers.short_description = 'Publishers'
-
-    list_display = ('a_title', 'authors', 'time_added', 'original_path')
-
+    list_display = ('a_title', 'get_authors', 'time_added')
     readonly_fields = ('time_added', 'a_updated', 'a_id')
+    search_fields = ['a_title', 'authors__name', 'publishers__name']
+
+
+class PublisherAdmin(admin.ModelAdmin):
+    inlines = [
+        PublishersInline,
+    ]
+
+    list_display = ('name', 'book_count')
+    search_fields = ['name']
+
+    def get_queryset(self, request):
+        return books_models.Publisher.objects.annotate(book_count=Count(
+            'books'))
+
+    def book_count(self, inst):
+        return inst.book_count
+
+    book_count.admin_order_field = 'book_count'
 
 
 class TagGroupAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+admin.site.register(books_models.Author, AuthorAdmin)
 admin.site.register(books_models.Book, BookAdmin)
 admin.site.register(books_models.Language)
+admin.site.register(books_models.Publisher, PublisherAdmin)
 admin.site.register(books_models.Status)
 admin.site.register(books_models.TagGroup, TagGroupAdmin)

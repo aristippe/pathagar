@@ -37,19 +37,19 @@
 {% block content %}
 
     {% if q != None %}
-        <h4 class="list_header">{% trans "Search:" %}
+        <h3 class="list_header">{% trans "Search:" %}
             {% blocktrans with query=q %}"{{ query }}"{% endblocktrans %}
             ({{ paginator.count }}
-            {% trans "results" %})</h4>
+            {% trans "results" %})</h3>
 {#        {% else %}#}
 {#        <h1>{% trans "Books" %}</h1>#}
         {% else %}
-        <div style="padding-top:2em"></div>
+        <div style="padding-top:1em"></div>
     {% endif %}
 
     {% url 'by_tag' tag as view_tag %}
     {% if request.get_full_path == view_tag %}
-        <h4 class="list_header">{% trans "Tag:" %} {{ tag }}</h4>
+        <h3 class="list_header">{% trans "Tag:" %} {{ tag }}</h3>
     {% endif %}
 
     {% include "pagination.html" %}
@@ -99,8 +99,8 @@
                             <img src="{{ book.cover_img.url }}" alt="Cover"
                                  width="50px"/>
                         {% else %}
-                            <img src="{% static "images/generic_cover.png" %}"
-                                 alt="Cover" height="50px"/>
+                            <img src="{% static "images/book-icon.png" %}"
+                                 alt="Cover" width="50px"/>
                         {% endif %}
                     </a>
                 </td>
@@ -154,15 +154,19 @@
 
     {% include "pagination.html" %}
 
-    <hr class="space">
-    <div class="box">
-        <ul class="stats">
-            <li>{% trans "Published eBooks:" %} {{ published_books }}</li>
-            {% if user.is_authenticated %}
-                <li>{% trans "Unpublished eBooks:" %}
-                    {{ unpublished_books }}</li>
-            {% endif %}
-        </ul>
-    </div>
+{% endblock %}
 
+{# TODO footer https://stackoverflow.com/questions/17966140/twitter-bootstrap-3-sticky-footer#}
+{% block footer %}
+    <div id="footer navbar-fixed-bottom">
+        <div class="container">
+            <ul class="stats">
+                <li>{% trans "Books:" %} {{ published_books }}</li>
+                {% if user.is_superuser %}
+                    <li>{% trans "Unpublished eBooks:" %}
+                        {{ unpublished_books }}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}

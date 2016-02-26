@@ -6,7 +6,7 @@
 {% block title %}{% if action == 'add' %}
     Add Book
 {% else %}
-    Edit Book
+    {% trans "Editing" %} - {{ book.a_title }}
 {% endif %}
 {% endblock %}
 
@@ -42,7 +42,7 @@
                 <img src="{{ book.cover_img.url }}" alt="Cover" width=180px/>
                 {% bootstrap_field form.remove_cover_img %}
             {% else %}
-                <img src="{% static "images/generic_cover.png" %}" alt="Cover"
+                <img src="{% static "images/book-icon.png" %}" alt="Cover"
                         width=180px/>
                 <br/><br/>
             {% endif %}
@@ -80,7 +80,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-3 required">{% trans "Author(s):" %}</div>
+                <div class="col-sm-3">{% trans "Author(s):" %}</div>
                 <div class="col-sm-8">
                     {% bootstrap_field form.authors show_label=False %}
 {#                    set_required=False#}
@@ -89,7 +89,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-3 required">{% trans "Publisher(s):" %}</div>
+                <div class="col-sm-3">{% trans "Publisher(s):" %}</div>
                 <div class="col-sm-8">
                     {% bootstrap_field form.publishers show_label=False %}
 {#                    set_required=False#}
@@ -148,7 +148,9 @@
 {#                        {% endif %}#}
 {#            </div>#}
         </fieldset>
+
     </form>
+
 {% endblock %}
 
 {% block footer %}

@@ -6,10 +6,11 @@ table.dataTable, table.dataTable thead th, table.dataTable thead td {
     /*border: 1px solid black;*/
 }
 
-.list_header {
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-    font-size: 150%;
+/* TODO find better condensed font than Oswald for non-OS X */
+h3.list_header {
+    font-family: "HelveticaNeue-CondensedBold", HelveticaNeue, "Oswald", Helvetica, Arial, sans-serif;
+    margin-top: 0.5em;
+    margin-bottom: 1.5em;
 }
 
 table th, table thead th {
