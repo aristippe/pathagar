@@ -171,7 +171,7 @@ SENDFILE_BACKEND = 'sendfile.backends.development'
 
 TAGGIT_CASE_INSENSITIVE = True
 
-# TAGGIT_STRING_FROM_TAGS = 'books.utils.comma_joiner'
+TAGGIT_STRING_FROM_TAGS = 'books.utils.comma_joiner'
 TAGGIT_TAGS_FROM_STRING = 'books.utils.comma_splitter'
 
 # -- Pathagar settings.

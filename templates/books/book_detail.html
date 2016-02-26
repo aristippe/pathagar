@@ -33,11 +33,10 @@
 
         <div class="details">
             <h2 class="detail_title">{{ book.a_title }}</h2>
-            <h4 class="detail_author">
-                {% for author in book.authors.all %}
-                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">
-                        {{ author.name }}</a>{% if not forloop.last %}, {% endif %}
-                {% endfor %}
+            <h4 class="detail_author">{% trans "by" %}
+                {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
+                {% endif %}
+                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% endfor %}
             </h4>
 
             <div class="detail_info">
@@ -45,7 +44,7 @@
                 <div class="col-sm-8">
                     {% for publisher in book.publishers.all %}
                         <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">
-                            {{ publisher.name }}</a>{% if not forloop.last %}, {% endif %}
+                            {{ publisher.name }}</a>{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 </div>
                 <br/>

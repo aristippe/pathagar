@@ -1,7 +1,7 @@
 # Utility functions for django-taggit
 # https://github.com/alex/django-taggit/blob/develop/docs/custom_tagging.txt
 
-def comma_joiner(tag_string):
+def comma_joiner(tags):
     return ', '.join(t.name for t in tags)
 
 def comma_splitter(tag_string):

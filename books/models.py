@@ -144,8 +144,9 @@ class Book(models.Model):
 
     # General fields
     a_title = models.CharField(_('atom:title'), max_length=255, null=False)
-    authors = models.ManyToManyField(Author, related_name='books')
-    publishers = models.ManyToManyField(Publisher, related_name='books')
+    authors = models.ManyToManyField(Author, blank=True, related_name='books')
+    publishers = models.ManyToManyField(Publisher, blank=True,
+                                        related_name='books')
     dc_language = models.ForeignKey(Language, blank=True, null=True)
 
     # ePub atom fields

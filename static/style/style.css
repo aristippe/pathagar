@@ -7,7 +7,7 @@ a {
     color: inherit;
 }
 
-a:hover {
+a:hover, h4.detail_author a {
     text-decoration: none;
     color: #2e9dfd;
 }

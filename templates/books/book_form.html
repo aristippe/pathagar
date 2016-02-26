@@ -47,6 +47,13 @@
                 <br/><br/>
             {% endif %}
             {% bootstrap_field form.cover_img show_label=False %}
+                        <input type="submit" class="btn btn-sm btn-primary"
+                        {% if action == 'add' %}
+                            value="Add">
+                        {% else %}
+                            value="{% trans "Edit" %}">
+                        {% endif %}
+
         </div>
 
         <fieldset>
@@ -76,6 +83,7 @@
                 <div class="col-sm-3 required">{% trans "Author(s):" %}</div>
                 <div class="col-sm-8">
                     {% bootstrap_field form.authors show_label=False %}
+{#                    set_required=False#}
                     {{ form.authors.errors }}
                 </div>
             </div>
@@ -131,14 +139,14 @@
                     </div>
             </div>
 
-            <div class="col-sm-4 last">
-                <input type="submit" class="btn btn-sm btn-default"
-                        {% if action == 'add' %}
-                            value="Add">
-                        {% else %}
-                            value="{% trans "Edit" %}">
-                        {% endif %}
-            </div>
+{#            <div class="col-sm-4 last">#}
+{#                <input type="submit" class="btn btn-sm btn-default"#}
+{#                        {% if action == 'add' %}#}
+{#                            value="Add">#}
+{#                        {% else %}#}
+{#                            value="{% trans "Edit" %}">#}
+{#                        {% endif %}#}
+{#            </div>#}
         </fieldset>
     </form>
 {% endblock %}

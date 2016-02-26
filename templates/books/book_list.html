@@ -115,9 +115,9 @@
                     {% endif %}
                 </td>
                 <td class="list_author">
-                    {% for author in book.authors.all %}
-                        <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                    {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
+                    {% endif %}
+                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% endfor %}
                 </td>
                 <td class="list_date">
                     {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago{% endblocktrans %}</td>

@@ -231,15 +231,11 @@ class Command(BaseCommand):
                         subject_split = subject.replace('/', ',') \
                             .replace(';', ',').replace(' ,', ',').split(',')
                         for tag in subject_split:
-                            tag = tag.lower().encode("utf-8").strip()
+                            tag = tag.encode("utf-8").lower().strip()
                             self.stdout.write(self.style.NOTICE(
                                 'Found subject (tag): %s'
                                 % tag))
-                            # surround multi-word tags in quotes
-                            if " " not in tag:
-                                book.tags.add(tag)
-                            else:
-                                book.tags.add('"' + tag + '"')
+                            book.tags.add(tag)
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
             try:
