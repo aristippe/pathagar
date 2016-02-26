@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'userena',
     'guardian',
     'easy_thumbnails',
+    'precise_bbcode',
     # pathagar apps
     'accounts',
     'books.apps.BooksConfig',

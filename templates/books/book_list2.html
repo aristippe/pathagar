@@ -43,6 +43,8 @@
             {% trans "results" %})</h4>
 {#        {% else %}#}
 {#        <h1>{% trans "Books" %}</h1>#}
+        {% else %}
+        <div style="padding-top:2em"></div>
     {% endif %}
 
     {% url 'by_tag' tag as view_tag %}
@@ -58,9 +60,7 @@
             <th></th>
             {% if q != None %}
                 <th><a data-name="by-title"
-                       href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a>
-                </th>
-                <th><a data-name="by-author"
+                       href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a> / <a data-name="by-author"
                        href="{% url "by_author" %}?q={{ q|urlencode }}">{% trans "Author" %}</a>
                 </th>
                 <th><a data-name="latest"
@@ -74,8 +74,8 @@
                 </th>
             {% else %}
                 <th><a data-name="by-title" href="{% url "by_title" %}">
-                    {% trans "Title" %}</a></th>
-                <th><a data-name="by-author" href="{% url "by_author" %}">
+                    {% trans "Title" %}</a> / <a data-name="by-author"
+                        href="{% url "by_author" %}">
                     {% trans "Author" %}</a></th>
                 <th class="th_date_added"><a data-name="latest" href=
                         "{% url "latest" %}">
@@ -93,20 +93,38 @@
         <tbody>
         {% for book in book_list %}
             <tr>
-                <td>
+                <td class="list_cover">
                     <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
                             <img src="{{ book.cover_img.url }}" alt="Cover"
-                                 width="24px"/>
+                                 width="50px"/>
                         {% else %}
                             <img src="{% static "images/generic_cover.png" %}"
-                                 alt="Cover" height="24px"/>
+                                 alt="Cover" height="50px"/>
                         {% endif %}
                     </a>
                 </td>
                 <td class="list_title">
-                    <a href="{% url "book_detail" book.pk %}"
+                    <a class="list_title" href="{% url "book_detail" book.pk %}"
                     >{{ book.a_title }}</a>
+
+                    <div class="list_authors">
+                    <span class="list_authors">
+                    {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
+                    {% endif %}
+                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% endfor %}
+                    </span>
+
+                    {% if book.publishers.all %}
+                    | {% for publisher in book.publishers.all %}
+                    <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% endfor %}
+                    {% endif %}
+
+{#                    {%  if book.dc_issued %}#}
+{#                    - {{ book.dc_issued|date:"Y" }}#}
+{#                    {% endif %}#}
+                    </div>
+
                     {% if book.tags.count != 0 %}
                         <div class="list_tags">
                             {% for tag in book.tags.all %}
@@ -117,11 +135,7 @@
                         </div>
                     {% endif %}
                 </td>
-                <td class="list_author">
-                    {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
-                    {% endif %}
-                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% endfor %}
-                </td>
+
                 <td class="list_date">
                     {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago{% endblocktrans %}</td>
                 <!-- date:'Y-m-d H:i' -->

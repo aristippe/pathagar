@@ -169,7 +169,8 @@ class Book(models.Model):
     # TODO a_status null=True?
     a_status = models.ForeignKey(Status, blank=False, null=False)
     time_added = models.DateTimeField(_('time added'), auto_now_add=True)
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager(blank=True,
+                           help_text=_("A comma-separated list of tags."))
     downloads = models.IntegerField(default=0)
 
     class Meta:

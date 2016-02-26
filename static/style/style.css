@@ -43,7 +43,6 @@ div.paginator {
 }
 
 .header h1 {
-    /*color: white;*/
     font-size: 200%;
     font-weight: bold;
     position: relative;
@@ -207,52 +206,7 @@ div.required:after {
     display: none;
 }
 
-/* List view */
 
-
-table th, table thead th {
-    color: black;
-    padding: 0;
-}
-
-table#book_list {
-    font-size:97%;
-}
-
-
-table#book_list th.th_date_added {
-    width: 13em;
-}
-
-.list_title {
-    width: 50%;
-}
-
-.list_author {
-    width: 30%;
-}
-
-.list_number {
-    text-align: center;
-    width: 1.5em;
-    padding:0;
-    text-align:right;
-}
-
-.list_download_link {
-    text-align: center;
-    width: 2em;
-}
-
-.list_date {
-    width: 20%;
-}
-
-.list_tags {
-    font-size: 90%;
-    padding-left: 1em;
-    color: gray;
-}
 
 /* footer */
 
@@ -276,18 +230,6 @@ ul.stats li {
 
 label {
     font-weight: normal
-}
-
-.list_header {
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-    font-size: 150%;
-}
-
-table.dataTable, table.dataTable thead th, table.dataTable thead td {
-    padding: 0;
-    border-bottom: 0 !important;
-    /*border: 1px solid black;*/
 }
 
 /*tr.even td, tr.odd td { background:#ffffff }*/
