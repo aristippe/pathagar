@@ -48,7 +48,7 @@
                 <li class="nav-item"><a data-name="latest" href="
                 {% url "latest" %}">{% trans "Books" %}</a></li>
                 <li class="nav-item">
-                    <a data-name="by-author" href="{% url "by_author" %}">
+                    <a data-name="authors" href="{% url "author_list" %}">
                         {% trans "Authors" %}</a>
                 </li>
                 {% if user.is_superuser %}
@@ -123,7 +123,8 @@
         <div class="footer">
             <div class="row">
                 <div class="col-sm-5">{% trans "Books:" %}
-                    {{ books.count }}</div>
+                    {{ books.count }}
+                </div>
                 {% if user.is_superuser %}
                     <div class="col-sm-5">
                     {% trans "Unpublished eBooks:" %}
@@ -132,7 +133,7 @@
                 {% endif %}
             </div>
             <div class="row">
-                <div class="col-sm-5">
+                <div class="col-sm-3">
                     <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
                 </div>
             </div>

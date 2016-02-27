@@ -18,7 +18,7 @@
 from django.contrib import admin
 from django.db.models import Count
 import models as books_models
-
+from forms import AdminAuthorsForm, AdminBooksForm
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -31,6 +31,8 @@ class PublishersInline(admin.TabularInline):
 
 
 class AuthorAdmin(admin.ModelAdmin):
+    form = AdminAuthorsForm
+
     inlines = [
         AuthorsInline,
     ]
@@ -49,6 +51,8 @@ class AuthorAdmin(admin.ModelAdmin):
 
 
 class BookAdmin(admin.ModelAdmin):
+    form = AdminBooksForm
+
     fieldsets = [
         ('File information', {
             'fields': ['book_file', 'original_path',

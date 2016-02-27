@@ -188,18 +188,19 @@ class Command(BaseCommand):
             if authors:
                 for author in authors:
                     if author is not None:
-                        author_split = author.replace(
+                        author_split = author.strip().replace(
                             ' and ', ';').replace('&', ';').split(';')
                         for auth in author_split:
                             auth = auth.strip()
-                            self.stdout.write(self.style.NOTICE(
-                                'Found author: %s' % auth))
-                            try:
-                                author = models.Author.objects.get(name=auth)
-                            except:
-                                author = models.Author(name=auth)
-                                author.save()
-                            book.authors.add(author)
+                            if auth:
+                                self.stdout.write(self.style.NOTICE(
+                                    'Found author: "%s"' % auth))
+                                try:
+                                    author = models.Author.objects.get(name=auth)
+                                except:
+                                    author = models.Author(name=auth)
+                                    author.save()
+                                book.authors.add(author)
 
             # Add publishers
             if publishers:
@@ -234,19 +235,20 @@ class Command(BaseCommand):
             if subjects:
                 for subject in subjects:
                     # workaround for ePubs with description as subject
-                    if len(subject) <= 80:
-                        subject_split = subject.replace('/', ',') \
-                            .replace(';', ',') \
-                            .replace(':', '') \
-                            .replace('\n', ',') \
-                            .replace(' ,', ',') \
-                            .split(',')
-                        for tag in subject_split:
-                            tag = tag.encode("utf-8").lower().strip()
-                            self.stdout.write(self.style.NOTICE(
-                                'Found subject (tag): %s'
-                                % tag))
-                            book.tags.add(tag)
+                    if subject:
+                        if len(subject) <= 80:
+                            subject_split = subject.replace('/', ',') \
+                                .replace(';', ',') \
+                                .replace(':', '') \
+                                .replace('\n', ',') \
+                                .replace(' ,', ',') \
+                                .split(',')
+                            for tag in subject_split:
+                                tag = tag.encode("utf-8").lower().strip()
+                                self.stdout.write(self.style.NOTICE(
+                                    'Found subject (tag): %s'
+                                    % tag))
+                                book.tags.add(tag)
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
             try:

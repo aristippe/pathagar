@@ -18,6 +18,7 @@
 import logging
 import os
 
+from dal import autocomplete
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
@@ -31,16 +32,17 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.list import ListView
 from formtools.wizard.views import SessionWizardView
 from pure_pagination import Paginator, EmptyPage
 from sendfile import sendfile
 from taggit.models import Tag
 
-from dal import autocomplete
+from pure_pagination.mixins import PaginationMixin
 
 from app_settings import BOOKS_PER_PAGE
 from books.app_settings import BOOK_PUBLISHED
-from forms import BookEditForm, AddLanguageForm
+from forms import AuthorEditForm, BookEditForm, AddLanguageForm
 from models import Author, Book, Language, Publisher, Status, TagGroup
 from opds import generate_catalog
 from opds import generate_root_catalog
@@ -60,6 +62,20 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
             return Author.objects.none()
 
         qs = Author.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
+class BookAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Book.objects.none()
+
+        qs = Book.objects.all()
 
         if self.q:
             qs = qs.filter(name__istartswith=self.q)
@@ -197,6 +213,49 @@ class AddBookWizard(SessionWizardView):
 def add_language(request):
     return handle_pop_add(request, AddLanguageForm, 'language')
 
+
+class AuthorDetailView(DetailView):
+    model = Author
+
+    def get_context_data(self, **kwargs):
+        context = super(AuthorDetailView, self).get_context_data(**kwargs)
+        # context['book_list'] = self.object.book_set.all()
+        context['book_list'] = Book.objects.filter(authors=self.object)
+        return context
+
+
+class AuthorEditView(UpdateView):
+    model = Author
+    form_class = AuthorEditForm
+
+    def get_context_data(self, **kwargs):
+        context = super(AuthorEditView, self).get_context_data(**kwargs)
+        context.update({'action': 'edit'})
+
+        return context
+
+
+class AuthorListView(PaginationMixin, ListView):
+    model = Author
+    context_object_name = "authors"
+    paginate_by = BOOKS_PER_PAGE
+
+    def get_context_data(self, **kwargs):
+        context = super(AuthorListView, self).get_context_data(**kwargs)
+        q = self.request.GET.get('q')
+        context['input'] = q
+        return context
+
+    def get_queryset(self):
+        try:
+            q = self.kwargs['q']
+        except:
+            q = ''
+        if q != '':
+            queryset = self.model.objects.filter(name__icontains = q)
+        else:
+            queryset = Author.objects.all()
+        return queryset
 
 # https://stackoverflow.com/questions/16937076/how-does-one-use-a-custom-widget-with-a-generic-updateview-without-having-to-red
 # https://stackoverflow.com/questions/17052701/problems-integrating-django-autocomplete-light-with-django-taggit

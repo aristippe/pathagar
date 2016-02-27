@@ -28,10 +28,50 @@ class AuthorCreateMultipleField(autocomplete.CreateModelMultipleField):
     def create_value(self, value):
         return models.Author.objects.create(name=value).pk
 
+class BookCreateMultipleField(autocomplete.CreateModelMultipleField):
+    def create_value(self, value):
+        return models.Book.objects.create(name=value).pk
 
 class PublisherCreateMultipleField(autocomplete.CreateModelMultipleField):
     def create_value(self, value):
         return models.Publisher.objects.create(name=value).pk
+
+
+class AdminAuthorsForm(forms.ModelForm):
+    books = BookCreateMultipleField(
+        required=False,
+        queryset=models.Book.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(url='book-autocomplete'),
+    )
+
+    class Meta:
+        model = models.Author
+        fields = ('name','books')
+
+
+class AdminBooksForm(forms.ModelForm):
+    authors = AuthorCreateMultipleField(
+        required=False,
+        queryset=models.Author.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+    )
+
+    class Meta:
+        model = models.Book
+        exclude = ['mimetype']
+
+
+
+class AuthorEditForm(forms.ModelForm):
+    books = BookCreateMultipleField(
+        required=False,
+        queryset=models.Book.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(url='book-autocomplete'),
+    )
+
+    class Meta:
+        model = models.Author
+        fields = ('name', 'books')
 
 
 class BookEditForm(forms.ModelForm):

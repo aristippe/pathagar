@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet"
+            href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"
+            type="text/css"/>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+
+    <link rel="stylesheet"
+            href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
+            type="text/css"/>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
+
+    <link rel="stylesheet" href="{% static "style/book_list.css" %}"
+            type="text/css">
+    <script type="text/javascript"
+            src="{% static "js/book_list.js" %}"></script>
+
+{% endblock %}
+
+    {% block title %}{% trans "Authors" %} :: Pathagar{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+    $('#search').example('Book Search...');
+{% endblock %}
+
+
+{% block content %}
+
+    <h3 class="detail_title">{% trans "Authors" %}</h3>
+
+    {% if authors %}
+
+        {% include "pagination.html" %}
+
+        <table id="author_list" class="hover">
+            <thead>
+            <th>{% trans "Author" %}</th>
+            <th>{% trans "Books" %}</th>
+            </thead>
+            <tbody>
+            {% for author in authors %}
+                <tr>
+                    <td class="author_list_author">
+                        <a class="list_author"
+                                href="/author/{{ author.id }}">{{ author.name }}</a>
+                    </td>
+                    {% for book in author.books.all|slice:":5" %}
+                        {% if not forloop.first %}
+                            <tr/>
+                            <tr>
+                            <td class="blank">&nbsp;</td>
+                        {% endif %}
+                        <td class="author_cover" style="width:50px;
+                                text-align:center">
+                            <a href="{% url "book_detail" book.pk %}">
+                                {% if book.cover_img %}
+                                    <img class="author_cover" src=
+                                    "{{ book.cover_img.url }}"
+                                            alt="Cover"
+                                            height="50px"/>
+                                {% else %}
+                                    <img class="author_cover" src="{% static "images/book-icon.png" %}"
+                                            alt="Cover" height="50px"/>
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td class="author_book"
+                                style="vertical-align:middle">
+                            <a class="book" href=
+                            "{% url "book_detail" book.pk %}">
+                            {{ book.a_title }}</a>
+                                {% if book.publishers.all %}
+                                | {% for publisher in book.publishers.all %}
+                                <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+                            {% endif %}
+                        </td>
+                            <td class="list_download_link">
+                                <a class="download"
+                                  href="{% url "book_download" book.pk %}">⬇︎</a>
+                            </td>
+                            {% if not forloop.first %}
+                                </tr>
+                            {% endif %}
+
+                    {% endfor %}
+
+                    {% if author.books.count > 5 %}
+                        <td colspan="2" class="blank">&nbsp;</td>
+                        <td colspan="2">
+                            <a class="list_author"
+                            href="/author/{{ author.id }}">
+                                {% trans "more"%} ...</a>
+                        </td>
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% include "pagination.html" %}
+
+    {% else %}
+    {% endif %}
+
+
+{% endblock %}

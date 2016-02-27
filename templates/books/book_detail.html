@@ -36,7 +36,10 @@
             <h4 class="detail_author">
                 {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
                 {% endif %}
-                    <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% endfor %}
+                <a href="/author/{{ author.id }}">{{ author.name }}</a>{% endfor %}
+{#                {% if user.is_superuser %}#}
+{#                    <a href="{% url "author_edit" author.pk %}"><span class="glyphicon glyphicon-edit" aria-hidden="true"/></a>#}
+{#                {% endif %}#}
             </h4>
 
             <div class="detail_info">

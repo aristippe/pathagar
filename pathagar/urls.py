@@ -73,6 +73,16 @@ urlpatterns = [
         login_required(views.BookDeleteView.as_view()),
         name='book_delete'),
 
+    url(r'^author/(?P<pk>\d+)/$',
+        login_required(views.AuthorDetailView.as_view()),
+        name='author_detail'),
+    url(r'^authors/$',
+        login_required(views.AuthorListView.as_view()),
+        name='author_list'),
+    url(r'^author/(?P<pk>\d+)/edit$',
+        login_required(views.AuthorEditView.as_view()),
+        name='author_edit'),
+
     url(r'^book/(?P<book_id>\d+)/download$', views.download_book,
         name='book_download'),
 
@@ -81,6 +91,11 @@ urlpatterns = [
         'author-autocomplete/$',
         views.AuthorAutocomplete.as_view(),
         name='author-autocomplete',
+    ),
+    url(
+        'book-autocomplete/$',
+        views.BookAutocomplete.as_view(),
+        name='book-autocomplete',
     ),
     url(
         'publisher-autocomplete/$',

@@ -18,11 +18,15 @@ table th, table thead th {
     padding: 0;
 }
 
-table#book_list {
+table#book_list, table#author_list {
     font-size:97%;
 }
 
-table#book_list tbody td {
+table#book_list {
+    vertical-align: top;
+}
+
+table#book_list, table#author_list tbody td {
     padding-bottom: 0.75em;
     color: gray;
 }
@@ -84,3 +88,38 @@ div.list_authors {
 span.list_authors {
     color: black;
 }
+
+.list_cover {
+    max-width: 50px;
+    max-height: 80px;
+    width: auto;
+    height: auto;
+}
+
+/* author list */
+
+table#author_list tbody td.author_list_author {
+    width: 40%;
+    vertical-align: middle;
+}
+
+a.list_author {
+    font-size:110%;
+    color: #2e9dfd;
+}
+
+a.book {
+    color: #222222;
+}
+
+.author_cover {
+    max-width: 40px;
+    width: auto;
+    height: auto;
+}
+
+/* temp */
+
+/*table#author_list tbody td {*/
+    /*border: 1px solid gray;*/
+/*}*/
