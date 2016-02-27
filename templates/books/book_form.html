@@ -47,12 +47,16 @@
                 <br/><br/>
             {% endif %}
             {% bootstrap_field form.cover_img show_label=False %}
-                        <input type="submit" class="btn btn-sm btn-primary"
-                        {% if action == 'add' %}
-                            value="Add">
-                        {% else %}
-                            value="{% trans "Edit" %}">
-                        {% endif %}
+            <input type="submit" class="btn btn-sm btn-primary"
+            {% if action == 'add' %}
+                value="Add">
+            {% else %}
+                value="{% trans "Edit" %}">
+            {% endif %}
+            <a href="{% url "book_detail" book.pk %}">
+                <button type="button" class="btn btn-secondary btn-sm"
+                >{% trans "Cancel" %}</button>
+            </a>
 
         </div>
 

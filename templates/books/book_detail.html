@@ -29,74 +29,86 @@
                     <a href="{% url "book_delete" book.pk %}"><span class="glyphicon glyphicon-trash" aria-hidden="true"/></a>
                 {% endif %}
             </div>
-                {#                <div class="col-sm-2"><label>Status:</label></div>#}
-                {#                <div class="col-sm-3">{{ book.a_status }}</div>#}
         </div>
 
         <div class="details">
             <h2 class="detail_title">{{ book.a_title }}</h2>
-            <h4 class="detail_author">{% trans "by" %}
+            <h4 class="detail_author">
                 {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
                 {% endif %}
                     <a href="{% url "by_title" %}?q={{ author.name|urlencode }}">{{ author.name }}</a>{% endfor %}
             </h4>
 
             <div class="detail_info">
-                <div class="col-sm-3">{% trans "Publisher:" %}</div>
-                <div class="col-sm-8">
-                    {% for publisher in book.publishers.all %}
-                        <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">
-                            {{ publisher.name }}</a>{% if not forloop.last %},{% endif %}
-                        {% endfor %}
-                </div>
-                <br/>
-
-                <div class="col-sm-3">{% trans "Published:" %}</div>
-                <div class="col-sm-8">{{ book.dc_issued }}</div>
-                <br/>
-                <div class="col-sm-3">{% trans "Language:" %}</div>
-                {% ifnotequal book.dc_language None %}
-                    <div class="col-sm-3">{{ book.dc_language }}</div>
-                {% else %}
-                    <div class="col-sm-8">{% trans "Unknown" %}</div>
-                {% endifnotequal %}
-                <br/><br/>
-
-                {% if book.tags.count != 0 %}
-                    <div class="col-sm-3">{% trans "Tags:" %}</div>
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Publisher:" %}</div>
                     <div class="col-sm-8">
-                        {% for tag in book.tags.all %}
-                            <a class="list_tag" href="{% url "by_tag" tag.name %}">
-                                {{ tag.name }}</a>{% if not forloop.last %},
-                        {% endif %}
-                        {% endfor %}
+                        {% for publisher in book.publishers.all %}
+                            <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">
+                                {{ publisher.name }}</a>{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Published:" %}</div>
+                    <div class="col-sm-8">{{ book.dc_issued }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Language:" %}</div>
+                        {% ifnotequal book.dc_language None %}
+                            <div class="col-sm-3">{{ book.dc_language }}</div>
+                        {% endifnotequal %}
+                    </div>
+{#                <div class="row">#}
+{#                    <div class="col-sm-3">Status:</div>#}
+{#                    <div class="col-sm-6">{{ book.a_status }}</div>#}
+{#                </div>#}
+
+                <br/>
+                {% if book.tags.count != 0 %}
+                    <div class="row">
+                        <div class="col-sm-3">{% trans "Tags:" %}</div>
+                        <div class="col-sm-8">
+                            {% for tag in book.tags.all %}
+                                <a class="list_tag" href="{% url "by_tag" tag.name %}">
+                                    {{ tag.name }}</a>{% if not forloop.last %},
+                            {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
                 {% endif %}
 
-                <div class="col-sm-3">{% trans "Added:" %}</div>
-                <div class="col-sm-8">
-                    {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago {% endblocktrans %}</div>
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Added:" %}</div>
+                    <div class="col-sm-8">
+                        {% blocktrans with time_added=book.time_added|timesince %}{{ time_added }} ago {% endblocktrans %}
+                    </div>
+                </div>
 {#                <br/>#}
 {#                <div class="col-sm-3">{% trans "Size:" %}</div>#}
 {#                <div class="col-sm-8">{{ book.book_file.size|filesizeformat }}</div>#}
-                <br/>
-                <div class="col-sm-3">{% trans "Downloads:" %}</div>
-                <div class="col-sm-8">{{ book.downloads }}</div>
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Downloads:" %}</div>
+                    <div class="col-sm-6">{{ book.downloads }}</div>
+                </div>
                 {% if user.is_superuser %}
 {#                    <div class="col-sm-3"><a href="#more" class="" data-toggle="collapse">Toggle#}
 {#                        Foo</a></div>#}
 {#                    <div class="col-sm-8"></div>#}
 {#                    <div id="more" class="collapse">#}
-                    <br/>
-                    <div class="col-sm-3">{% trans "Path:" %}</div>
-                    <div class="col-sm-9">{{ book.original_path }}</div>
+                    <div class="row">
+                        <div class="col-sm-3">{% trans "Path:" %}</div>
+                        <div class="col-sm-9">{{ book.original_path }}</div>
+                    </div>
 {#                    </div>#}
                 {% endif %}
             </div>
 
             {% ifnotequal book.a_summary None %}
-                <div class="col-sm-12"><br/>{{ book.a_summary|safe }}</div>
+                <div class="row">
+                    <div class="col-sm-11"><br/>{{ book.a_summary|safe }}</div>
+                </div>
             {% endifnotequal %}
         </div> <!-- detail-info -->
 
@@ -133,18 +145,7 @@
                 {{ form.security_hash }}
                 <input type="hidden" name="next"
                         value="{% url "book_detail" book.pk %}"/>
-
-                {#<div class="col-sm-3"><label for="id_your_name">Your name:</label></div>#}
-                {#{{ form.name }}#}
-                {#<hr class="space">#}
-
-                {#                <div class="col-sm-3" style="padding-left:2em"><label for="id_comment">Comment:</label></div>#}
                 {{ form.comment }}
-
-{#                <input type="hidden" name="email"#}
-{#                        value="fake_emai@kfake.org"/>#}
-{#                <input type="hidden" name="url"#}
-{#                        value="http://faksite.org"/>#}
 
                 <input type="submit" name="submit" class="btn btn-sm btn-default" value="{% trans "Add comment" %}">
             </form>

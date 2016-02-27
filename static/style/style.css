@@ -266,7 +266,7 @@ tbody {
 .detail_sidebar {
     padding-top: 1.75em;
     width: 240px;
-    float: right;
+    float: left;
 }
 
 .details {
