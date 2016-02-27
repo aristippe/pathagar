@@ -17,6 +17,7 @@ from books.storage import LinkableFile
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def get_epubs_paths(paths):
     """Return a list of paths for potential EPUB(s) from a list of file and
     directory names. The returned list contains only files with the '.epub'
@@ -188,7 +189,7 @@ class Command(BaseCommand):
                 for author in authors:
                     if author is not None:
                         author_split = author.replace(
-                            ' and ',';').replace('&',';').split(';')
+                            ' and ', ';').replace('&', ';').split(';')
                         for auth in author_split:
                             auth = auth.strip()
                             self.stdout.write(self.style.NOTICE(
@@ -235,7 +236,11 @@ class Command(BaseCommand):
                     # workaround for ePubs with description as subject
                     if len(subject) <= 80:
                         subject_split = subject.replace('/', ',') \
-                            .replace(';', ',').replace(' ,', ',').split(',')
+                            .replace(';', ',') \
+                            .replace(':', '') \
+                            .replace('\n', ',') \
+                            .replace(' ,', ',') \
+                            .split(',')
                         for tag in subject_split:
                             tag = tag.encode("utf-8").lower().strip()
                             self.stdout.write(self.style.NOTICE(
