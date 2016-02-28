@@ -83,28 +83,28 @@ urlpatterns = [
         login_required(views.AuthorEditView.as_view()),
         name='author_edit'),
 
-    url(r'^book/(?P<book_id>\d+)/download$', views.download_book,
-        name='book_download'),
+    url(r'^book/(?P<book_id>\d+)/download$',
+        login_required(views.download_book), name='book_download'),
 
     # Auto-complete for book model m2m fields
     url(
         'author-autocomplete/$',
-        views.AuthorAutocomplete.as_view(),
+        login_required(views.AuthorAutocomplete.as_view()),
         name='author-autocomplete',
     ),
     url(
         'book-autocomplete/$',
-        views.BookAutocomplete.as_view(),
+        login_required(views.BookAutocomplete.as_view()),
         name='book-autocomplete',
     ),
     url(
         'publisher-autocomplete/$',
-        views.PublisherAutocomplete.as_view(),
+        login_required(views.PublisherAutocomplete.as_view()),
         name='publisher-autocomplete',
     ),
     url(
         'tags-autocomplete/$',
-        views.TagAutocomplete.as_view(),
+        login_required(views.TagAutocomplete.as_view()),
         name='tags-autocomplete',
     ),
 

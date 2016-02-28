@@ -35,14 +35,23 @@
 
     <h3 class="detail_title">{% trans "Authors" %}</h3>
 
+    {% if q != None %}
+        <h4 class="list_header">{% trans "Search:" %}
+            {% blocktrans with query=q %}"{{ query }}"{% endblocktrans %}
+            ({{ paginator.count }}
+            {% trans "results" %})</h4>
+    {% endif %}
+
     {% if authors %}
 
         {% include "pagination.html" %}
 
         <table id="author_list" class="hover">
             <thead>
-            <th>{% trans "Author" %}</th>
-            <th>{% trans "Books" %}</th>
+                <tr>
+                    <th>{% trans "Author" %}</th>
+                    <th>{% trans "Books" %}</th>
+                </tr>
             </thead>
             <tbody>
             {% for author in authors %}
@@ -53,7 +62,7 @@
                     </td>
                     {% for book in author.books.all|slice:":5" %}
                         {% if not forloop.first %}
-                            <tr/>
+                            </tr>
                             <tr>
                             <td class="blank">&nbsp;</td>
                         {% endif %}

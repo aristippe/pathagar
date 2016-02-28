@@ -23,7 +23,15 @@ $(document).ready(function () {
         alert(table.rows('.selected').data().length + ' row(s) selected');
     });
 
-    $('#book_list, #author_list').
+    $('#book_list').
+      on('mouseover', 'tr', function() {
+          $(this).find('.download').show();
+      }).
+      on('mouseout', 'tr', function() {
+          $(this).find('.download').hide();
+      });
+
+    $('#author_list').
       on('mouseover', 'tr', function() {
           $(this).find('.download').show();
       }).

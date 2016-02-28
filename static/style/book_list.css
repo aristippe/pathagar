@@ -99,7 +99,7 @@ span.list_authors {
 /* author list */
 
 table#author_list tbody td.author_list_author {
-    width: 40%;
+    width: 35%;
     vertical-align: middle;
 }
 

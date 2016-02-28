@@ -40,7 +40,7 @@
 {% block content %}
 
     {% if q != None %}
-        <h3 class="list_header">{% trans "Search:" %}
+        <h3>{% trans "Search:" %}
             {% blocktrans with query=q %}"{{ query }}"{% endblocktrans %}
             ({{ paginator.count }}
             {% trans "results" %})</h3>

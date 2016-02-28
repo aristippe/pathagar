@@ -219,8 +219,8 @@ class AuthorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AuthorDetailView, self).get_context_data(**kwargs)
-        # context['book_list'] = self.object.book_set.all()
-        context['book_list'] = Book.objects.filter(authors=self.object)
+        context['book_list'] = self.object.books.all()
+        # context['book_list'] = Book.objects.filter(authors=self.object)
         return context
 
 
@@ -242,17 +242,13 @@ class AuthorListView(PaginationMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AuthorListView, self).get_context_data(**kwargs)
-        q = self.request.GET.get('q')
-        context['input'] = q
+        context['q'] = self.request.GET.get('q')
         return context
 
     def get_queryset(self):
-        try:
-            q = self.kwargs['q']
-        except:
-            q = ''
-        if q != '':
-            queryset = self.model.objects.filter(name__icontains = q)
+        query = self.request.GET.get('q')
+        if query:
+            queryset = self.model.objects.filter(name__icontains = query)
         else:
             queryset = Author.objects.all()
         return queryset

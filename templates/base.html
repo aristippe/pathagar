@@ -118,6 +118,7 @@
 <div class="container">
     {% block content %}{% endblock %}
 
+    {% if user.is_authenticated %}
     {% block footer %}
         <hr/>
         <div class="footer">
@@ -139,6 +140,7 @@
             </div>
         </div>
     {% endblock %}
+    {% endif %}
 
 </div>
 
