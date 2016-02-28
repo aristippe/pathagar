@@ -62,40 +62,50 @@
         <tr>
             <th></th>
             {% if q != None %}
+
                 <th><a data-name="by-title"
                        href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a> / <a data-name="by-author"
                        href="{% url "by_author" %}?q={{ q|urlencode }}">{% trans "Author" %}</a>
                 </th>
+
                 <th><a data-name="latest"
                        href="{% url "latest" %}?q={{ q|urlencode }}">{% trans "Added" %}</a>
                 </th>
+
                 {% if allow_user_comments %}
                     <th class="list_number">❝</th>
                 {% endif %}
+
                 <th class="list_number"><a data-name="by-author"
                                               href="{% url "most_downloaded" %}?q={{ q|urlencode }}">⬇</a>
                 </th>
             {% else %}
+
                 <th><a data-name="by-title" href="{% url "by_title" %}">
                     {% trans "Title" %}</a> / <a data-name="by-author"
                         href="{% url "by_author" %}">
                     {% trans "Author" %}</a></th>
+
                 <th class="th_date_added"><a data-name="latest" href=
                         "{% url "latest" %}">
                     {% trans "Added" %}</a></th>
+
                 {% if allow_user_comments %}
                     <th class="list_number">❝</th>
                 {% endif %}
+
                 <th class="list_number"><a data-name="by-author"
                                               href="{% url "most_downloaded" %}">⬇</a>
                 </th>
+
             {% endif %}
-            <th></th>
+            <th>&nbsp;</th>
         </tr>
         </thead>
         <tbody>
         {% for book in book_list %}
             <tr>
+
                 <td class="list_cover">
                     <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
@@ -109,6 +119,7 @@
                         {% endif %}
                     </a>
                 </td>
+
                 <td class="list_title">
                     <a class="list_title" href="{% url "book_detail" book.pk %}"
                     >{{ book.a_title }}</a>
@@ -148,10 +159,13 @@
                     {% get_comment_count for book as comment_count %}
                     <td class="list_number">{{ comment_count }}</td>
                 {% endif %}
+
                 <td class="list_number">{{ book.downloads }}</td>
+
                 <td class="list_download_link"><a class="download"
                                                   href="{% url "book_download" book.pk %}">⬇︎</a>
                 </td>
+
             </tr>
         {% endfor %}
         </tbody>

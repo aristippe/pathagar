@@ -12,10 +12,14 @@ def comma_splitter(tag_string):
 def fix_authors(authors):
     authors = authors.strip().replace(', PhD', '') \
         .replace(' PhD', '') \
+        .replace(', PH.D.', '') \
+        .replace(' PH.D.', '') \
         .replace(', Ph.D.', '') \
         .replace(' Ph.D.', '') \
         .replace(', Ph.D', '') \
         .replace(' Ph.D', '') \
+        .replace(', M.D.', '') \
+        .replace(' M.D.', '') \
         .replace(', MD', '') \
         .replace(' MD', '')
     if ',' in authors:

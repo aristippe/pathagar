@@ -221,6 +221,8 @@ class AuthorDetailView(DetailView):
         context = super(AuthorDetailView, self).get_context_data(**kwargs)
         context['book_list'] = self.object.books.all()
         # context['book_list'] = Book.objects.filter(authors=self.object)
+        context['allow_user_comments'] = settings.ALLOW_USER_COMMENTS
+
         return context
 
 
@@ -242,6 +244,7 @@ class AuthorListView(PaginationMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AuthorListView, self).get_context_data(**kwargs)
+        context['allow_user_comments'] = settings.ALLOW_USER_COMMENTS
         context['q'] = self.request.GET.get('q')
         return context
 

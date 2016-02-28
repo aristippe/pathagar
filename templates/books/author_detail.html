@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% load comments %}
+{% load thumbnail %}
 
 {% block head %}
     <link rel="stylesheet"
@@ -76,7 +77,7 @@
                     <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
                             <img class="list_cover" src=
-                                    "{{ book.cover_img.url }}" alt="Cover"
+                                    "{{ book.cover_img|thumbnail_url:'thumb' }}" alt="Cover"
                                  height="80px"/>
                         {% else %}
                             <img src="{% static "images/book-icon.png" %}"

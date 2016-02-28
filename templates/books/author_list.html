@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static from staticfiles %}
+{% load comments %}
 {% load thumbnail %}
 
 {% block head %}
@@ -51,6 +52,9 @@
                 <tr>
                     <th>{% trans "Author" %}</th>
                     <th>{% trans "Books" %}</th>
+{#                    {% if allow_user_comments %}#}
+{#                        <th class="list_number">❝</th>#}
+{#                    {% endif %}#}
                 </tr>
             </thead>
             <tbody>
@@ -63,11 +67,13 @@
                     </td>
 
                     {% for book in author.books.all|slice:":5" %}
+
                         {% if not forloop.first %}
                             </tr>
                             <tr>
                             <td class="blank">&nbsp;</td>
                         {% endif %}
+
                         <td class="author_cover" style="width:50px;
                                 text-align:center">
                             <a href="{% url "book_detail" book.pk %}">
@@ -82,6 +88,7 @@
                                 {% endif %}
                             </a>
                         </td>
+
                         <td class="author_book"
                                 style="vertical-align:middle">
                             <a class="book" href=
@@ -90,15 +97,32 @@
                                 {% if book.publishers.all %}
                                 | {% for publisher in book.publishers.all %}
                                 <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+                            {% if book.tags.count != 0 %}
+                            <div class="list_tags">
+                                {% for tag in book.tags.all %}
+                                    <a class="list_tag"
+                                       href="{% url "by_tag" tag.name %}">
+                                        {{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+                               {% endfor %}
+                            </div>
+                    {% endif %}
+
                             {% endif %}
                         </td>
-                            <td class="list_download_link">
-                                <a class="download"
-                                  href="{% url "book_download" book.pk %}">⬇︎</a>
-                            </td>
-                            {% if not forloop.first %}
-                                </tr>
-                            {% endif %}
+
+{#                        {% if allow_user_comments %}#}
+{#                            {% get_comment_count for book as comment_count %}#}
+{#                            <td class="list_number">{{ comment_count }}</td>#}
+{#                        {% endif %}#}
+
+                        <td class="list_download_link">
+                            <a class="download"
+                              href="{% url "book_download" book.pk %}">⬇︎</a>
+                        </td>
+
+                        {% if not forloop.first %}
+                            </tr>
+                        {% endif %}
 
                     {% endfor %}
 

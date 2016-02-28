@@ -70,7 +70,8 @@ def advanced_search(queryset, searchterms):
                                          Q(authors__name__icontains=word) |
                                          Q(publishers__name__icontains=word) |
                                          Q(dc_identifier__icontains=word) |
-                                         Q(a_summary__icontains=word))
+                                         Q(a_summary__icontains=word)) \
+                    .distinct()
             except Book.DoesNotExist:
                 results = Book.objects.none()
 
