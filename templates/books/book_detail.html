@@ -2,8 +2,8 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% load comments %}
-{#{% load bbcode_tags %}#}
-{#{% bbcode entry.bbcode_content %}#}
+{% load bbcode_tags %}
+{% bbcode entry.bbcode_content %}
 
 {% block title %}{{ book.a_title }} :: Pathagar{% endblock %}
 
@@ -124,6 +124,7 @@
 {#                <hr class="comment">#}
                 <div class="comment_author">
                     {% blocktrans with user_name=comment.user_name comment_date=comment.submit_date|timesince %}{{ user_name }} | {{ comment_date }} ago{% endblocktrans %}</div>
+
                 <div class="comment">{{ comment.comment }}</div>
                 <br/>
 

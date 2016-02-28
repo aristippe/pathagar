@@ -13,6 +13,7 @@ from django.conf import settings
 from books import models
 from books.epub import Epub
 from books.storage import LinkableFile
+from books.utils import *
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -191,16 +192,18 @@ class Command(BaseCommand):
                         author_split = author.strip().replace(
                             ' and ', ';').replace('&', ';').split(';')
                         for auth in author_split:
-                            auth = auth.strip()
+                            auth = fix_authors(auth)
                             if auth:
-                                self.stdout.write(self.style.NOTICE(
-                                    'Found author: "%s"' % auth))
-                                try:
-                                    author = models.Author.objects.get(name=auth)
-                                except:
-                                    author = models.Author(name=auth)
-                                    author.save()
-                                book.authors.add(author)
+                                for a in auth if not \
+                                        isinstance(auth, basestring) else [auth]:
+                                    self.stdout.write(self.style.NOTICE(
+                                        'Found author: "%s"' % a))
+                                    try:
+                                        author = models.Author.objects.get(name=a)
+                                    except:
+                                        author = models.Author(name=a)
+                                        author.save()
+                                    book.authors.add(author)
 
             # Add publishers
             if publishers:

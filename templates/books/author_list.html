@@ -55,11 +55,13 @@
             </thead>
             <tbody>
             {% for author in authors %}
+                    {% if author.books.count > 0 %}
                 <tr>
                     <td class="author_list_author">
                         <a class="list_author"
                                 href="/author/{{ author.id }}">{{ author.name }}</a>
                     </td>
+
                     {% for book in author.books.all|slice:":5" %}
                         {% if not forloop.first %}
                             </tr>
@@ -110,6 +112,7 @@
                     {% endif %}
 
                 </tr>
+            {% endif %}
             {% endfor %}
             </tbody>
         </table>
