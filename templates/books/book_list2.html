@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% load comments %}
-
+{% load thumbnail %}
 
 {#https://stackoverflow.com/questions/8174122/django-sorl-thumbnail-and-easy-thumbnail-in-same-project#}
 
@@ -100,7 +100,7 @@
                     <a href="{% url "book_detail" book.pk %}">
                         {% if book.cover_img %}
                             <img class="list_cover" src=
-                            "{{ book.cover_img.url }}"
+                            "{{ book.cover_img|thumbnail_url:'thumb'}}" }}"
                                     alt="Cover"
                                  height="80px"/>
                         {% else %}
