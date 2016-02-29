@@ -28,7 +28,7 @@ def simple_search(queryset, searchterms,
     for subterm in subterms:
         word = subterm
         if search_title:
-            q_objects.append(Q(a_title__icontains=word))
+            q_objects.append(Q(title__icontains=word))
         if search_author:
             q_objects.append(Q(authors__name__icontains=word))
 
@@ -54,7 +54,7 @@ def advanced_search(queryset, searchterms):
             key, word = subterm.split(':')
             key = key.strip()
             if key == 'title':
-                q_objects.append(Q(a_title__icontains=word))
+                q_objects.append(Q(title__icontains=word))
             if key == 'author':
                 q_objects.append(Q(authors__name__icontains=word))
             if key == 'publisher':
@@ -66,7 +66,7 @@ def advanced_search(queryset, searchterms):
         else:
             word = subterm
             try:
-                results = results.filter(Q(a_title__icontains=word) |
+                results = results.filter(Q(title__icontains=word) |
                                          Q(authors__name__icontains=word) |
                                          Q(publishers__name__icontains=word) |
                                          Q(dc_identifier__icontains=word) |

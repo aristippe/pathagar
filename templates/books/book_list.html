@@ -106,7 +106,7 @@
                 </td>
                 <td class="list_title">
                     <a href="{% url "book_detail" book.pk %}"
-                    >{{ book.a_title }}</a>
+                    >{{ book.title }}</a>
                     {% if book.tags.count != 0 %}
                         <div class="list_tags">
                             {% for tag in book.tags.all %}

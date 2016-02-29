@@ -6,7 +6,7 @@
 {% block title %}{% if action == 'add' %}
     Add Book
 {% else %}
-    {% trans "Editing" %} - {{ book.a_title }}
+    {% trans "Editing" %} - {{ book.title }}
 {% endif %}
 {% endblock %}
 
@@ -78,8 +78,8 @@
             <div class="row">
                 <div class="col-sm-3 required">{% trans "Title:" %}</div>
                 <div class="col-sm-8">
-                    {% bootstrap_field form.a_title show_label=False %}
-                    {{ form.a_title.errors }}
+                    {% bootstrap_field form.title show_label=False %}
+                    {{ form.title.errors }}
                 </div>
             </div>
 

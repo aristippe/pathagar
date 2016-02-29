@@ -82,7 +82,7 @@ The format of the JSON file is like::
       {
         "book_path": "Path to ebook file",
         "cover_path": "Path to cover image",
-        "a_title": "Title",
+        "title": "Title",
         "authors": "Author",
         "a_status": "Published",
         "a_summary": "Description",

@@ -58,7 +58,7 @@ class BookAdmin(admin.ModelAdmin):
             'fields': ['book_file', 'original_path',
                        'cover_img']}),
         ('Basic information',
-         {'fields': ['a_title', 'a_status', 'tags']}),
+         {'fields': ['title', 'a_status', 'tags']}),
         ('Extended information', {
             'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
                        'dc_language', 'dc_issued',
@@ -71,9 +71,9 @@ class BookAdmin(admin.ModelAdmin):
         AuthorsInline, PublishersInline
     ]
 
-    list_display = ('a_title', 'get_authors', 'time_added')
+    list_display = ('title', 'get_authors', 'time_added')
     readonly_fields = ('time_added', 'a_updated', 'a_id')
-    search_fields = ['a_title', 'authors__name', 'publishers__name']
+    search_fields = ['title', 'authors__name', 'publishers__name']
 
 
 class PublisherAdmin(admin.ModelAdmin):

@@ -93,7 +93,7 @@
                                 style="vertical-align:middle">
                             <a class="book" href=
                             "{% url "book_detail" book.pk %}">
-                            {{ book.a_title }}</a>
+                            {{ book.title }}</a>
                                 {% if book.publishers.all %}
                                 | {% for publisher in book.publishers.all %}
                                 <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}

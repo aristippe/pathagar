@@ -147,7 +147,7 @@ class Book(models.Model):
                                   blank=True, null=True)
 
     # General fields
-    a_title = models.CharField(_('atom:title'), max_length=255, null=False)
+    title = models.CharField(_('atom:title'), max_length=255, null=False)
     authors = models.ManyToManyField(Author, blank=True, related_name='books')
     publishers = models.ManyToManyField(Publisher, blank=True,
                                         related_name='books')
@@ -183,7 +183,7 @@ class Book(models.Model):
         get_latest_by = "time_added"
 
     def __unicode__(self):
-        return self.a_title
+        return self.title
 
     @models.permalink
     def get_absolute_url(self):

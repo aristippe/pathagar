@@ -491,7 +491,7 @@ def latest(request, qtype=None):
 
 @login_required
 def by_title(request, qtype=None):
-    queryset = Book.objects.all().order_by('a_title')
+    queryset = Book.objects.all().order_by('title')
     return _book_list(request, queryset, qtype, list_by='by-title')
 
 

@@ -64,7 +64,7 @@ class Command(BaseCommand):
 
             if os.path.exists(path):
                 f = open(path)
-                book = Book(book_file=File(f), a_title=title, a_author=author,
+                book = Book(book_file=File(f), title=title, a_author=author,
                             a_summary=summary, a_status=status_published)
                 try:
                     book.save()

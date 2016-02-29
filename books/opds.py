@@ -194,7 +194,7 @@ def generate_catalog(request, page_obj):
         if book.dc_language is not None:
             add_kwargs['dc_language'] = book.dc_language.code
 
-        feed.add_item(book.a_id, book.a_title, book.a_updated, **add_kwargs)
+        feed.add_item(book.a_id, book.title, book.a_updated, **add_kwargs)
 
     s = StringIO()
     feed.write(s, 'UTF-8')
