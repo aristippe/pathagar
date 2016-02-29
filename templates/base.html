@@ -97,7 +97,8 @@
                             </li>
                             {% if user.is_superuser %}
                                 <li>
-                                    <a href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+                                    <a target="_blank"
+                                            href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
                                 </li>
                             {% endif %}
                             <li><a href="{% url "userena_signout" %}?next=/"

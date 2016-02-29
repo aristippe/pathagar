@@ -145,6 +145,7 @@ class Book(models.Model):
     mimetype = models.CharField(max_length=200, null=True)
     cover_img = models.ImageField(_('cover'), upload_to='covers',
                                   blank=True, null=True)
+    # cover_img_url = models.URLField(null=True, blank=True)
 
     # General fields
     title = models.CharField(_('title'), max_length=255, null=False)
@@ -191,6 +192,19 @@ class Book(models.Model):
 
     def get_authors(self):
         return ", ".join([str(p) for p in self.authors.all()])
+
+    # def save(self, *args, **kwargs):
+    #     import urllib2
+    #     from django.core.files import File
+    #     from django.core.files.temp import NamedTemporaryFile
+    #
+    #     if self.cover_img_url:
+    #         img_temp = NamedTemporaryFile(delete=True)
+    #         img_temp.write(urllib2.urlopen(self.cover_img_url).read())
+    #         img_temp.flush()
+    #         self.cover_img.file.save(img_filename, File(img_temp))
+    #         self.cover_img_url = ''
+    #         super(Book, self).save()
 
 
 @receiver(post_delete, sender=Book)
