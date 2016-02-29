@@ -209,7 +209,7 @@ def add_to_pathagar(pathagar_books, mdata, cover_image):
         "title": metadata['title'],
         "authors": author,
         "a_status": "Published",
-        "a_summary": summary,
+        "summary": summary,
     }
 
     if cover_image:

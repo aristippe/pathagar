@@ -136,9 +136,9 @@
                 {% endif %}
             </div>
 
-            {% ifnotequal book.a_summary None %}
+            {% ifnotequal book.summary None %}
                 <div class="row">
-                    <div class="col-sm-11"><br/>{{ book.a_summary|safe }}</div>
+                    <div class="col-sm-11"><br/>{{ book.summary|safe }}</div>
                 </div>
             {% endifnotequal %}
         </div> <!-- detail-info -->

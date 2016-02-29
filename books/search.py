@@ -62,7 +62,7 @@ def advanced_search(queryset, searchterms):
             if key == 'identifier':
                 q_objects.append(Q(dc_identifier__icontains=word))
             if key == 'summary':
-                q_objects.append(Q(a_summary__icontains=word))
+                q_objects.append(Q(summary__icontains=word))
         else:
             word = subterm
             try:
@@ -70,7 +70,7 @@ def advanced_search(queryset, searchterms):
                                          Q(authors__name__icontains=word) |
                                          Q(publishers__name__icontains=word) |
                                          Q(dc_identifier__icontains=word) |
-                                         Q(a_summary__icontains=word)) \
+                                         Q(summary__icontains=word)) \
                     .distinct()
             except Book.DoesNotExist:
                 results = Book.objects.none()

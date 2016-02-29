@@ -183,7 +183,7 @@ def generate_catalog(request, page_obj):
                          'type': __get_mimetype(book)}]
 
         add_kwargs = {
-            'content': book.a_summary,
+            'content': book.summary,
             'links': linklist,
             'authors': [{'name': book.authors}],
             'dc_publisher': book.publishers,

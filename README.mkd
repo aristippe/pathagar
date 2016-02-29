@@ -85,7 +85,7 @@ The format of the JSON file is like::
         "title": "Title",
         "authors": "Author",
         "a_status": "Published",
-        "a_summary": "Description",
+        "summary": "Description",
         "tags": "set, of, tags"
       },
       ...

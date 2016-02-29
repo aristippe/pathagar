@@ -147,16 +147,16 @@ class Book(models.Model):
                                   blank=True, null=True)
 
     # General fields
-    title = models.CharField(_('atom:title'), max_length=255, null=False)
+    title = models.CharField(_('title'), max_length=255, null=False)
     authors = models.ManyToManyField(Author, blank=True, related_name='books')
     publishers = models.ManyToManyField(Publisher, blank=True,
                                         related_name='books')
     dc_language = models.ForeignKey(Language, blank=True, null=True)
+    summary = models.TextField(_('summary'), blank=True, null=True)
 
     # ePub atom fields
     a_id = UUIDField('atom:id')
     a_updated = models.DateTimeField(_('atom:updated'), auto_now=True)
-    a_summary = models.TextField(_('atom:summary'), blank=True, null=True)
     a_category = models.CharField(_('atom:category'),
                                   max_length=200, blank=True, null=True)
     a_rights = models.TextField(_('atom:rights'), blank=True, null=True)

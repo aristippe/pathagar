@@ -60,7 +60,7 @@ class BookAdmin(admin.ModelAdmin):
         ('Basic information',
          {'fields': ['title', 'a_status', 'tags']}),
         ('Extended information', {
-            'fields': ['a_summary', 'a_category', 'a_rights', 'a_id',
+            'fields': ['summary', 'a_category', 'a_rights', 'a_id',
                        'dc_language', 'dc_issued',
                        'dc_identifier', 'time_added', 'a_updated',
                        'downloads'],

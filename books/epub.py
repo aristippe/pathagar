@@ -260,7 +260,7 @@ class Epub(object):
                 print '  [ ] %s not found' % name
 
         return ({'title': info.title,
-                 'a_summary': info.summary,
+                 'summary': info.summary,
                  'a_rights': info.rights,
                  'dc_language': info.language,
                  'dc_identifier': identifier,
