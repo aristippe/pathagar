@@ -64,7 +64,7 @@ urlpatterns = [
                                                     forms.BookMetadataForm])),
         name='book_add'),
     url(r'^book/(?P<pk>\d+)/view$',
-        login_required(views.BookDetailView.as_view()),
+        login_required(views.BookDisplay.as_view()),
         name='book_detail'),
     url(r'^book/(?P<pk>\d+)/edit$',
         login_required(views.BookEditView.as_view()),

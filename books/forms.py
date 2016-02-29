@@ -15,13 +15,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from django import forms
 import os
+
+from dal import autocomplete
+from django import forms
 
 import models
 from epub import Epub
-from dal import autocomplete
-from django.utils.translation import ugettext_lazy as _
 
 
 class AuthorCreateMultipleField(autocomplete.CreateModelMultipleField):
@@ -77,7 +77,15 @@ class AuthorEditForm(forms.ModelForm):
 
     class Meta:
         model = models.Author
-        fields = ('name', 'books')
+        fields = ('name', 'description', 'website', 'headshot', 'books')
+
+
+class BookAddTagsForm(forms.Form):
+    tags = forms.CharField()
+
+    class Meta:
+        model = models.Book
+        fields = ['tags']
 
 
 class BookEditForm(forms.ModelForm):

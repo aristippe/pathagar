@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}
+    {% trans "Editing" %} - {{ author.name }}
+{% endblock %}
+
+
+{% block content %}
+
+    <h3>{{ author.name }}</h3>
+
+    {{ form.errors }}
+{#    {% bootstrap_messages %}#}
+
+    <form enctype="multipart/form-data"
+            action="{% url "author_edit" author.pk %}" method="POST">
+        {% csrf_token %}
+        {{ form.media }}
+
+        <fieldset>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    <strong>{{ form.non_field_errors }}</strong>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-sm-2 required">{% trans "Name:" %}</div>
+                <div class="col-sm-6">
+                    {% bootstrap_field form.name show_label=False %}
+                    {{ form.name.errors }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">{% trans "Link:" %}</div>
+                <div class="col-sm-6">
+                    {% bootstrap_field form.website show_label=False %}
+                    {{ form.website.errors }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">{% trans "Biography:" %}</div>
+                <div class="col-sm-6">
+                    {% bootstrap_field form.description show_label=False %}
+                    {{ form.description.errors }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2">&nbsp;</div>
+                <input type="submit" class="btn btn-sm btn-primary"
+                value="{% trans "Edit" %}">
+            <a href="{% url "author_detail" author.pk %}">
+                <button type="button" class="btn btn-secondary btn-sm"
+                >{% trans "Cancel" %}</button>
+            </a>
+
+            </div>
+
+        </fieldset>
+
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

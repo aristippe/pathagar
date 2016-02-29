@@ -24,25 +24,30 @@ from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import InvalidPage
+from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.http import Http404
 from django.http import HttpResponse
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.views.generic import FormView
+from django.views.generic import View
 from django.views.generic.detail import DetailView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 from formtools.wizard.views import SessionWizardView
 from pure_pagination import Paginator, EmptyPage
+from pure_pagination.mixins import PaginationMixin
 from sendfile import sendfile
 from taggit.models import Tag
 
-from pure_pagination.mixins import PaginationMixin
-
 from app_settings import BOOKS_PER_PAGE
 from books.app_settings import BOOK_PUBLISHED
-from forms import AuthorEditForm, BookEditForm, AddLanguageForm
+from forms import AuthorEditForm, BookAddTagsForm, BookEditForm, \
+    AddLanguageForm
 from models import Author, Book, Language, Publisher, Status, TagGroup
 from opds import generate_catalog
 from opds import generate_root_catalog
@@ -233,8 +238,10 @@ class AuthorEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(AuthorEditView, self).get_context_data(**kwargs)
         context.update({'action': 'edit'})
-
         return context
+
+    def get_success_url(self):
+        return reverse('author_detail', kwargs={'pk' : self.object.pk})
 
 
 class AuthorListView(PaginationMixin, ListView):
@@ -256,6 +263,7 @@ class AuthorListView(PaginationMixin, ListView):
             queryset = Author.objects.all()
         return queryset
 
+
 # https://stackoverflow.com/questions/16937076/how-does-one-use-a-custom-widget-with-a-generic-updateview-without-having-to-red
 # https://stackoverflow.com/questions/17052701/problems-integrating-django-autocomplete-light-with-django-taggit
 
@@ -275,13 +283,47 @@ class BookDeleteView(DeleteView):
     success_url = '/'
 
 
-class BookDetailView(DetailView):
+class BookDetailView(View):
+    # model = Book
+
+    def get(self, request, *args, **kwargs):
+        view = BookDisplay.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = BookAddTags.as_view()
+        return view(request, *args, **kwargs)
+
+    # def get_context_data(self, **kwargs):
+    # context = super(BookDetailView, self).get_context_data(**kwargs)
+    # context['form'] = BookAddTagsForm()
+    # context.update({'allow_user_comments': settings.ALLOW_USER_COMMENTS})
+    #
+    # return context
+
+
+class BookAddTags(SingleObjectMixin, FormView):
+    template_name = 'books/book_detail.html'
+    form_class = BookAddTagsForm
+    model = Book
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super(BookAddTags, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('book-detail', kwargs={'pk': self.object.pk})
+
+
+class BookDisplay(DetailView):
     model = Book
 
     def get_context_data(self, **kwargs):
-        context = super(BookDetailView, self).get_context_data(**kwargs)
+        context = super(BookDisplay, self).get_context_data(**kwargs)
+        context['form'] = BookAddTagsForm()
         context.update({'allow_user_comments': settings.ALLOW_USER_COMMENTS})
-
         return context
 
 
