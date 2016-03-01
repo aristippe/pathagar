@@ -30,8 +30,8 @@ def get_epubs_paths(paths):
 
     def validate_and_add(path, filenames):
         """Check that the `path` has an '.epub' extension, convert it to
-        absolute and add it to `filenames` if not already imported and not
-        present already in order to preserve the ordering.
+        absolute and add it to `filenames` if not present already in order to
+        preserve the ordering.
 
         :param path:
         :param filenames:
@@ -39,8 +39,6 @@ def get_epubs_paths(paths):
         if os.path.splitext(path)[1] == '.epub':
             filename = os.path.abspath(path)
             if filename not in filenames:
-                if not models.Book.objects.filter(
-                        original_path=filename).exists():
                     filenames.append(filename)
 
     print "Finding new ePubs ..."
@@ -92,7 +90,7 @@ class Command(BaseCommand):
         for i, filename in enumerate(epub_filenames):
             self.stdout.write(self.style.HTTP_INFO(
                 '[{i: {width}}/{total: {width}}] {f}'.format(
-                    i=i,
+                    i=i+1,
                     total=len(epub_filenames),
                     width=width,
                     f=filename)))
@@ -107,7 +105,7 @@ class Command(BaseCommand):
 
             if success:
                 counter['success'] += 1
-                self.stdout.write(self.style.NOTICE('File imported'))
+                self.stdout.write(self.style.HTTP_REDIRECT('File imported'))
             else:
                 counter['fail'] += 1
                 self.stdout.write(self.style.NOTICE('File NOT imported'))
@@ -251,7 +249,7 @@ class Command(BaseCommand):
                                 .split(',')
                             for tag in subject_split:
                                 if tag is not ' ':
-                                    tag = tag.encode("utf-8").lower().strip()
+                                    tag = tag.lower().strip()
                                     self.stdout.write(self.style.NOTICE(
                                         'Found subject (tag): "%s"'
                                         % tag))
