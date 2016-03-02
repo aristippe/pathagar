@@ -63,7 +63,7 @@
                 <tr>
                     <td class="author_list_author">
                         <a class="list_author"
-                                href="/author/{{ author.id }}">{{ author.name }}</a>
+                                href="{% url "author_detail" author.pk %}">{{ author.name }}</a>
                     </td>
 
                     {% for book in author.books.all|slice:":5" %}
@@ -130,7 +130,7 @@
                         <td colspan="2" class="blank">&nbsp;</td>
                         <td colspan="2">
                             <a class="list_author"
-                            href="/author/{{ author.id }}">
+                            href="{% url "author_detail" author.pk %}">
                                 {% trans "more"%} ...</a>
                         </td>
                     {% endif %}
