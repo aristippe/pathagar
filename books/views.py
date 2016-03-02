@@ -241,7 +241,7 @@ class AuthorEditView(UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse('author_detail', kwargs={'pk' : self.object.pk})
+        return reverse('author_detail', kwargs={'pk': self.object.pk})
 
 
 class AuthorListView(PaginationMixin, ListView):
@@ -258,7 +258,7 @@ class AuthorListView(PaginationMixin, ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            queryset = self.model.objects.filter(name__icontains = query)
+            queryset = self.model.objects.filter(name__icontains=query)
         else:
             queryset = Author.objects.all()
         return queryset

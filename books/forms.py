@@ -53,7 +53,7 @@ class AdminAuthorsForm(forms.ModelForm):
 
     class Meta:
         model = models.Author
-        fields = ('name','books')
+        fields = ('name', 'books')
 
 
 class AdminBooksForm(forms.ModelForm):

@@ -87,20 +87,13 @@ DATABASES = {
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
-    'userena.backends.UserenaAuthenticationBackend',
-    'guardian.backends.ObjectPermissionBackend',
+    'userena.backends.UserenaAuthenticationBackend',  # userena
+    'guardian.backends.ObjectPermissionBackend',  # guardian
     'django.contrib.auth.backends.ModelBackend',
 )
 
 SESSION_INVALIDATION_ON_PASSWORD_CHANGE = False
 
-ANONYMOUS_USER_ID = -1
-
-AUTH_PROFILE_MODULE = 'accounts.Profile'
-
-USERENA_ACTIVATION_DAYS = 10
-USERENA_PROFILE_DETAIL_TEMPLATE = 'accounts/profile_detail.html'
-USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 
@@ -158,7 +151,6 @@ MEDIA_URL = '/static_media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static_media')
 
-
 # Other settings
 LOGIN_REDIRECT_URL = '/'
 
@@ -168,20 +160,38 @@ INTERNAL_IPS = ['127.0.0.1']
 
 
 # -- Third-party apps settings.
+# sendfile
 SENDFILE_BACKEND = 'sendfile.backends.development'
 
+# taggit
 TAGGIT_CASE_INSENSITIVE = True
-
 TAGGIT_STRING_FROM_TAGS = 'books.utils.comma_joiner'
 TAGGIT_TAGS_FROM_STRING = 'books.utils.comma_splitter'
 
-# easy-thumbnals
+# easy-thumbnails
 THUMBNAIL_ALIASES = {
     '': {
         'thumb': {'size': (100, 100), 'crop': False},
     },
 }
 THUMBNAIL_DEBUG = True
+
+# django-guardian
+ANONYMOUS_USER_ID = -1
+
+# django-userena
+AUTH_PROFILE_MODULE = 'accounts.Profile'
+USERENA_ACTIVATION_DAYS = 10
+USERENA_PROFILE_DETAIL_TEMPLATE = 'accounts/profile_detail.html'
+USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+
+# django-pure-pagination
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 5,
+    'MARGIN_PAGES_DISPLAYED': 1,
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}
+
 
 # -- Pathagar settings.
 # Number of books shown per page in the OPDS catalogs and in the HTML pages.
@@ -196,11 +206,6 @@ ALLOW_PUBLIC_ADD_BOOKS = False
 
 ALLOW_USER_COMMENTS = True
 
-PAGINATION_SETTINGS = {
-    'PAGE_RANGE_DISPLAYED': 5,
-    'MARGIN_PAGES_DISPLAYED': 1,
-    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
-}
 
 # -- Local settings.
 # Deployment-specific variables are imported from local_settings.py

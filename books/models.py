@@ -41,7 +41,7 @@ class Author(models.Model):
     name = models.CharField(_('author'), unique=True, max_length=255)
     description = models.TextField(_('description'), blank=True, null=True)
     headshot = models.ImageField(_('headshot'), upload_to='author_headshots',
-                                  blank=True, null=True)
+                                 blank=True, null=True)
     website = models.URLField(_('website'), blank=True, null=True)
 
     # __unicode__ on Python 2

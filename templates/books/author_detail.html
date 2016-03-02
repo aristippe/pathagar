@@ -123,7 +123,7 @@
                     <span class="list_authors">
                     {% for author in book.authors.all %}{% if forloop.first %}{% else %}{% if forloop.last %} {% trans "and" %}{% else %},{% endif %}
                     {% endif %}
-                    <a href="/author/{{ author.id }}">{{ author.name }}</a>{% endfor %}
+                    <a href="{% url "author_detail" author.pk %}">{{ author.name }}</a>{% endfor %}
                     </span>
 
                     {% if book.publishers.all %}

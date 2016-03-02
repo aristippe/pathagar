@@ -1,6 +1,7 @@
 # Utility functions for django-taggit
 # https://github.com/alex/django-taggit/blob/develop/docs/custom_tagging.txt
 
+
 def comma_joiner(tags):
     return ', '.join(t.name for t in tags)
 
@@ -23,7 +24,7 @@ def fix_authors(authors):
         .replace(', MD', '') \
         .replace(' MD', '')
     if ',' in authors:
-        if not ', Jr.' in authors:
+        if ', Jr.' not in authors:
             authors = [b.strip() + ' ' + a.strip()
                        for a, b in zip(*[iter(authors.split(','))] * 2)]
     return authors

@@ -13,7 +13,7 @@ from django.conf import settings
 from books import models
 from books.epub import Epub
 from books.storage import LinkableFile
-from books.utils import *
+from books.utils import fix_authors
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -195,11 +195,13 @@ class Command(BaseCommand):
                             auth = fix_authors(auth)
                             if auth:
                                 for a in auth if not \
-                                        isinstance(auth, basestring) else [auth]:
+                                        isinstance(auth, basestring) \
+                                        else [auth]:
                                     self.stdout.write(self.style.NOTICE(
                                         'Found author: "%s"' % a))
                                     try:
-                                        author = models.Author.objects.get(name=a)
+                                        author = models.Author.objects.get(
+                                            name=a)
                                     except:
                                         author = models.Author(name=a)
                                         author.save()

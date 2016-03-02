@@ -296,7 +296,8 @@ class AtomFeed(object):
         if data.get('logo'):
             handler.add_quick_element(u'logo', data['logo'])
         if data.get('updated'):
-            handler.add_quick_element(u'updated', rfc3339_date(data['updated']))
+            handler.add_quick_element(u'updated',
+                                      rfc3339_date(data['updated']))
         for category in data.get('categories', []):
             self.write_category_construct(handler, category)
         for link in data.get('links', []):
@@ -377,8 +378,8 @@ class AtomFeed(object):
 
             handler.add_quick_element(u'id', item['id'], tabs=2)
             self.write_text_construct(handler, u'title', item['title'], tabs=2)
-            handler.add_quick_element(u'updated', rfc3339_date(item['updated']),
-                                      tabs=2)
+            handler.add_quick_element(u'updated',
+                                      rfc3339_date(item['updated']), tabs=2)
             if item.get('published'):
                 handler.add_quick_element(u'published',
                                           rfc3339_date(item['published']),
