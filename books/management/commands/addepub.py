@@ -19,12 +19,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def get_epubs_paths(paths):
+def get_epubs_paths(paths, skip_original_path=True):
     """Return a list of paths for potential EPUB(s) from a list of file and
     directory names. The returned list contains only files with the '.epub'
     extension, traversing the directories recursively.
 
     :param paths:
+    :param skip_original_path: boolean indicating it the files that match a
+    Book.original_path are excluded from the results.
     :return:
     """
 
@@ -39,7 +41,10 @@ def get_epubs_paths(paths):
         if os.path.splitext(path)[1] == '.epub':
             filename = os.path.abspath(path)
             if filename not in filenames:
-                    filenames.append(filename)
+                if skip_original_path and models.Book.objects.filter(
+                        original_path=filename).exists():
+                    return
+                filenames.append(filename)
 
     print "Finding new ePubs ..."
     filenames = []
@@ -75,9 +80,17 @@ class Command(BaseCommand):
             dest='use_symlink',
             default=False,
             help='Use symbolic links instead of copying the files.')
+        parser.add_argument(
+            '--ignore-original-path', '-i',
+            action='store_false',
+            dest='skip_original_path',
+            default=True,
+            help=('Do not take into account the file path when checking for '
+                  'duplicates.'))
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(options['item'])
+        epub_filenames = get_epubs_paths(options['item'],
+                                         options['skip_original_path'])
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')

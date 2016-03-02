@@ -7,6 +7,7 @@ from mock import patch
 
 from django.core.files.storage import FileSystemStorage
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TransactionTestCase
 from django.utils.crypto import get_random_string
 
@@ -41,7 +42,7 @@ class CommandAddEpubTest(TransactionTestCase):
         """
         # Try to import all the sample epubs.
         src_epubs = [epub.fullpath for epub in sample_epubs.EPUBS_ALL]
-        call_command('addepub', *src_epubs)
+        call_command('addepub', *src_epubs, skip_original_path=True)
 
         # Get the list of output files.
         media_books = os.listdir(os.path.join(self.tmp_media_root, 'books'))
@@ -90,7 +91,8 @@ class CommandAddEpubTest(TransactionTestCase):
         """
         # Try to import all the sample epubs.
         src_epubs = [epub.fullpath for epub in sample_epubs.EPUBS_ALL]
-        call_command('addepub', *src_epubs, use_symlink=True)
+        call_command('addepub', *src_epubs, use_symlink=True,
+                     skip_original_path=True)
 
         # Get the list of output files.
         media_books = os.listdir(os.path.join(self.tmp_media_root, 'books'))
@@ -133,6 +135,28 @@ class CommandAddEpubTest(TransactionTestCase):
         # Make assertions on the files as a whole.
         self.assertEqual(len(media_books), len(sample_epubs.EPUBS_VALID))
         self.assertEqual(len(media_covers), len(sample_epubs.EPUBS_COVER))
+
+    def test_addepub_skipping(self):
+        """Test the `addepub` `--ignore-original-path` flag.
+        """
+        # Try to import all the valid epubs.
+        src_epubs = [epub.fullpath for epub in sample_epubs.EPUBS_VALID]
+        call_command('addepub', *src_epubs)
+        self.assertEqual(models.Book.objects.count(),
+                         len(sample_epubs.EPUBS_VALID))
+
+        # Try to import them again, skipping them during get_epub_paths
+        # (default behaviour), which should raise a CommandError.
+        src_epubs = [epub.fullpath for epub in sample_epubs.EPUBS_VALID]
+        with self.assertRaises(CommandError):
+            call_command('addepub', *src_epubs)
+
+        # Try to import them again, not skipping them, which should result
+        # in all of them marked as duplicates due to SHA and not imported.
+        src_epubs = [epub.fullpath for epub in sample_epubs.EPUBS_VALID]
+        call_command('addepub', *src_epubs, skip_original_path=False)
+        self.assertEqual(models.Book.objects.count(),
+                         len(sample_epubs.EPUBS_VALID))
 
 
 class CommandResyncTest(TransactionTestCase):

@@ -42,7 +42,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(options['item'])
+        epub_filenames = get_epubs_paths(options['item'],
+                                         skip_original_path=False)
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')
