@@ -39,6 +39,7 @@ from pure_pagination.mixins import PaginationMixin
 from sendfile import sendfile
 from taggit.models import Tag
 
+from decorators import login_or_public_browse_required
 from forms import (AuthorEditForm, BookAddTagsForm, BookEditForm,
                    AddLanguageForm)
 from models import Author, Book, Language, Publisher, Status, TagGroup
@@ -386,7 +387,7 @@ def tags_listgroups(request):
     return HttpResponse(catalog, content_type='application/atom+xml')
 
 
-@login_required
+@login_or_public_browse_required
 def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     """
     Filter the books, paginate the result, and return either a HTML
@@ -454,7 +455,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     return render(request, 'books/book_list2.html', extra_context)
 
 
-@login_required
+@login_or_public_browse_required
 def home(request):
     return redirect('latest')
 
@@ -476,25 +477,25 @@ def authors(request, qtype=None):
     return _book_list(request, queryset, qtype, list_by='authors')
 
 
-@login_required
+@login_or_public_browse_required
 def latest(request, qtype=None):
     queryset = Book.objects.all()
     return _book_list(request, queryset, qtype, list_by='latest')
 
 
-@login_required
+@login_or_public_browse_required
 def by_title(request, qtype=None):
     queryset = Book.objects.all().order_by('title')
     return _book_list(request, queryset, qtype, list_by='by-title')
 
 
-@login_required
+@login_or_public_browse_required
 def by_author(request, qtype=None):
     queryset = Book.objects.all().order_by('authors')
     return _book_list(request, queryset, qtype, list_by='by-author')
 
 
-@login_required
+@login_or_public_browse_required
 def by_tag(request, tag, qtype=None):
     """ displays a book list by the tag argument
     :param request:
@@ -515,7 +516,7 @@ def by_tag(request, tag, qtype=None):
                       tag=tag_instance)
 
 
-@login_required
+@login_or_public_browse_required
 def most_downloaded(request, qtype=None):
     queryset = Book.objects.all().order_by('-downloads')
     return _book_list(request, queryset, qtype, list_by='most-downloaded')

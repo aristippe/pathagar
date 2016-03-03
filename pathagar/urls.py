@@ -8,6 +8,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from books import views
 from books import forms
+from books.decorators import (login_or_public_browse_required,
+                              login_or_public_add_book_required)
 
 admin.autodiscover()
 
@@ -59,11 +61,11 @@ urlpatterns = [
 
     # Add, view, edit and remove books:
     url(r'^book/add$',
-        login_required(views.AddBookWizard.as_view([forms.BookUploadForm,
-                                                    forms.BookMetadataForm])),
+        login_or_public_add_book_required(views.AddBookWizard.as_view(
+            [forms.BookUploadForm, forms.BookMetadataForm])),
         name='book_add'),
     url(r'^book/(?P<pk>\d+)/view$',
-        login_required(views.BookDisplay.as_view()),
+        login_or_public_browse_required(views.BookDisplay.as_view()),
         name='book_detail'),
     url(r'^book/(?P<pk>\d+)/edit$',
         login_required(views.BookEditView.as_view()),
