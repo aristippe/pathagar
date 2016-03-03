@@ -248,25 +248,37 @@ class Command(BaseCommand):
                     tmp_cover_path = None
 
             # Add subjects as tags
-            if subjects:
-                for subject in subjects:
-                    # workaround for ePubs with description as subject
-                    if subject:
-                        if len(subject) <= 80:
-                            subject_split = subject.replace('/', ',') \
-                                .replace(';', ',') \
-                                .replace(':', '') \
-                                .replace('\n', ',') \
-                                .replace(' ,', ',') \
-                                .replace(' ,', ',') \
-                                .split(',')
-                            for tag in subject_split:
-                                if tag is not ' ':
-                                    tag = tag.lower().strip()
-                                    self.stdout.write(self.style.NOTICE(
-                                        'Found subject (tag): "%s"'
-                                        % tag))
-                                    book.tags.add(tag)
+            for subject in (subjects or []):
+                # workaround for ePubs with description as subject
+                if not subject or len(subject) > 80:
+                    break
+
+                subject_split = subject.replace('/', ',') \
+                    .replace(';', ',') \
+                    .replace(':', '') \
+                    .replace('\n', ',') \
+                    .replace(' ,', ',') \
+                    .replace(' ,', ',') \
+                    .split(',')
+                for tag in subject_split:
+                    if tag is not ' ':
+                        # The specs recommend using unicode for the tags, but
+                        # do not enforce it. As a result, tags in exotic
+                        # encodings might cause taggit to crash while trying to
+                        # create the slug.
+                        self.stdout.write(self.style.NOTICE(
+                            'Found subject (tag): "%s"' % tag))
+                        try:
+                            book.tags.add(tag.lower().strip())
+                        except:
+                            try:
+                                book.tags.add(
+                                    tag.encode('utf-8').lower().strip())
+                            except:
+                                # No further efforts are made, and the tag is
+                                # not added.
+                                self.stdout.write(self.style.WARNING(
+                                    'Tag could not be added'))
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
             try:
