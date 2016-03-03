@@ -18,7 +18,6 @@
 import logging
 import os
 
-from dal import autocomplete
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
@@ -26,33 +25,25 @@ from django.core.files.storage import FileSystemStorage
 from django.core.paginator import InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import Http404
-from django.http import HttpResponse
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.views.generic import FormView
-from django.views.generic import View
-from django.views.generic.detail import DetailView
-from django.views.generic.detail import SingleObjectMixin
+from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import FormView, View
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
+
+from dal import autocomplete
 from formtools.wizard.views import SessionWizardView
 from pure_pagination import Paginator, EmptyPage
 from pure_pagination.mixins import PaginationMixin
 from sendfile import sendfile
 from taggit.models import Tag
 
-from app_settings import BOOKS_PER_PAGE
-from books.app_settings import BOOK_PUBLISHED
-from forms import AuthorEditForm, BookAddTagsForm, BookEditForm, \
-    AddLanguageForm
+from forms import (AuthorEditForm, BookAddTagsForm, BookEditForm,
+                   AddLanguageForm)
 from models import Author, Book, Language, Publisher, Status, TagGroup
-from opds import generate_catalog
-from opds import generate_root_catalog
-from opds import generate_taggroups_catalog
-from opds import generate_tags_catalog
+from opds import (generate_catalog, generate_root_catalog,
+                  generate_taggroups_catalog, generate_tags_catalog)
 from opds import page_qstring
 from popuphandler import handle_pop_add
 from search import simple_search, advanced_search
@@ -247,7 +238,7 @@ class AuthorEditView(UpdateView):
 class AuthorListView(PaginationMixin, ListView):
     model = Author
     context_object_name = "authors"
-    paginate_by = BOOKS_PER_PAGE
+    paginate_by = settings.BOOKS_PER_PAGE
 
     def get_context_data(self, **kwargs):
         context = super(AuthorListView, self).get_context_data(**kwargs)
@@ -407,10 +398,12 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     search_author = request.GET.get('search-author') == 'on'
 
     if not request.user.is_authenticated():
-        queryset = queryset.filter(a_status=BOOK_PUBLISHED)
+        queryset = queryset.filter(a_status=settings.BOOK_PUBLISHED)
 
-    published_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
-    unpublished_count = Book.objects.exclude(a_status=BOOK_PUBLISHED).count()
+    published_count = Book.objects.\
+        filter(a_status=settings.BOOK_PUBLISHED).count()
+    unpublished_count = Book.objects.\
+        exclude(a_status=settings.BOOK_PUBLISHED).count()
 
     # If no search options are specified, assumes search all, the
     # advanced search will be used:
@@ -426,7 +419,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
             queryset = simple_search(queryset, q,
                                      search_title, search_author)
 
-    paginator = Paginator(queryset, BOOKS_PER_PAGE)
+    paginator = Paginator(queryset, settings.BOOKS_PER_PAGE)
     page = int(request.GET.get('page', '1'))
 
     try:

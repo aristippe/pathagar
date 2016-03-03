@@ -3,7 +3,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import login, logout
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -116,7 +115,10 @@ urlpatterns = [
 
     # Auth login and logout:
     url(r'^accounts/', include('userena.urls')),
-    url(r'^signin/', 'userena.views.signin', {'template_name': 'signin_form.html'}, name="signin"),
+    url(r'^signin/',
+        'userena.views.signin',
+        {'template_name': 'signin_form.html'},
+        name="signin"),
     # url(r'^accounts/login/$', login, name='login'),
     # url(r'^accounts/logout/$', logout, name='logout'),
 
