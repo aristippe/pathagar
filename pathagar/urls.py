@@ -85,7 +85,8 @@ urlpatterns = [
         name='author_edit'),
 
     url(r'^book/(?P<book_id>\d+)/download$',
-        login_required(views.download_book), name='book_download'),
+        login_or_public_browse_required(views.download_book),
+        name='book_download'),
 
     # Auto-complete for book model m2m fields
     url(

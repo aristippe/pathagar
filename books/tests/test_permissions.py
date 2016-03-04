@@ -1,13 +1,22 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 from itertools import product
+import os
+import shutil
+import tempfile
+
+from mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.files.base import File
+from django.core.files.storage import FileSystemStorage
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from books import models
+import sample_epubs
+
 
 user = namedtuple('user_tuple', ('username', 'password', 'email'))
 result = namedtuple('result', ('admin', 'user', 'anonymous'))
@@ -44,10 +53,7 @@ class PermissionsTestCase(TestCase):
         'book_detail': (result(200, 200, False), [1]),
         'book_edit': (result(200, 200, False), [1]),
         'book_delete': (result(200, 200, False), [1]),
-
-        # Book download
-        # TODO: test fixtures do not really provide a file yet
-        # 'book_download': (result(200, 200, False), [1]),
+        'book_download': (result(200, 200, False), [1]),
 
         # TODO: add rest of the urls
     }
@@ -81,9 +87,10 @@ class PermissionsTestCase(TestCase):
             # ret['by_tag_feed'] = (result(200, 200, 200), ['Tag1'])
             # ret['most_downloaded_feed'] = (result(200, 200, 200), [])
 
-            # Add, view, edit and remove books
-            # Only view.
+            # Book handling
+            # Only view and download.
             ret['book_detail'] = (result(200, 200, 200), [1])
+            ret['book_download'] = (result(200, 200, 200), [1])
 
         return ret
 
@@ -128,17 +135,38 @@ class PermissionsTestCase(TestCase):
             user_instance.save()
             self.users.append((user, user_instance))
 
+        # Create a temporary dir to replace MEDIA_ROOT.
+        self.tmp_media_root = tempfile.mkdtemp()
+
+        # Start the mocker which replaces MEDIA_ROOT with the tmp folder.
+        # This should have been accomplished via test.utils.override_settings,
+        # but seems that it does not work when using a custom storage.
+        # TODO: check if new Django versions fix this, and get rid of mock.
+        self.path_patcher = patch.object(
+            FileSystemStorage, 'path',
+            lambda instance, name: os.path.join(self.tmp_media_root, name))
+        self.mock_path = self.path_patcher.start()
+
         # Create some sample data.
-        # TODO: provide proper files for the Book, use a tmp media dir.
         author = models.Author(name='Author1')
         author.save()
+        epub = sample_epubs.EPUBS_VALID[0]
         book = models.Book(title='Book1',
                            a_status=models.Status.objects.get(pk=1),
                            mimetype='foo')
         book.save()
+        book.book_file.save(epub.filename,
+                            File(open(epub.fullpath, 'r')),
+                            save=False)
         book.authors.add(author)
         book.tags.add('Tag1')
         book.save()
+
+    def tearDown(self):
+        # Stop the mocker.
+        self.path_patcher.stop()
+        # Remove the temporary MEDIA_ROOT file.
+        shutil.rmtree(self.tmp_media_root)
 
     def test_permissions_false_true(self):
         for allow_add, allow_browse in product([False, True], repeat=2):
@@ -152,8 +180,7 @@ class PermissionsTestCase(TestCase):
             print 'Testing views ...'
 
             with self.settings(ALLOW_PUBLIC_ADD_BOOKS=allow_add,
-                               ALLOW_PUBLIC_BROWSE=allow_browse,
-                               ):
+                               ALLOW_PUBLIC_BROWSE=allow_browse):
                 # Loop through the available users.
                 for user, user_instance in [self.users[0],
                                             self.users[1],
