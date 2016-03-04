@@ -19,19 +19,21 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def get_epubs_paths(paths):
+def get_epubs_paths(paths, skip_original_path=True):
     """Return a list of paths for potential EPUB(s) from a list of file and
     directory names. The returned list contains only files with the '.epub'
     extension, traversing the directories recursively.
 
     :param paths:
+    :param skip_original_path: boolean indicating it the files that match a
+    Book.original_path are excluded from the results.
     :return:
     """
 
     def validate_and_add(path, filenames):
         """Check that the `path` has an '.epub' extension, convert it to
-        absolute and add it to `filenames` if not already imported and not
-        present already in order to preserve the ordering.
+        absolute and add it to `filenames` if not present already in order to
+        preserve the ordering.
 
         :param path:
         :param filenames:
@@ -39,9 +41,10 @@ def get_epubs_paths(paths):
         if os.path.splitext(path)[1] == '.epub':
             filename = os.path.abspath(path)
             if filename not in filenames:
-                if not models.Book.objects.filter(
+                if skip_original_path and models.Book.objects.filter(
                         original_path=filename).exists():
-                    filenames.append(filename)
+                    return
+                filenames.append(filename)
 
     print "Finding new ePubs ..."
     filenames = []
@@ -77,9 +80,17 @@ class Command(BaseCommand):
             dest='use_symlink',
             default=False,
             help='Use symbolic links instead of copying the files.')
+        parser.add_argument(
+            '--ignore-original-path', '-i',
+            action='store_false',
+            dest='skip_original_path',
+            default=True,
+            help=('Do not take into account the file path when checking for '
+                  'duplicates.'))
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(options['item'])
+        epub_filenames = get_epubs_paths(options['item'],
+                                         options['skip_original_path'])
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')
@@ -92,7 +103,7 @@ class Command(BaseCommand):
         for i, filename in enumerate(epub_filenames):
             self.stdout.write(self.style.HTTP_INFO(
                 '[{i: {width}}/{total: {width}}] {f}'.format(
-                    i=i,
+                    i=i+1,
                     total=len(epub_filenames),
                     width=width,
                     f=filename)))
@@ -107,7 +118,7 @@ class Command(BaseCommand):
 
             if success:
                 counter['success'] += 1
-                self.stdout.write(self.style.NOTICE('File imported'))
+                self.stdout.write(self.style.HTTP_REDIRECT('File imported'))
             else:
                 counter['fail'] += 1
                 self.stdout.write(self.style.NOTICE('File NOT imported'))
@@ -237,25 +248,37 @@ class Command(BaseCommand):
                     tmp_cover_path = None
 
             # Add subjects as tags
-            if subjects:
-                for subject in subjects:
-                    # workaround for ePubs with description as subject
-                    if subject:
-                        if len(subject) <= 80:
-                            subject_split = subject.replace('/', ',') \
-                                .replace(';', ',') \
-                                .replace(':', '') \
-                                .replace('\n', ',') \
-                                .replace(' ,', ',') \
-                                .replace(' ,', ',') \
-                                .split(',')
-                            for tag in subject_split:
-                                if tag is not ' ':
-                                    tag = tag.encode("utf-8").lower().strip()
-                                    self.stdout.write(self.style.NOTICE(
-                                        'Found subject (tag): "%s"'
-                                        % tag))
-                                    book.tags.add(tag)
+            for subject in (subjects or []):
+                # workaround for ePubs with description as subject
+                if not subject or len(subject) > 80:
+                    break
+
+                subject_split = subject.replace('/', ',') \
+                    .replace(';', ',') \
+                    .replace(':', '') \
+                    .replace('\n', ',') \
+                    .replace(' ,', ',') \
+                    .replace(' ,', ',') \
+                    .split(',')
+                for tag in subject_split:
+                    if tag is not ' ':
+                        # The specs recommend using unicode for the tags, but
+                        # do not enforce it. As a result, tags in exotic
+                        # encodings might cause taggit to crash while trying to
+                        # create the slug.
+                        self.stdout.write(self.style.NOTICE(
+                            'Found subject (tag): "%s"' % tag))
+                        try:
+                            book.tags.add(tag.lower().strip())
+                        except:
+                            try:
+                                book.tags.add(
+                                    tag.encode('utf-8').lower().strip())
+                            except:
+                                # No further efforts are made, and the tag is
+                                # not added.
+                                self.stdout.write(self.style.WARNING(
+                                    'Tag could not be added'))
         except Exception as e:
             # Delete .epub file in media/, if `book` is a valid object.
             try:
