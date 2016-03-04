@@ -272,3 +272,42 @@ class PermissionsTestCase(TestCase):
                                                     user_instance,
                                                     results)
                     print
+
+    def test_permissions_nonexistent_objects(self):
+        """Test the views that accept pks when a non-existing pk is used.
+        """
+        # Define views.
+        views_non_existing = {
+            # 'authors': (result(200, 200, False), ['Tag1']),
+            'by_tag': (result(404, 404, False), ['InvalidTag']),
+            # 'tag_groups': (result(200, 200, False), ['slug']),
+            # 'tag_groups_feed': (result(200, 200, False), ['slug']),
+            # 'by_tag_feed': (result(200, 200, False), ['Tag1']),
+            'book_detail': (result(404, 404, False), [2]),
+            'book_edit': (result(404, 404, False), [2]),
+            'book_delete': (result(404, 404, False), [2]),
+            'book_download': (result(404, 404, False), [2]),
+            'author_detail': (result(404, 404, False), [2]),
+            'author_edit': (result(404, 404, False), [2]),
+        }
+
+        with self.settings(ALLOW_PUBLIC_ADD_BOOKS=False,
+                           ALLOW_PUBLIC_BROWSE=False):
+            # Loop through the available users.
+            for user, user_instance in [self.users[0],
+                                        self.users[1],
+                                        (None, None)]:
+                # Logout and login as the desired user.
+                self.client.logout()
+                if user:
+                    self.client.login(username=user.username,
+                                      password=user.password)
+                print ' [%s]' % (user_instance or 'anonymous')
+
+                # Test each view
+                for view, (results, args) in views_non_existing.iteritems():
+                    self.get_and_assert_results(view,
+                                                args,
+                                                user_instance,
+                                                results)
+                print

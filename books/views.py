@@ -485,12 +485,8 @@ def by_tag(request, tag, qtype=None):
     :param qtype:
     :returns:
     """
-    # get the Tag object
-    tag_instance = Tag.objects.get(name=tag)
-
-    # if the tag does not exist, return 404
-    if tag_instance is None:
-        raise Http404()
+    # get the Tag object or return 404
+    tag_instance = get_object_or_404(Tag, name=tag)
 
     # Get a list of books that have the requested tag
     queryset = Book.objects.filter(tags=tag_instance)
