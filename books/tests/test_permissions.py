@@ -28,7 +28,9 @@ class PermissionsTestCase(TestCase):
     USERS = [user('admin', 'adminpass', 'adminemail'),
              user('user', 'userpass', '')]
 
-    # Base list of the views config, when all the variables are set to False
+    # Base list of the views config, when all the variables are set to False,
+    # in the form:
+    # 'url_name': (expected_results(for_admin, for_user, for_anon), kwargs)
     VIEWS_BASE = {
         'home': (result(reverse('latest'), reverse('latest'), False), []),
         # Book list
@@ -75,8 +77,6 @@ class PermissionsTestCase(TestCase):
         'book-autocomplete': (result(200, 200, False), []),
         'publisher-autocomplete': (result(200, 200, False), []),
         'tags-autocomplete': (result(200, 200, False), []),
-
-        # TODO: add rest of the urls
     }
 
     def _get_view_configuration(self,
@@ -84,6 +84,15 @@ class PermissionsTestCase(TestCase):
         """Convenience function for getting a list of the views along with
         the expected results for each kind of user, depending on the Pathagar
         defined settings.
+
+        :returns: dict with the form {'url_name': (results, kwargs)}, where
+        results contains the expected results for each user class. Each single
+        result can be:
+            - an integer representing the HTTP response code.
+            - False, which is interpreted as "the user does not have permission
+            and is redirected to the login page"
+            - a string containing the URL where the user should be redirected
+            to.
         """
         def replace(ret, replacements={}):
             for view, modifications in replacements.iteritems():
@@ -224,7 +233,15 @@ class PermissionsTestCase(TestCase):
         # Remove the temporary MEDIA_ROOT file.
         shutil.rmtree(self.tmp_media_root)
 
-    def test_permissions_false_true(self):
+    def test_permissions_with_pathagar_settings(self):
+        """Visit the views in `VIEWS_BASE` and compare the response to the
+        expected results, for the possible combination of:
+        - Pathagar settings `ALLOW_PUBLIC_ADD_BOOKS` and `ALLOW_PUBLIC_BROWSE`
+        - user classes (admin, regular user, anonymous)
+
+        The comparisons simply check for the expected HTTP response code or
+        the proper redirection, without parsing the actual response.
+        """
         for allow_add, allow_browse in product([False, True], repeat=2):
             # Retrieve the view permissions configuration for the combination
             # of Pathagar settings, modifying SETTINGS accordingly.
