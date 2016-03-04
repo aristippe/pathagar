@@ -116,9 +116,6 @@ urlpatterns = [
     # Comments
     url(r'^comments/', include('django_comments.urls')),
 
-    # Add language:
-    url(r'^add/(?:dc_language|language)/$', views.add_language),
-
     # Auth login and logout:
     url(r'^accounts/', include('userena.urls')),
     url(r'^signin/',

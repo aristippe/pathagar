@@ -89,8 +89,6 @@ class BookAddTagsForm(forms.Form):
 
 
 class BookEditForm(forms.ModelForm):
-    # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
-
     authors = AuthorCreateMultipleField(
         required=False,
         queryset=models.Author.objects.all(),
@@ -201,9 +199,3 @@ class BookMetadataForm(forms.ModelForm):
         model = models.Book
         exclude = ('book_file', 'original_path', 'mimetype',
                    'file_sha256sum', 'cover_img')
-
-
-class AddLanguageForm(forms.ModelForm):
-    class Meta:
-        model = models.Language
-        exclude = ('code',)

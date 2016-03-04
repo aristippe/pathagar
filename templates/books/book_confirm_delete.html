@@ -16,9 +16,6 @@
     });
 {% endblock %}
 
-{% block head %}
-    <script type="text/javascript" src="{% static "js/RelatedObjectLookups.js" %}"></script>{% endblock %}
-
 {% block content %}
     <form enctype="multipart/form-data" action="{% url "book_delete" book.pk %}"
           method="POST">{% csrf_token %}

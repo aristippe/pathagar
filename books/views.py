@@ -19,7 +19,6 @@ import logging
 import os
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import InvalidPage
@@ -39,13 +38,11 @@ from pure_pagination.mixins import PaginationMixin
 from sendfile import sendfile
 from taggit.models import Tag
 
-from forms import (AuthorEditForm, BookAddTagsForm, BookEditForm,
-                   AddLanguageForm)
+from forms import (AuthorEditForm, BookAddTagsForm, BookEditForm)
 from models import Author, Book, Language, Publisher, Status, TagGroup
 from opds import (generate_catalog, generate_root_catalog,
                   generate_taggroups_catalog, generate_tags_catalog)
 from opds import page_qstring
-from popuphandler import handle_pop_add
 from search import simple_search, advanced_search
 
 logger = logging.getLogger(__name__)
@@ -201,11 +198,6 @@ class AddBookWizard(SessionWizardView):
                     os.remove(second_tmp)
 
         return redirect(self.instance.get_absolute_url())
-
-
-@login_required
-def add_language(request):
-    return handle_pop_add(request, AddLanguageForm, 'language')
 
 
 class AuthorDetailView(DetailView):
