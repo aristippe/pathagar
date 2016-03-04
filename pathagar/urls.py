@@ -33,7 +33,8 @@ urlpatterns = [
         {}, 'most_downloaded'),
 
     # Tag groups:
-    url(r'^tags/groups.atom$', views.tags_listgroups,
+    url(r'^tags/groups.atom$',
+        login_or_public_browse_required(views.tags_listgroups),
         {}, 'tags_listgroups'),
 
     # Book list Atom:

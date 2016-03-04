@@ -47,6 +47,7 @@ class PermissionsTestCase(TestCase):
         # 'by_author_feed': (result(200, 200, False), []),
         # 'by_tag_feed': (result(200, 200, False), ['Tag1']),
         # 'most_downloaded_feed': (result(200, 200, False), []),
+        'tags_listgroups': (result(200, 200, False), []),
 
         # Book handling
         'book_add': (result(200, 200, False), []),
@@ -64,33 +65,46 @@ class PermissionsTestCase(TestCase):
         the expected results for each kind of user, depending on the Pathagar
         defined settings.
         """
+        def replace(ret, replacements={}):
+            for view, modifications in replacements.iteritems():
+                ret[view] = (ret[view][0]._replace(**modifications),
+                             ret[view][1])
+
+            return ret
+
         ret = self.VIEWS_BASE.copy()
         if allow_public_add_books:
             # TODO: allow_public_add does not make much sense without
             # allow_public_browse
-            ret['book_add'] = (result(200, 200, 200), [])
+            ret = replace(ret, {
+                'book_add': {'anonymous': 200},
+            })
+
         if allow_public_browse:
-            ret['home'] = (result(reverse('latest'), reverse('latest'),
-                                  reverse('latest')), [])
-            # Book list
-            ret['latest'] = (result(200, 200, 200), [])
-            ret['by_title'] = (result(200, 200, 200), [])
-            ret['by_author'] = (result(200, 200, 200), [])
-            ret['by_tag'] = (result(200, 200, 200), ['Tag1'])
-            ret['most_downloaded'] = (result(200, 200, 200), [])
+            ret = replace(ret, {
+                'home': {'anonymous': reverse('latest')},
 
-            # Feeds
-            # ret['root_feed'] = (result(200, 200, 200), [])
-            # ret['latest_feed'] = (result(200, 200, 200), [])
-            # ret['by_title_feed'] = (result(200, 200, 200), [])
-            # ret['by_author_feed'] = (result(200, 200, 200), [])
-            # ret['by_tag_feed'] = (result(200, 200, 200), ['Tag1'])
-            # ret['most_downloaded_feed'] = (result(200, 200, 200), [])
+                # Book list
+                'latest': {'anonymous': 200},
+                'by_title': {'anonymous': 200},
+                'by_author': {'anonymous': 200},
+                'by_tag': {'anonymous': 200},
+                'most_downloaded': {'anonymous': 200},
 
-            # Book handling
-            # Only view and download.
-            ret['book_detail'] = (result(200, 200, 200), [1])
-            ret['book_download'] = (result(200, 200, 200), [1])
+                # Feeds
+                # 'root_feed': {'anonymous': 200},
+                # 'latest_feed': {'anonymous': 200},
+                # 'by_title_feed': {'anonymous': 200},
+                # 'by_author_feed': {'anonymous': 200},
+                # 'by_tag_feed': {'anonymous': 200},
+                # 'most_downloaded_feed': {'anonymous': 200},
+                'tags_listgroups': {'anonymous': 200},
+
+                # Book handling
+                # Only view and download
+                'book_detail': {'anonymous': 200},
+                'book_download': {'anonymous': 200},
+            })
 
         return ret
 
