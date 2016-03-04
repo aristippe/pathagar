@@ -108,8 +108,6 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class AddBookWizard(SessionWizardView):
-    # TODO: allow adding books to anonymous if settings.ALLOW_PUBLIC_ADD_BOOKS
-    # This is currently prevented by the login_required decorator on urls.py.
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
                                                            'upload'))
     instance = None
@@ -468,7 +466,6 @@ def root(request, qtype=None):
     return HttpResponse(root_catalog, content_type='application/atom+xml')
 
 
-@login_required
 def authors(request, qtype=None):
     queryset = authors.books.all()
     return _book_list(request, queryset, qtype, list_by='authors')

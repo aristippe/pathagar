@@ -35,9 +35,15 @@ class PermissionsTestCase(TestCase):
         'latest': (result(200, 200, False), []),
         'by_title': (result(200, 200, False), []),
         'by_author': (result(200, 200, False), []),
-        # 'authors': (result(200, 200, False), ['Tag1']), Wrong parameter?
+        # 'authors': (result(200, 200, False), ['Tag1']), TODO Wrong parameter?
         'by_tag': (result(200, 200, False), ['Tag1']),
         'most_downloaded': (result(200, 200, False), []),
+
+        # Tag groups
+        # TODO: revise if tag groups feature is in use
+        # 'tag_groups': (result(200, 200, False), ['slug']),
+        # 'tag_groups_feed': (result(200, 200, False), ['slug']),
+        'tags_listgroups': (result(200, 200, False), []),
 
         # Feeds
         # TODO: currently seems feeds are broken
@@ -47,14 +53,28 @@ class PermissionsTestCase(TestCase):
         # 'by_author_feed': (result(200, 200, False), []),
         # 'by_tag_feed': (result(200, 200, False), ['Tag1']),
         # 'most_downloaded_feed': (result(200, 200, False), []),
-        'tags_listgroups': (result(200, 200, False), []),
 
-        # Book handling
+        # Tag list
+        'tags': (result(200, 200, False), []),
+        'tags_feed': (result(200, 200, False), []),
+
+        # Book management and download
         'book_add': (result(200, 200, False), []),
         'book_detail': (result(200, 200, False), [1]),
         'book_edit': (result(200, 200, False), [1]),
         'book_delete': (result(200, 200, False), [1]),
         'book_download': (result(200, 200, False), [1]),
+
+        # Author management
+        'author_list': (result(200, 200, False), []),
+        'author_detail': (result(200, 200, False), [1]),
+        'author_edit': (result(200, 200, False), [1]),
+
+        # Auto-complete for book model m2m fields
+        'author-autocomplete': (result(200, 200, False), []),
+        'book-autocomplete': (result(200, 200, False), []),
+        'publisher-autocomplete': (result(200, 200, False), []),
+        'tags-autocomplete': (result(200, 200, False), []),
 
         # TODO: add rest of the urls
     }
@@ -77,7 +97,16 @@ class PermissionsTestCase(TestCase):
             # TODO: allow_public_add does not make much sense without
             # allow_public_browse
             ret = replace(ret, {
+                # Book management and download
+                # Anonymous user can add book
                 'book_add': {'anonymous': 200},
+
+                # Auto-complete for book model m2m fields
+                # Anonymous user can use the m2m views to search info
+                'author-autocomplete': {'anonymous': 200},
+                # 'book-autocomplete': (result(200, 200, False), []),
+                'publisher-autocomplete': {'anonymous': 200},
+                'tags-autocomplete': {'anonymous': 200},
             })
 
         if allow_public_browse:
@@ -91,6 +120,11 @@ class PermissionsTestCase(TestCase):
                 'by_tag': {'anonymous': 200},
                 'most_downloaded': {'anonymous': 200},
 
+                # Tag groups
+                # 'tag_groups': {'anonymous': 200},
+                # 'tag_groups_feed': {'anonymous': 200},
+                'tags_listgroups': {'anonymous': 200},
+
                 # Feeds
                 # 'root_feed': {'anonymous': 200},
                 # 'latest_feed': {'anonymous': 200},
@@ -98,12 +132,20 @@ class PermissionsTestCase(TestCase):
                 # 'by_author_feed': {'anonymous': 200},
                 # 'by_tag_feed': {'anonymous': 200},
                 # 'most_downloaded_feed': {'anonymous': 200},
-                'tags_listgroups': {'anonymous': 200},
 
-                # Book handling
-                # Only view and download
+                # Tag list
+                'tags': {'anonymous': 200},
+                'tags_feed': {'anonymous': 200},
+
+                # Book management and download
+                # Anonymous users can only view and download
                 'book_detail': {'anonymous': 200},
                 'book_download': {'anonymous': 200},
+
+                # Author management
+                # Anonymous users can only view, not edit
+                'author_list': {'anonymous': 200},
+                'author_detail': {'anonymous': 200},
             })
 
         return ret

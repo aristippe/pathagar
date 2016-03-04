@@ -33,6 +33,10 @@ urlpatterns = [
         {}, 'most_downloaded'),
 
     # Tag groups:
+    url(r'^tags/groups/(?P<group_slug>[-\w]+)/$', views.tags,
+        {}, 'tag_groups'),
+    url(r'^tags/groups/(?P<group_slug>[-\w]+).atom$', views.tags,
+        {'qtype': u'feed'}, 'tag_groups_feed'),
     url(r'^tags/groups.atom$',
         login_or_public_browse_required(views.tags_listgroups),
         {}, 'tags_listgroups'),
@@ -51,18 +55,13 @@ urlpatterns = [
     url(r'^by-popularity.atom$', views.most_downloaded,
         {'qtype': u'feed'}, 'most_downloaded_feed'),
 
-    # Tag groups:
-    url(r'^tags/groups/(?P<group_slug>[-\w]+)/$', views.tags,
-        {}, 'tag_groups'),
-
-    url(r'^tags/groups/(?P<group_slug>[-\w]+).atom$', views.tags,
-        {'qtype': u'feed'}, 'tag_groups_feed'),
-
     # Tag list:
-    url(r'^tags/$', views.tags, {}, 'tags'),
-    url(r'^tags.atom$', views.tags, {'qtype': u'feed'}, 'tags_feed'),
+    url(r'^tags/$', login_or_public_browse_required(views.tags),
+        {}, 'tags'),
+    url(r'^tags.atom$', login_or_public_browse_required(views.tags),
+        {'qtype': u'feed'}, 'tags_feed'),
 
-    # Add, view, edit and remove books:
+    # Book management and download:
     url(r'^book/add$',
         login_or_public_add_book_required(views.AddBookWizard.as_view(
             [forms.BookUploadForm, forms.BookMetadataForm])),
@@ -76,25 +75,25 @@ urlpatterns = [
     url(r'^book/(?P<pk>\d+)/remove$',
         login_required(views.BookDeleteView.as_view()),
         name='book_delete'),
+    url(r'^book/(?P<book_id>\d+)/download$',
+        login_or_public_browse_required(views.download_book),
+        name='book_download'),
 
+    # Author management:
     url(r'^author/(?P<pk>\d+)/$',
-        login_required(views.AuthorDetailView.as_view()),
+        login_or_public_browse_required(views.AuthorDetailView.as_view()),
         name='author_detail'),
     url(r'^authors/$',
-        login_required(views.AuthorListView.as_view()),
+        login_or_public_browse_required(views.AuthorListView.as_view()),
         name='author_list'),
     url(r'^author/(?P<pk>\d+)/edit$',
         login_required(views.AuthorEditView.as_view()),
         name='author_edit'),
 
-    url(r'^book/(?P<book_id>\d+)/download$',
-        login_or_public_browse_required(views.download_book),
-        name='book_download'),
-
     # Auto-complete for book model m2m fields
     url(
         'author-autocomplete/$',
-        login_required(views.AuthorAutocomplete.as_view()),
+        login_or_public_add_book_required(views.AuthorAutocomplete.as_view()),
         name='author-autocomplete',
     ),
     url(
@@ -104,12 +103,13 @@ urlpatterns = [
     ),
     url(
         'publisher-autocomplete/$',
-        login_required(views.PublisherAutocomplete.as_view()),
+        login_or_public_add_book_required(
+            views.PublisherAutocomplete.as_view()),
         name='publisher-autocomplete',
     ),
     url(
         'tags-autocomplete/$',
-        login_required(views.TagAutocomplete.as_view()),
+        login_or_public_add_book_required(views.TagAutocomplete.as_view()),
         name='tags-autocomplete',
     ),
 
