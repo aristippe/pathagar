@@ -42,17 +42,19 @@ urlpatterns = [
         {}, 'tags_listgroups'),
 
     # Book list Atom:
-    url(r'^catalog.atom$', views.root,
+    url(r'^catalog.atom$', login_or_public_browse_required(views.root),
         {'qtype': u'feed'}, 'root_feed'),
-    url(r'^latest.atom$', views.latest,
+    url(r'^latest.atom$', login_or_public_browse_required(views.latest),
         {'qtype': u'feed'}, 'latest_feed'),
-    url(r'^by-title.atom$', views.by_title,
+    url(r'^by-title.atom$', login_or_public_browse_required(views.by_title),
         {'qtype': u'feed'}, 'by_title_feed'),
-    url(r'^by-author.atom$', views.by_author,
+    url(r'^by-author.atom$', login_or_public_browse_required(views.by_author),
         {'qtype': u'feed'}, 'by_author_feed'),
-    url(r'^tags/(?P<tag>.+).atom$', views.by_tag,
+    url(r'^tags/(?P<tag>.+).atom$',
+        login_or_public_browse_required(views.by_tag),
         {'qtype': u'feed'}, 'by_tag_feed'),
-    url(r'^by-popularity.atom$', views.most_downloaded,
+    url(r'^by-popularity.atom$',
+        login_or_public_browse_required(views.most_downloaded),
         {'qtype': u'feed'}, 'most_downloaded_feed'),
 
     # Tag list:

@@ -48,13 +48,12 @@ class PermissionsTestCase(TestCase):
         'tags_listgroups': (result(200, 200, False), []),
 
         # Feeds
-        # TODO: currently seems feeds are broken
-        # 'root_feed': (result(200, 200, False), []),
-        # 'latest_feed': (result(200, 200, False), []),
-        # 'by_title_feed': (result(200, 200, False), []),
-        # 'by_author_feed': (result(200, 200, False), []),
-        # 'by_tag_feed': (result(200, 200, False), ['Tag1']),
-        # 'most_downloaded_feed': (result(200, 200, False), []),
+        'root_feed': (result(200, 200, False), []),
+        'latest_feed': (result(200, 200, False), []),
+        'by_title_feed': (result(200, 200, False), []),
+        'by_author_feed': (result(200, 200, False), []),
+        'by_tag_feed': (result(200, 200, False), ['Tag1']),
+        'most_downloaded_feed': (result(200, 200, False), []),
 
         # Tag list
         'tags': (result(200, 200, False), []),
@@ -135,12 +134,12 @@ class PermissionsTestCase(TestCase):
                 'tags_listgroups': {'anonymous': 200},
 
                 # Feeds
-                # 'root_feed': {'anonymous': 200},
-                # 'latest_feed': {'anonymous': 200},
-                # 'by_title_feed': {'anonymous': 200},
-                # 'by_author_feed': {'anonymous': 200},
-                # 'by_tag_feed': {'anonymous': 200},
-                # 'most_downloaded_feed': {'anonymous': 200},
+                'root_feed': {'anonymous': 200},
+                'latest_feed': {'anonymous': 200},
+                'by_title_feed': {'anonymous': 200},
+                'by_author_feed': {'anonymous': 200},
+                'by_tag_feed': {'anonymous': 200},
+                'most_downloaded_feed': {'anonymous': 200},
 
                 # Tag list
                 'tags': {'anonymous': 200},
@@ -282,7 +281,7 @@ class PermissionsTestCase(TestCase):
             'by_tag': (result(404, 404, False), ['InvalidTag']),
             # 'tag_groups': (result(200, 200, False), ['slug']),
             # 'tag_groups_feed': (result(200, 200, False), ['slug']),
-            # 'by_tag_feed': (result(200, 200, False), ['Tag1']),
+            'by_tag_feed': (result(404, 404, False), ['InvalidTag1']),
             'book_detail': (result(404, 404, False), [2]),
             'book_edit': (result(404, 404, False), [2]),
             'book_delete': (result(404, 404, False), [2]),
