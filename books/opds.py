@@ -185,8 +185,8 @@ def generate_catalog(request, page_obj):
         add_kwargs = {
             'content': book.summary,
             'links': linklist,
-            'authors': [{'name': book.authors}],
-            'dc_publisher': book.publishers,
+            'authors': [{'name': a.name} for a in book.authors.all()],
+            'dc_publisher': [p.name for p in book.publishers.all()],
             'dc_issued': book.dc_issued,
             'dc_identifier': book.dc_identifier,
         }

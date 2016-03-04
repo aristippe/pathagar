@@ -207,7 +207,7 @@ class AtomFeed(object):
     def add_item(self, atom_id, title, updated, content=None, published=None,
                  rights=None, source=None, summary=None,
                  authors=[], categories=[], contributors=[], links=[],
-                 extra_attrs={}, dc_language=None, dc_publisher=None,
+                 extra_attrs={}, dc_language=None, dc_publisher=[],
                  dc_issued=None, dc_identifier=None):
         if atom_id is None:
             raise LookupError('Feed has no item_id method')
@@ -407,9 +407,9 @@ class AtomFeed(object):
             if item.get('dc_language'):
                 handler.add_quick_element(u'dcterms:language',
                                           item['dc_language'], tabs=2)
-            if item.get('dc_publisher'):
+            for publisher in item['dc_publisher']:
                 handler.add_quick_element(u'dcterms:publisher',
-                                          item['dc_publisher'], tabs=2)
+                                          publisher, tabs=2)
             if item.get('dc_issued'):
                 handler.add_quick_element(u'dcterms:issued', item['dc_issued'],
                                           tabs=2)
