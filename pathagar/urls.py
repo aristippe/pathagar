@@ -15,19 +15,21 @@ admin.autodiscover()
 
 urlpatterns = [
     # Book list:
-    url(r'^$', views.home,
+    url(r'^$', login_or_public_browse_required(views.home),
         {}, 'home'),
-    url(r'^latest/$', views.latest,
+    url(r'^latest/$', login_or_public_browse_required(views.latest),
         {}, 'latest'),
-    url(r'^by-title/$', views.by_title,
+    url(r'^by-title/$', login_or_public_browse_required(views.by_title),
         {}, 'by_title'),
-    url(r'^by-author/$', views.by_author,
+    url(r'^by-author/$', login_or_public_browse_required(views.by_author),
         {}, 'by_author'),
-    url(r'^authors/(?P<tag>.+)/$', views.authors,
+    url(r'^authors/(?P<tag>.+)/$',
+        login_or_public_browse_required(views.authors),
         {}, 'authors'),
-    url(r'^tags/(?P<tag>.+)/$', views.by_tag,
+    url(r'^tags/(?P<tag>.+)/$', login_or_public_browse_required(views.by_tag),
         {}, 'by_tag'),
-    url(r'^by-popularity/$', views.most_downloaded,
+    url(r'^by-popularity/$',
+        login_or_public_browse_required(views.most_downloaded),
         {}, 'most_downloaded'),
 
     # Tag groups:
