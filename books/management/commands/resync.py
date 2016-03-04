@@ -42,7 +42,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        epub_filenames = get_epubs_paths(options['item'])
+        epub_filenames = get_epubs_paths(options['item'],
+                                         skip_original_path=False)
 
         if not epub_filenames:
             raise CommandError('No .epub files found on the specified paths.')
@@ -55,7 +56,7 @@ class Command(BaseCommand):
         for i, filename in enumerate(epub_filenames):
             self.stdout.write(self.style.HTTP_INFO(
                 '[{i: {width}}/{total: {width}}] {f}'.format(
-                    i=i,
+                    i=i+1,
                     total=len(epub_filenames),
                     width=width,
                     f=filename)))
@@ -71,7 +72,7 @@ class Command(BaseCommand):
             if book:
                 if success:
                     counter['success'] = counter['success'] + 1
-                    self.stdout.write(self.style.SUCCESS(
+                    self.stdout.write(self.style.HTTP_REDIRECT(
                         'Book #%s (%s) modified (%s).' % (book.pk, book,
                                                           book.original_path)))
                 else:
@@ -84,7 +85,7 @@ class Command(BaseCommand):
                     'No match found.'))
             self.stdout.write('')
 
-        self.stdout.write('{} books updated, {} books failed to update,'
+        self.stdout.write('{} books updated, {} books failed to update, '
                           '{} items not mached.'.format(counter['success'],
                                                         counter['fail'],
                                                         counter['not_found']))
