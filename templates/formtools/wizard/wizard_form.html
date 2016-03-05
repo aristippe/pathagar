@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block head %}
+{% block extra_head %}
     {{ wizard.form.media }}
+    {{ form.media }}
 {% endblock %}
 
 {% block content %}
@@ -11,15 +12,14 @@
         {% csrf_token %}
         <table>
             {{ wizard.management_form }}
-            {% if wizard.form.forms %}
-                {{ wizard.form.management_form }}
-                {% for form in wizard.form.forms %}
-                    {{ form }}
-                {% endfor %}
+
+            {% if wizard.steps.step0 == 1 %}
+                {% include "books/snippets/book_edit_form.html" with form=wizard.form book=book legend="Add Book" %}
             {% else %}
                 {{ wizard.form }}
             {% endif %}
         </table>
+
         {% if wizard.steps.prev %}
             <button name="wizard_goto_step" type="submit"
                     value="{{ wizard.steps.first }}">{% trans "first step" %}</button>

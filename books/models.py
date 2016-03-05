@@ -157,7 +157,7 @@ class Book(models.Model):
     file_sha256sum = models.CharField(max_length=64, unique=True)
     mimetype = models.CharField(max_length=200, null=True)
     cover_img = ImageField(_('cover'), upload_to='covers',
-                                  blank=True, null=True)
+                           blank=True, null=True)
     # cover_img_url = models.URLField(null=True, blank=True)
 
     # General fields

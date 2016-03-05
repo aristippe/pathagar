@@ -164,11 +164,11 @@ class BookUploadForm(forms.Form):
         return data
 
 
-class BookMetadataForm(forms.ModelForm):
+class BookMetadataForm(BookEditForm):
     class Meta:
         model = models.Book
-        exclude = ('book_file', 'original_path', 'mimetype',
-                   'file_sha256sum', 'cover_img')
+        exclude = ('book_file',
+                   'original_path', 'mimetype', 'file_sha256sum', 'cover_img')
 
 
 class AddLanguageForm(forms.ModelForm):

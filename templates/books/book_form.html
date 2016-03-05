@@ -1,68 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load static from staticfiles %}
 {% load bootstrap3 %}
-{% load book_edit %}
 
-{% block title %}{% if action == 'add' %}
-    Add Book
-{% else %}
-    {% trans "Editing" %} - {{ book.title }}
-{% endif %}
-{% endblock %}
+{% block title %}{% trans "Editing" %} - {{ book.title }}{% endblock %}
 
 {% block extra_head %}
 {{ form.media }}
 {% endblock %}
 
-{# TODO: i8n #}
 {% block content %}
-<form enctype="multipart/form-data" action="{% url "book_edit" book.pk %}" method="POST" class="form-horizontal">
-    {% csrf_token %}
-    <div class="row">
-        <fieldset>
-            <legend>Edit Book</legend>
-            
-            {% if form.cover_img %}
-            <div class="col-md-2">
-                <div class="col-md-12">
-                {% if form.cover_img %}
-                    {# TODO: use CSS for the img #}
-                    <img src="{% if book.cover_img %}{{ book.cover_img.url }}{% else %}{% static "images/book-icon.png" %}{% endif %}"
-                         alt="Cover" width="180px"/>
-
-                    {# TODO: prettify control #}
-                    {% bootstrap_field form.cover_img show_label=False %}
-                {% endif %}
-                </div>
-            </div>
-            
-            <div class="col-md-10">
-            {% else %}
-            <div class="col-md-12">
-            {% endif %}
-                {% for field in form %}
-                    {% if field.name != "cover_img" %}
-                        <div class="row">
-                            {% bootstrap_field field layout="horizontal" horizontal_label_class="col-md-2" horizontal_field_class=field.name|field_width %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            
-
-        <fieldset>
-    </div>
-
-	<div class="row text-center">
-	    {% buttons %}
-	       {% bootstrap_button "Save" button_type="submit" %}
-	       {# TODO: link to details, not / #}
-	       {% bootstrap_button "Cancel" href="/" button_class="btn-default" %}
-	    {% endbuttons %}
-	</div>
-</form>
-</div>
+{% include "books/snippets/book_edit_form.html" with form=form book=book legend="Edit Book" %}
 {% endblock %}
 
 {% block footer %}
