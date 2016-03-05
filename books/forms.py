@@ -17,8 +17,10 @@
 
 import os
 
-from dal import autocomplete
 from django import forms
+from django.utils.translation import ugettext as _
+
+from dal import autocomplete
 
 import models
 from epub import Epub
@@ -89,65 +91,36 @@ class BookAddTagsForm(forms.Form):
 
 
 class BookEditForm(forms.ModelForm):
-    # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
-
     authors = AuthorCreateMultipleField(
+        label=_('Author(s)'),
         required=False,
         queryset=models.Author.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
     )
     publishers = PublisherCreateMultipleField(
+        label=_('Publisher(s)'),
         required=False,
         queryset=models.Publisher.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(url='publisher-autocomplete'),
     )
+
+    # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
     # tags = autocomplete.TaggitField(
     #     required=False,
     #     widget=autocomplete.TagSelect2(url='tags-autocomplete'),
     # )
 
-    # hide current value for cover_img
-    cover_img = forms.ImageField(required=False, widget=forms.FileInput)
-    remove_cover_img = forms.BooleanField(required=False)
-
     class Meta:
         model = models.Book
-        exclude = ('original_path', 'mimetype', 'file_sha256sum',)
+        fields = ['title', 'authors', 'publishers', 'dc_language', 'dc_issued',
+                  'a_status', 'tags', 'downloads', 'summary', 'cover_img']
 
-    def save(self, commit=True):
-        """
-        Store the MIME type of the uploaded book in the database.
-
-        This is given by the browser in the POST request.
-
-        :param commit:
-        :returns: saved instance
-        """
-        instance = super(BookEditForm, self).save(commit=False)
-        # Save the tags.
-        self.save_m2m()
-
-        # TODO: revise, as the template currently does not allow replacing
-        # book_file, so mimetype is not really on cleaned_data.
-        book_file = self.cleaned_data['book_file']
-
-        # Delete cover_img if checked
-        if self.cleaned_data.get('remove_cover_img'):
-            try:
-                os.unlink(instance.cover_img.path)
-            except OSError:
-                pass
-            instance.cover_img = None
-
-        if instance.mimetype is None:
-            try:
-                instance.mimetype = book_file.content_type
-            except:
-                pass
-        if commit:
-            # TODO cleanup old authors and tags if no longer used
-            instance.save()
-        return instance
+        # TODO: move some of these to models directly?
+        labels = {
+                  'dc_language': _('Language'),
+                  'dc_issued': _('Published'),
+                  'a_status': _('Status'),
+                  }
 
 
 class BookUploadForm(forms.Form):

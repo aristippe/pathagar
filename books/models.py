@@ -36,6 +36,19 @@ def sha256_sum(_file):  # used to generate sha256 sum of book files
     return s.hexdigest()
 
 
+class ImageField(models.ImageField):
+    """Custom ImageField that automatically deletes the old image when it is
+    modified via a ModelForm (either by clicking on the "clear" checkbox, or
+    selecting a new image with the "upload" button).
+    """
+    def save_form_data(self, instance, data):
+        if data is not None:
+            file_ = getattr(instance, self.attname)
+            if file_ != data:
+                file_.delete(save=False)
+        super(ImageField, self).save_form_data(instance, data)
+
+
 @python_2_unicode_compatible
 class Author(models.Model):
     name = models.CharField(_('author'), unique=True, max_length=255)
@@ -143,7 +156,7 @@ class Book(models.Model):
     original_path = models.CharField(_('file'), max_length=1016)
     file_sha256sum = models.CharField(max_length=64, unique=True)
     mimetype = models.CharField(max_length=200, null=True)
-    cover_img = models.ImageField(_('cover'), upload_to='covers',
+    cover_img = ImageField(_('cover'), upload_to='covers',
                                   blank=True, null=True)
     # cover_img_url = models.URLField(null=True, blank=True)
 

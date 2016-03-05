@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% load bootstrap3 %}
+{% load book_edit %}
 
 {% block title %}{% if action == 'add' %}
     Add Book
@@ -10,153 +11,59 @@
 {% endif %}
 {% endblock %}
 
-{% block script %}
-    $(document).ready(function()
-    {
-    $(".hidden_body").hide();
-    $(".hidden_head").click(function()
-    {
-    $(this).next(".hidden_body").slideToggle(100);
-    });
-    $('#id_dc_identifier').example('ISBN');
-    });
+{% block extra_head %}
+{{ form.media }}
 {% endblock %}
 
-{% block head %}
-    <script type="text/javascript" src="{% static "js/RelatedObjectLookups.js" %}"></script>{% endblock %}
-
+{# TODO: i8n #}
 {% block content %}
-    {{ form.errors }}
-    <form enctype="multipart/form-data"
-            {% if action == 'add' %}
-                action="{% url "book_add" %}"
-            {% else %}
-                action="{% url "book_edit" book.pk %}"
-            {% endif %}
-            method="POST">
-        {% csrf_token %}
-        {{ form.media }}
+<form enctype="multipart/form-data" action="{% url "book_edit" book.pk %}" method="POST" class="form-horizontal">
+    {% csrf_token %}
+    <div class="row">
+        <fieldset>
+            <legend>Edit Book</legend>
+            
+            {% if form.cover_img %}
+            <div class="col-md-2">
+                <div class="col-md-12">
+                {% if form.cover_img %}
+                    {# TODO: use CSS for the img #}
+                    <img src="{% if book.cover_img %}{{ book.cover_img.url }}{% else %}{% static "images/book-icon.png" %}{% endif %}"
+                         alt="Cover" width="180px"/>
 
-        <div class="detail_sidebar">
-            {% if book.cover_img %}
-                <img src="{{ book.cover_img.url }}" alt="Cover" width=180px/>
-                {% bootstrap_field form.remove_cover_img %}
+                    {# TODO: prettify control #}
+                    {% bootstrap_field form.cover_img show_label=False %}
+                {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-md-10">
             {% else %}
-                <img src="{% static "images/book-icon.png" %}" alt="Cover"
-                        width=180px/>
-                <br/><br/>
+            <div class="col-md-12">
             {% endif %}
-            {% bootstrap_field form.cover_img show_label=False %}
-            <input type="submit" class="btn btn-sm btn-primary"
-            {% if action == 'add' %}
-                value="Add">
-            {% else %}
-                value="{% trans "Edit" %}">
-            {% endif %}
-            <a href="{% url "book_detail" book.pk %}">
-                <button type="button" class="btn btn-secondary btn-sm"
-                >{% trans "Cancel" %}</button>
-            </a>
-
-        </div>
+                {% for field in form %}
+                    {% if field.name != "cover_img" %}
+                        <div class="row">
+                            {% bootstrap_field field layout="horizontal" horizontal_label_class="col-md-2" horizontal_field_class=field.name|field_width %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
 
         <fieldset>
-            <legend>
-                {% if action == 'add' %}
-                    Add Book
-                {% else %}
-                    Edit Book
-                {% endif %}
-            </legend>
+    </div>
 
-            {% if form.non_field_errors %}
-                <div class="alert alert-error">
-                    <strong>{{ form.non_field_errors }}</strong>
-                </div>
-            {% endif %}
-
-            <div class="row">
-                <div class="col-sm-3 required">{% trans "Title:" %}</div>
-                <div class="col-sm-8">
-                    {% bootstrap_field form.title show_label=False %}
-                    {{ form.title.errors }}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3">{% trans "Author(s):" %}</div>
-                <div class="col-sm-8">
-                    {% bootstrap_field form.authors show_label=False %}
-{#                    set_required=False#}
-                    {{ form.authors.errors }}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3">{% trans "Publisher(s):" %}</div>
-                <div class="col-sm-8">
-                    {% bootstrap_field form.publishers show_label=False %}
-{#                    set_required=False#}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3">{% trans "Language:" %}</div>
-                <div class="col-sm-5">
-                    {% bootstrap_field form.dc_language show_label=False %}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3">{% trans "Published:" %}</div>
-                <div class="col-sm-3">
-                    {% bootstrap_field form.dc_issued show_label=False %}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3 required">{% trans "Status:" %}</div>
-                <div class="col-sm-3">
-                    {% bootstrap_field form.a_status show_label=False %}
-                    {{ form.a_status.errors }}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3">{% trans "Tags:" %}</div>
-                <div class="col-sm-8">
-                    {% bootstrap_field form.tags show_label=False %}
-                </div>
-            </div>
-
-            {% if user.is_superuser %}
-                <div class="row">
-                    <div class="col-sm-3">{% trans "Downloads" %}:</div>
-                    <div class="col-sm-2">
-                        {% bootstrap_field form.downloads show_label=False %}
-                    </div>
-                </div>    {% endif %}
-
-            <div class="row">
-                <div class="col-sm-11">
-                    {% bootstrap_field form.summary %}
-                    </div>
-            </div>
-
-{#            <div class="col-sm-4 last">#}
-{#                <input type="submit" class="btn btn-sm btn-default"#}
-{#                        {% if action == 'add' %}#}
-{#                            value="Add">#}
-{#                        {% else %}#}
-{#                            value="{% trans "Edit" %}">#}
-{#                        {% endif %}#}
-{#            </div>#}
-        </fieldset>
-
-    </form>
-
+	<div class="row text-center">
+	    {% buttons %}
+	       {% bootstrap_button "Save" button_type="submit" %}
+	       {# TODO: link to details, not / #}
+	       {% bootstrap_button "Cancel" href="/" button_class="btn-default" %}
+	    {% endbuttons %}
+	</div>
+</form>
+</div>
 {% endblock %}
 
 {% block footer %}
-
 {% endblock %}
