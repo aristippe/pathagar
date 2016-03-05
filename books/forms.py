@@ -15,8 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import os
-
 from django import forms
 from django.utils.translation import ugettext as _
 
@@ -116,8 +114,7 @@ class BookEditForm(forms.ModelForm):
                   'a_status', 'tags', 'downloads', 'summary', 'cover_img']
 
         # TODO: move some of these to models directly?
-        labels = {
-                  'dc_language': _('Language'),
+        labels = {'dc_language': _('Language'),
                   'dc_issued': _('Published'),
                   'a_status': _('Status'),
                   }
@@ -148,11 +145,9 @@ class BookUploadForm(forms.Form):
         try:
             # Fetch information from the epub, and set it as attributes.
             epub = Epub(data)
-            info_dict, authors, publishers, cover_path, tags = \
-                epub.as_model_dict()
+            info_dict, cover_path, tags = epub.as_model_dict()
 
             # TODO: pass this info via a cleaner way.
-            # self.cleaned_data['authors'] = ",".join(authors)
             self.cleaned_data['original_path'] = data.name
             self.cleaned_data['info_dict'] = info_dict
             self.cleaned_data['cover_path'] = cover_path

@@ -162,6 +162,21 @@ class AddBookWizard(SessionWizardView):
                 status=settings.DEFAULT_BOOK_STATUS
             )
 
+            # TODO: Language, Author and Publishers are created even if the
+            # Book is not saved, or they are changed by the user. Something
+            # should be done (keep track of them and compare on saving, check
+            # dal docs, provide admin action to clean orphans, etc).
+
+            # Retrieve or create authors.
+            ret['authors'] = []
+            for a in info_dict['authors']:
+                ret['authors'].append(
+                    Author.objects.get_or_create(name=a)[0].pk)
+            ret['publishers'] = []
+            for p in info_dict['publishers']:
+                ret['publishers'].append(
+                    Publisher.objects.get_or_create(name=p)[0].pk)
+
             try:
                 # TODO: Language is created even if the Book is not saved.
                 ret['dc_language'] = Language.objects.get_or_create_by_code(
@@ -187,7 +202,9 @@ class AddBookWizard(SessionWizardView):
         self.instance.file_sha256sum = self.storage. \
             extra_data['file_sha256sum']
         self.instance.save()
-        # Save the tags.
+        # Save the m2m fields.
+        self.instance.authors.add(*form_list[1].cleaned_data['authors'])
+        self.instance.publishers.add(*form_list[1].cleaned_data['publishers'])
         self.instance.tags.add(*form_list[1].cleaned_data['tags'])
 
         # Set the cover image.
