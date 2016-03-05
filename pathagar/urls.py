@@ -96,23 +96,23 @@ urlpatterns = [
     url(
         'author-autocomplete/$',
         login_or_public_add_book_required(views.AuthorAutocomplete.as_view()),
-        name='author-autocomplete',
+        name='author_autocomplete',
     ),
     url(
         'book-autocomplete/$',
         login_required(views.BookAutocomplete.as_view()),
-        name='book-autocomplete',
+        name='book_autocomplete',
     ),
     url(
         'publisher-autocomplete/$',
         login_or_public_add_book_required(
             views.PublisherAutocomplete.as_view()),
-        name='publisher-autocomplete',
+        name='publisher_autocomplete',
     ),
     url(
         'tags-autocomplete/$',
         login_or_public_add_book_required(views.TagAutocomplete.as_view()),
-        name='tags-autocomplete',
+        name='tags_autocomplete',
     ),
 
     # Comments

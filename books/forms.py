@@ -48,7 +48,7 @@ class AdminAuthorsForm(forms.ModelForm):
     books = BookCreateField(
         required=False,
         queryset=models.Book.objects.all(),
-        widget=autocomplete.ModelSelect2(url='book-autocomplete'),
+        widget=autocomplete.ModelSelect2(url='book_autocomplete'),
     )
 
     class Meta:
@@ -60,7 +60,7 @@ class AdminBooksForm(forms.ModelForm):
     authors = AuthorCreateMultipleField(
         required=False,
         queryset=models.Author.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='author_autocomplete'),
     )
 
     class Meta:
@@ -72,7 +72,7 @@ class AuthorEditForm(forms.ModelForm):
     books = BookCreateMultipleField(
         required=False,
         queryset=models.Book.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='book-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='book_autocomplete'),
     )
 
     class Meta:
@@ -92,16 +92,16 @@ class BookEditForm(forms.ModelForm):
     authors = AuthorCreateMultipleField(
         required=False,
         queryset=models.Author.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='author_autocomplete'),
     )
     publishers = PublisherCreateMultipleField(
         required=False,
         queryset=models.Publisher.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='publisher-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='publisher_autocomplete'),
     )
     # tags = autocomplete.TaggitField(
     #     required=False,
-    #     widget=autocomplete.TagSelect2(url='tags-autocomplete'),
+    #     widget=autocomplete.TagSelect2(url='tags_autocomplete'),
     # )
 
     # hide current value for cover_img

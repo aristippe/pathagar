@@ -72,10 +72,10 @@ class PermissionsTestCase(TestCase):
         'author_edit': (result(200, 200, False), [1]),
 
         # Auto-complete for book model m2m fields
-        'author-autocomplete': (result(200, 200, False), []),
-        'book-autocomplete': (result(200, 200, False), []),
-        'publisher-autocomplete': (result(200, 200, False), []),
-        'tags-autocomplete': (result(200, 200, False), []),
+        'author_autocomplete': (result(200, 200, False), []),
+        'book_autocomplete': (result(200, 200, False), []),
+        'publisher_autocomplete': (result(200, 200, False), []),
+        'tags_autocomplete': (result(200, 200, False), []),
     }
 
     def _get_view_configuration(self,
@@ -111,10 +111,10 @@ class PermissionsTestCase(TestCase):
 
                 # Auto-complete for book model m2m fields
                 # Anonymous user can use the m2m views to search info
-                'author-autocomplete': {'anonymous': 200},
-                # 'book-autocomplete': (result(200, 200, False), []),
-                'publisher-autocomplete': {'anonymous': 200},
-                'tags-autocomplete': {'anonymous': 200},
+                'author_autocomplete': {'anonymous': 200},
+                # 'book_autocomplete': (result(200, 200, False), []),
+                'publisher_autocomplete': {'anonymous': 200},
+                'tags_autocomplete': {'anonymous': 200},
             })
 
         if allow_public_browse:
