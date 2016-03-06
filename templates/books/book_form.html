@@ -9,7 +9,9 @@
 {% endblock %}
 
 {% block content %}
-{% include "books/snippets/book_edit_form.html" with form=form book=book legend="Edit Book" %}
+<form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+    {% include "books/snippets/book_edit_form.html" with form=form book=book legend="Edit Book" buttons=True %}
+</form>
 {% endblock %}
 
 {% block footer %}

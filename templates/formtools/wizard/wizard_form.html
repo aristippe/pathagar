@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}Upload Book{% endblock %}
 
 {% block extra_head %}
     {{ wizard.form.media }}
@@ -7,25 +10,38 @@
 {% endblock %}
 
 {% block content %}
-    <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-    <form action="" method="post" enctype=multipart/form-data>
-        {% csrf_token %}
-        <table>
-            {{ wizard.management_form }}
+<div class="row">
+<h1>Upload <small>({{ wizard.steps.step1 }}/{{ wizard.steps.count }})</small></h1>
+<hr/>
+</div>
 
-            {% if wizard.steps.step0 == 1 %}
-                {% include "books/snippets/book_edit_form.html" with form=wizard.form book=book legend="Add Book" %}
-            {% else %}
-                {{ wizard.form }}
-            {% endif %}
-        </table>
+<form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+    {% csrf_token %}
+        {{ wizard.management_form }}
 
-        {% if wizard.steps.prev %}
-            <button name="wizard_goto_step" type="submit"
-                    value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-            <button name="wizard_goto_step" type="submit"
-                    value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+        {% if wizard.steps.step0 == 1 %}
+            {% include "books/snippets/book_edit_form.html" with form=wizard.form book=book legend="Add Book" %}
+        {% else %}
+            {% bootstrap_form wizard.form %}
         {% endif %}
-        <input type="submit" value="{% trans "submit" %}"/>
-    </form>
+
+    <div class="row text-center">
+    {% buttons %}
+        {% if wizard.steps.prev %}
+           {# This piece assumes there are only 2 steps. #}
+           {# Refer to formtools docs if this changes in the future. #}
+           {% bootstrap_button _("First step") name="wizard_goto_step" value="0" button_type="submit" button_class="btn-default" %}
+        {% endif %}
+
+        {% if wizard.steps.current == wizard.steps.last %}
+           {% bootstrap_button _("Add Book") button_type="submit" value=_("Add Book") button_class="btn-success" %}
+        {% else %}
+           {% bootstrap_button _("Next step") button_type="submit" value=_("Next step") %}
+        {% endif %}
+    {% endbuttons %}
+    </div>
+</form>
+{% endblock %}
+
+{% block footer %}
 {% endblock %}

@@ -170,6 +170,12 @@ class BookMetadataForm(BookEditForm):
         exclude = ('book_file',
                    'original_path', 'mimetype', 'file_sha256sum', 'cover_img')
 
+        # TODO: move some of these to models directly?
+        labels = {'dc_language': _('Language'),
+                  'dc_issued': _('Published'),
+                  'a_status': _('Status'),
+                  }
+
 
 class AddLanguageForm(forms.ModelForm):
     class Meta:
