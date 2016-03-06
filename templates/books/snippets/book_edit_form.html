@@ -1,5 +1,5 @@
 {% comment %}
-Snippet that renders a form used for editing a Book.
+Snippet that renders the fields of a form used for editing a Book's metadata.
 
 :param form: ModelForm for a Book
 :param book: Book instance (optional)
@@ -12,7 +12,6 @@ Snippet that renders a form used for editing a Book.
 {% load bootstrap3 %}
 {% load book_edit %}
 
-{# TODO: i8n #}
 {% csrf_token %}
 <div class="row">
     <fieldset>
@@ -51,9 +50,8 @@ Snippet that renders a form used for editing a Book.
 {% if buttons %}
     <div class="row text-center">
         {% buttons %}
-           {# TODO: link to details, not / #}
-           {% bootstrap_button "Cancel" href="/" button_class="btn-default" %}
-           {% bootstrap_button "Save" button_type="submit" button_class="btn-success" %}
+           {% bootstrap_button _("Cancel") href=book.get_absolute_url button_class="btn-default" %}
+           {% bootstrap_button _("Save") button_type="submit" button_class="btn-success" %}
         {% endbuttons %}
     </div>
 {% endif %}

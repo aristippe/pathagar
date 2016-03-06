@@ -10,7 +10,7 @@
 
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-    {% include "books/snippets/book_edit_form.html" with form=form book=book legend="Edit Book" buttons=True %}
+    {% include "books/snippets/book_edit_form.html" with form=form book=book legend=_("Edit Book") buttons=True %}
 </form>
 {% endblock %}
 

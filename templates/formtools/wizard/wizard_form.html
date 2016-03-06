@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
-{% block title %}Upload Book{% endblock %}
+{% block title %}{% trans "Upload Book" %}{% endblock %}
 
 {% block extra_head %}
     {{ wizard.form.media }}
@@ -11,7 +11,7 @@
 
 {% block content %}
 <div class="row">
-<h1>Upload <small>({{ wizard.steps.step1 }}/{{ wizard.steps.count }})</small></h1>
+<h1>{% trans "Upload Book" %} <small>({{ wizard.steps.step1 }}/{{ wizard.steps.count }})</small></h1>
 <hr/>
 </div>
 
@@ -20,7 +20,7 @@
         {{ wizard.management_form }}
 
         {% if wizard.steps.step0 == 1 %}
-            {% include "books/snippets/book_edit_form.html" with form=wizard.form book=book legend="Add Book" %}
+            {% include "books/snippets/book_edit_form.html" with form=wizard.form book=book legend=_("Add Book") %}
         {% else %}
             {% bootstrap_form wizard.form %}
         {% endif %}
