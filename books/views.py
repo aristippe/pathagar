@@ -157,7 +157,6 @@ class AddBookWizard(SessionWizardView):
             # Update the initial values with the epub information.
             info_dict = self.storage.extra_data['info_dict']
             ret.update(info_dict)
-            ret['original_path'] = self.storage.extra_data['original_path']
             ret['a_status'] = Status.objects.get(
                 status=settings.DEFAULT_BOOK_STATUS
             )
@@ -165,7 +164,7 @@ class AddBookWizard(SessionWizardView):
             # TODO: Language, Author and Publishers are created even if the
             # Book is not saved, or they are changed by the user. Something
             # should be done (keep track of them and compare on saving, check
-            # dal docs, provide admin action to clean orphans, etc).
+            # dal docs, provide admin action to clean orphans, etc) about this.
 
             # Retrieve or create authors.
             ret['authors'] = []
@@ -178,7 +177,6 @@ class AddBookWizard(SessionWizardView):
                     Publisher.objects.get_or_create(name=p)[0].pk)
 
             try:
-                # TODO: Language is created even if the Book is not saved.
                 ret['dc_language'] = Language.objects.get_or_create_by_code(
                     info_dict['dc_language']
                 )
@@ -199,8 +197,9 @@ class AddBookWizard(SessionWizardView):
         uploaded_file = form_list[0].cleaned_data['epub_file']
         # Set file related parameters.
         self.instance.book_file = uploaded_file
-        self.instance.file_sha256sum = self.storage. \
+        self.instance.file_sha256sum = self.storage.\
             extra_data['file_sha256sum']
+        self.instance.original_path = self.storage.extra_data['original_path']
         self.instance.save()
         # Save the m2m fields.
         self.instance.authors.add(*form_list[1].cleaned_data['authors'])
