@@ -323,3 +323,8 @@ hr.comment {
     margin-bottom: 1em;
     height: 1px;
 }
+
+img.cover_detail {
+	width: 180px;
+	margin-bottom: 2em;
+}

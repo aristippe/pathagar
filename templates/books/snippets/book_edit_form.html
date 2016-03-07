@@ -21,9 +21,8 @@ Snippet that renders the fields of a form used for editing a Book's metadata.
         <div class="col-md-2">
             <div class="col-md-12">
             {% if form.cover_img %}
-                {# TODO: use CSS for the img #}
                 <img src="{% if book.cover_img %}{{ book.cover_img.url }}{% else %}{% static "images/book-icon.png" %}{% endif %}"
-                     alt="Cover" width="180px"/>
+                     alt="Cover" class="cover_detail" />
 
                 {# TODO: prettify control #}
                 {% bootstrap_field form.cover_img show_label=False %}
