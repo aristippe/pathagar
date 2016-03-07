@@ -28,9 +28,7 @@
 {% endblock %}
 
 {% block content %}
-
-    <h4 class="list_header">{% trans "Tags" %} {% if tag_group %}
-        by {{ tag_group }}{% endif %}</h4>
+    <h4 class="list_header">{% trans "Tags" %}</h4>
 
         <!-- TODO fix alignment to better match book_list -->
     <br/>
@@ -56,17 +54,4 @@
             </tbody>
         </table>
     {% endif %}
-
-    {% if tag_group_list %}
-        <div class="span-2"><label>Tag groups:</label></div>
-        <div class="span-10">
-            {% for tag_group in tag_group_list %}
-                <a class="button" href="{% url "tag_groups" tag_group.slug %}">{{ tag_group.name }}</a>
-            {% endfor %}
-        </div>
-        <hr class="space">
-    {% endif %}
-
-
 {% endblock %}
-

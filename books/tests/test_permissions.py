@@ -40,12 +40,6 @@ class PermissionsTestCase(TestCase):
         'by_tag': (result(200, 200, False), ['Tag1']),
         'most_downloaded': (result(200, 200, False), []),
 
-        # Tag groups
-        # TODO: revise if tag groups feature is in use
-        # 'tag_groups': (result(200, 200, False), ['slug']),
-        # 'tag_groups_feed': (result(200, 200, False), ['slug']),
-        'tags_listgroups': (result(200, 200, False), []),
-
         # Feeds
         'root_feed': (result(200, 200, False), []),
         'latest_feed': (result(200, 200, False), []),
@@ -128,11 +122,6 @@ class PermissionsTestCase(TestCase):
                 'by_author': {'anonymous': 200},
                 'by_tag': {'anonymous': 200},
                 'most_downloaded': {'anonymous': 200},
-
-                # Tag groups
-                # 'tag_groups': {'anonymous': 200},
-                # 'tag_groups_feed': {'anonymous': 200},
-                'tags_listgroups': {'anonymous': 200},
 
                 # Feeds
                 'root_feed': {'anonymous': 200},
@@ -307,8 +296,6 @@ class PermissionsTestCase(TestCase):
         views_non_existing = {
             # 'authors': (result(200, 200, False), ['Tag1']),
             'by_tag': (result(404, 404, False), ['InvalidTag']),
-            # 'tag_groups': (result(200, 200, False), ['slug']),
-            # 'tag_groups_feed': (result(200, 200, False), ['slug']),
             'by_tag_feed': (result(404, 404, False), ['InvalidTag1']),
             'book_detail': (result(404, 404, False), [2]),
             'book_edit': (result(404, 403, False), [2]),
@@ -319,7 +306,8 @@ class PermissionsTestCase(TestCase):
         }
 
         with self.settings(ALLOW_PUBLIC_ADD_BOOKS=False,
-                           ALLOW_PUBLIC_BROWSE=False):
+                           ALLOW_PUBLIC_BROWSE=False,
+                           ALLOW_USER_EDIT=False):
             # Loop through the available users.
             for user, user_instance in [self.users[0],
                                         self.users[1],

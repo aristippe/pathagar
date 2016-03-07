@@ -39,9 +39,9 @@ from sendfile import sendfile
 from taggit.models import Tag
 
 from forms import (AuthorEditForm, BookAddTagsForm, BookEditForm)
-from models import Author, Book, Language, Publisher, Status, TagGroup
+from models import Author, Book, Language, Publisher, Status
 from opds import (generate_catalog, generate_root_catalog,
-                  generate_taggroups_catalog, generate_tags_catalog)
+                  generate_tags_catalog)
 from opds import page_qstring
 from search import simple_search, advanced_search
 
@@ -333,33 +333,15 @@ def download_book(request, book_id):
     return sendfile(request, filename, attachment=True)
 
 
-def tags(request, qtype=None, group_slug=None):
+def tags(request, qtype=None):
     """
 
     :param request:
     :param qtype:
-    :param group_slug:
     :return:
     """
-    context = {'list_by': 'by-tag'}
-
-    tag_list = Tag.objects.all().annotate(count=Count('book'))
-
-    if group_slug is not None:
-        tag_group = get_object_or_404(TagGroup, slug=group_slug)
-        context.update({'tag_group': tag_group})
-
-        # TODO: find a way of performing the previous django-tagging
-        # get_for_object(tag_group) using django-taggit. Currently it just
-        # returns all the tags, as a quick hack for avoiding problems, but it
-        # is the *wrong* behaviour.
-        # context.update({'tag_list': Tag.objects.get_for_object(tag_group)})
-        context.update({'tag_list': tag_list})
-    else:
-        context.update({'tag_list': tag_list})
-
-    tag_groups = TagGroup.objects.all()
-    context.update({'tag_group_list': tag_groups})
+    context = {'list_by': 'by-tag',
+               'tag_list': Tag.objects.all().annotate(count=Count('book'))}
 
     # Return OPDS Atom Feed:
     if qtype == 'feed':
@@ -368,12 +350,6 @@ def tags(request, qtype=None, group_slug=None):
 
     # Return HTML page:
     return render(request, 'books/tag_list.html', context)
-
-
-def tags_listgroups(request):
-    tag_groups = TagGroup.objects.all()
-    catalog = generate_taggroups_catalog(tag_groups)
-    return HttpResponse(catalog, content_type='application/atom+xml')
 
 
 def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):

@@ -28,15 +28,6 @@ urlpatterns = [
         login_or_public_browse_required(views.most_downloaded),
         {}, 'most_downloaded'),
 
-    # Tag groups:
-    url(r'^tags/groups/(?P<group_slug>[-\w]+)/$', views.tags,
-        {}, 'tag_groups'),
-    url(r'^tags/groups/(?P<group_slug>[-\w]+).atom$', views.tags,
-        {'qtype': u'feed'}, 'tag_groups_feed'),
-    url(r'^tags/groups.atom$',
-        login_or_public_browse_required(views.tags_listgroups),
-        {}, 'tags_listgroups'),
-
     # Book list Atom:
     url(r'^catalog.atom$', login_or_public_browse_required(views.root),
         {'qtype': u'feed'}, 'root_feed'),
