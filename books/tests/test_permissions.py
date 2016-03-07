@@ -37,7 +37,6 @@ class PermissionsTestCase(TestCase):
         'latest': (result(200, 200, False), []),
         'by_title': (result(200, 200, False), []),
         'by_author': (result(200, 200, False), []),
-        # 'authors': (result(200, 200, False), ['Tag1']), TODO Wrong parameter?
         'by_tag': (result(200, 200, False), ['Tag1']),
         'most_downloaded': (result(200, 200, False), []),
 

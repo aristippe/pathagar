@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from books import views
@@ -22,9 +22,6 @@ urlpatterns = [
         {}, 'by_title'),
     url(r'^by-author/$', login_or_public_browse_required(views.by_author),
         {}, 'by_author'),
-    url(r'^authors/(?P<tag>.+)/$',
-        login_or_public_browse_required(views.authors),
-        {}, 'authors'),
     url(r'^tags/(?P<tag>.+)/$', login_or_public_browse_required(views.by_tag),
         {}, 'by_tag'),
     url(r'^by-popularity/$',

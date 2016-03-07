@@ -458,11 +458,6 @@ def root(request, qtype=None):
     return HttpResponse(root_catalog, content_type='application/atom+xml')
 
 
-def authors(request, qtype=None):
-    queryset = authors.books.all()
-    return _book_list(request, queryset, qtype, list_by='authors')
-
-
 def latest(request, qtype=None):
     queryset = Book.objects.all()
     return _book_list(request, queryset, qtype, list_by='latest')
