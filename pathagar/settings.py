@@ -208,6 +208,9 @@ ALLOW_PUBLIC_ADD_BOOKS = False
 # Allow non logged in users to browse the site
 ALLOW_PUBLIC_BROWSE = False
 
+# Allow regular users to modify Books and Authors.
+ALLOW_USER_EDIT = False
+
 ALLOW_USER_COMMENTS = True
 
 

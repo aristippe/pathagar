@@ -24,7 +24,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.paginator import InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import FormView, View
 from django.views.generic.detail import DetailView, SingleObjectMixin

@@ -2,14 +2,13 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from books import views
 from books import forms
 from books.decorators import (login_or_public_browse_required,
-                              login_or_public_add_book_required)
+                              login_or_public_add_book_required,
+                              staff_or_allow_user_edit)
 
 admin.autodiscover()
 
@@ -65,17 +64,18 @@ urlpatterns = [
 
     # Book management and download:
     url(r'^book/add$',
-        login_or_public_add_book_required(views.AddBookWizard.as_view(
-            [forms.BookUploadForm, forms.BookMetadataForm])),
+        login_or_public_add_book_required(
+            views.AddBookWizard.as_view([forms.BookUploadForm,
+                                         forms.BookMetadataForm])),
         name='book_add'),
     url(r'^book/(?P<pk>\d+)/view$',
         login_or_public_browse_required(views.BookDisplay.as_view()),
         name='book_detail'),
     url(r'^book/(?P<pk>\d+)/edit$',
-        login_required(views.BookEditView.as_view()),
+        staff_or_allow_user_edit()(views.BookEditView.as_view()),
         name='book_edit'),
     url(r'^book/(?P<pk>\d+)/remove$',
-        login_required(views.BookDeleteView.as_view()),
+        staff_or_allow_user_edit()(views.BookDeleteView.as_view()),
         name='book_delete'),
     url(r'^book/(?P<book_id>\d+)/download$',
         login_or_public_browse_required(views.download_book),
@@ -89,7 +89,7 @@ urlpatterns = [
         login_or_public_browse_required(views.AuthorListView.as_view()),
         name='author_list'),
     url(r'^author/(?P<pk>\d+)/edit$',
-        login_required(views.AuthorEditView.as_view()),
+        staff_or_allow_user_edit()(views.AuthorEditView.as_view()),
         name='author_edit'),
 
     # Auto-complete for book model m2m fields
@@ -100,7 +100,7 @@ urlpatterns = [
     ),
     url(
         'book-autocomplete/$',
-        login_required(views.BookAutocomplete.as_view()),
+        login_or_public_add_book_required(views.BookAutocomplete.as_view()),
         name='book_autocomplete',
     ),
     url(

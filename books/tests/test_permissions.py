@@ -60,26 +60,28 @@ class PermissionsTestCase(TestCase):
         'tags_feed': (result(200, 200, False), []),
 
         # Book management and download
-        'book_add': (result(200, 200, False), []),
+        'book_add': (result(200, 403, False), []),
         'book_detail': (result(200, 200, False), [1]),
-        'book_edit': (result(200, 200, False), [1]),
-        'book_delete': (result(200, 200, False), [1]),
+        'book_edit': (result(200, 403, False), [1]),
+        'book_delete': (result(200, 403, False), [1]),
         'book_download': (result(200, 200, False), [1]),
 
         # Author management
         'author_list': (result(200, 200, False), []),
         'author_detail': (result(200, 200, False), [1]),
-        'author_edit': (result(200, 200, False), [1]),
+        'author_edit': (result(200, 403, False), [1]),
 
         # Auto-complete for book model m2m fields
-        'author_autocomplete': (result(200, 200, False), []),
-        'book_autocomplete': (result(200, 200, False), []),
-        'publisher_autocomplete': (result(200, 200, False), []),
-        'tags_autocomplete': (result(200, 200, False), []),
+        'author_autocomplete': (result(200, 403, False), []),
+        'book_autocomplete': (result(200, 403, False), []),
+        'publisher_autocomplete': (result(200, 403, False), []),
+        'tags_autocomplete': (result(200, 403, False), []),
     }
 
     def _get_view_configuration(self,
-                                allow_public_add_books, allow_public_browse):
+                                allow_public_add_books,
+                                allow_public_browse,
+                                allow_user_edit):
         """Convenience function for getting a list of the views along with
         the expected results for each kind of user, depending on the Pathagar
         defined settings.
@@ -107,14 +109,14 @@ class PermissionsTestCase(TestCase):
             ret = replace(ret, {
                 # Book management and download
                 # Anonymous user can add book
-                'book_add': {'anonymous': 200},
+                'book_add': {'anonymous': 200, 'user': 200},
 
                 # Auto-complete for book model m2m fields
                 # Anonymous user can use the m2m views to search info
-                'author_autocomplete': {'anonymous': 200},
-                # 'book_autocomplete': (result(200, 200, False), []),
-                'publisher_autocomplete': {'anonymous': 200},
-                'tags_autocomplete': {'anonymous': 200},
+                'author_autocomplete': {'anonymous': 200, 'user': 200},
+                'book_autocomplete': {'anonymous': 200, 'user': 200},
+                'publisher_autocomplete': {'anonymous': 200, 'user': 200},
+                'tags_autocomplete': {'anonymous': 200, 'user': 200},
             })
 
         if allow_public_browse:
@@ -154,6 +156,26 @@ class PermissionsTestCase(TestCase):
                 # Anonymous users can only view, not edit
                 'author_list': {'anonymous': 200},
                 'author_detail': {'anonymous': 200},
+            })
+
+        if allow_user_edit:
+            ret = replace(ret, {
+                # Book management and download
+                # Users can edit and delete
+                'book_add': {'user': 200},
+                'book_edit': {'user': 200},
+                'book_delete': {'user': 200},
+
+                # Author management
+                # Users can edit and delete
+                'author_edit': {'user': 200},
+
+                # Auto-complete for book model m2m fields
+                # Users can use the m2m views to search info
+                'author_autocomplete': {'user': 200},
+                'book_autocomplete': {'user': 200},
+                'publisher_autocomplete': {'user': 200},
+                'tags_autocomplete': {'user': 200},
             })
 
         return ret
@@ -235,24 +257,31 @@ class PermissionsTestCase(TestCase):
     def test_permissions_with_pathagar_settings(self):
         """Visit the views in `VIEWS_BASE` and compare the response to the
         expected results, for the possible combination of:
-        - Pathagar settings `ALLOW_PUBLIC_ADD_BOOKS` and `ALLOW_PUBLIC_BROWSE`
+        - Pathagar settings `ALLOW_PUBLIC_ADD_BOOKS`, `ALLOW_PUBLIC_BROWSE` and
+        `ALLOW_USER_EDIT`
         - user classes (admin, regular user, anonymous)
 
         The comparisons simply check for the expected HTTP response code or
         the proper redirection, without parsing the actual response.
         """
-        for allow_add, allow_browse in product([False, True], repeat=2):
+        for allow_add, allow_browse, user_edit in product([False, True],
+                                                          repeat=3):
             # Retrieve the view permissions configuration for the combination
             # of Pathagar settings, modifying SETTINGS accordingly.
             print '\nModifying settings ...'
             print (' ALLOW_PUBLIC_ADD_BOOKS = %s\n'
-                   ' ALLOW_PUBLIC_BROWSE = %s' % (allow_add, allow_browse))
+                   ' ALLOW_PUBLIC_BROWSE = %s\n'
+                   ' ALLOW_USER_EDIT = %s\n' % (allow_add,
+                                                allow_browse,
+                                                user_edit))
             views_config = self._get_view_configuration(allow_add,
-                                                        allow_browse)
+                                                        allow_browse,
+                                                        user_edit)
             print 'Testing views ...'
 
             with self.settings(ALLOW_PUBLIC_ADD_BOOKS=allow_add,
-                               ALLOW_PUBLIC_BROWSE=allow_browse):
+                               ALLOW_PUBLIC_BROWSE=allow_browse,
+                               ALLOW_USER_EDIT=user_edit):
                 # Loop through the available users.
                 for user, user_instance in [self.users[0],
                                             self.users[1],
@@ -283,11 +312,11 @@ class PermissionsTestCase(TestCase):
             # 'tag_groups_feed': (result(200, 200, False), ['slug']),
             'by_tag_feed': (result(404, 404, False), ['InvalidTag1']),
             'book_detail': (result(404, 404, False), [2]),
-            'book_edit': (result(404, 404, False), [2]),
-            'book_delete': (result(404, 404, False), [2]),
+            'book_edit': (result(404, 403, False), [2]),
+            'book_delete': (result(404, 403, False), [2]),
             'book_download': (result(404, 404, False), [2]),
             'author_detail': (result(404, 404, False), [2]),
-            'author_edit': (result(404, 404, False), [2]),
+            'author_edit': (result(404, 403, False), [2]),
         }
 
         with self.settings(ALLOW_PUBLIC_ADD_BOOKS=False,
