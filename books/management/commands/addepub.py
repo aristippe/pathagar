@@ -143,8 +143,7 @@ class Command(BaseCommand):
             epub = Epub(filename)
             epub.get_info()
             # Get the information we need for creating the Model.
-            info_dict, authors, publishers, tmp_cover_path, subjects = \
-                epub.as_model_dict()
+            info_dict, tmp_cover_path, subjects = epub.as_model_dict()
             assert info_dict
         except Exception as e:
             self.stdout.write(self.style.ERROR(
@@ -177,6 +176,10 @@ class Command(BaseCommand):
         info_dict['a_status'] = models.Status.objects.get(
             status=settings.DEFAULT_BOOK_STATUS)
 
+        # Remove authors and publishers from dict.
+        authors = info_dict.pop('authors', [])
+        publishers = info_dict.pop('publishers', [])
+
         # Create and save the Book.
         try:
             # Prepare the Book.
@@ -197,39 +200,29 @@ class Command(BaseCommand):
             # authors, publishers, cover, and tags
 
             # Add authors
-            if authors:
-                for author in authors:
-                    if author is not None:
-                        author_split = author.strip().replace(
-                            ' and ', ';').replace('&', ';').split(';')
-                        for auth in author_split:
-                            auth = fix_authors(auth)
-                            if auth:
-                                for a in auth if not \
-                                        isinstance(auth, basestring) \
-                                        else [auth]:
-                                    self.stdout.write(self.style.NOTICE(
-                                        'Found author: "%s"' % a))
-                                    try:
-                                        author = models.Author.objects.get(
-                                            name=a)
-                                    except:
-                                        author = models.Author(name=a)
-                                        author.save()
-                                    book.authors.add(author)
+            for author in authors:
+                if author is not None:
+                    author_split = author.strip().replace(
+                        ' and ', ';').replace('&', ';').split(';')
+                    for auth in author_split:
+                        auth = fix_authors(auth)
+                        if auth:
+                            for a in auth if not \
+                                    isinstance(auth, basestring) \
+                                    else [auth]:
+                                self.stdout.write(self.style.NOTICE(
+                                    'Found author: "%s"' % a))
+                                book.authors.add(
+                                    models.Author.objects.get_or_create(
+                                        name=a)[0].pk)
 
             # Add publishers
-            if publishers:
-                for publisher in publishers:
-                    self.stdout.write(self.style.NOTICE(
-                        'Found publisher: "%s"' % publisher))
-                    try:
-                        publisher = models.Publisher.objects.get(
-                            name=publisher)
-                    except:
-                        publisher = models.Publisher(name=publisher)
-                        publisher.save()
-                    book.publishers.add(publisher)
+            for publisher in publishers:
+                self.stdout.write(self.style.NOTICE(
+                    'Found publisher: "%s"' % publisher))
+                book.publishers.add(
+                    models.Publisher.objects.get_or_create(
+                        name=publisher)[0].pk)
 
             # Add cover image (cover_image). It is handled here as the filename
             # depends on instance.pk (which is only present after Book.save()).

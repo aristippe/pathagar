@@ -16,13 +16,7 @@
 {% block content %}
 
         <div class="detail_sidebar">
-            {% if  book.cover_img %}
-                <img src="{{ book.cover_img.url }}" alt="Cover" width=180px/>
-            {% else %}
-                <img src="{% static "images/book-icon.png" %}" alt="Cover"
-                        width=180px/>
-            {% endif %}
-            <br/><br/>
+            <img src="{% if book.cover_img %}{{ book.cover_img.url }}{% else %}{% static "images/book-icon.png" %}{% endif %}" alt="Cover"  class="cover_detail" />
             <div class="row">
                 <div class="col-sm-5">
                     <a href="{% url "book_download" book.pk %}"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"/><!--{% trans "Download" %}--></a>
