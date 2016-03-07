@@ -19,6 +19,7 @@ from django import forms
 from django.utils.translation import ugettext as _
 
 from dal import autocomplete
+from django import forms
 
 import models
 from epub import Epub
@@ -48,7 +49,7 @@ class AdminAuthorsForm(forms.ModelForm):
     books = BookCreateField(
         required=False,
         queryset=models.Book.objects.all(),
-        widget=autocomplete.ModelSelect2(url='book-autocomplete'),
+        widget=autocomplete.ModelSelect2(url='book_autocomplete'),
     )
 
     class Meta:
@@ -60,7 +61,7 @@ class AdminBooksForm(forms.ModelForm):
     authors = AuthorCreateMultipleField(
         required=False,
         queryset=models.Author.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='author_autocomplete'),
     )
 
     class Meta:
@@ -72,7 +73,7 @@ class AuthorEditForm(forms.ModelForm):
     books = BookCreateMultipleField(
         required=False,
         queryset=models.Book.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='book-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='book_autocomplete'),
     )
 
     class Meta:
@@ -93,19 +94,18 @@ class BookEditForm(forms.ModelForm):
         label=_('Author(s)'),
         required=False,
         queryset=models.Author.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='author-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='author_autocomplete'),
     )
     publishers = PublisherCreateMultipleField(
         label=_('Publisher(s)'),
         required=False,
         queryset=models.Publisher.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(url='publisher-autocomplete'),
+        widget=autocomplete.ModelSelect2Multiple(url='publisher_autocomplete'),
     )
 
-    # dc_language = ModelChoiceField(Language.objects, widget=SelectWithPop)
     # tags = autocomplete.TaggitField(
     #     required=False,
-    #     widget=autocomplete.TagSelect2(url='tags-autocomplete'),
+    #     widget=autocomplete.TagSelect2(url='tags_autocomplete'),
     # )
 
     class Meta:

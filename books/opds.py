@@ -112,10 +112,6 @@ def generate_root_catalog():
         {'id': 'tags', 'title': 'Tags', 'updated': datetime.datetime.now(),
          'links': [{'rel': 'subsection', 'type': 'application/atom+xml',
                     'href': reverse('tags_feed')}]},
-        {'id': 'tag-groups', 'title': 'Tag groups',
-         'updated': datetime.datetime.now(),
-         'links': [{'rel': 'subsection', 'type': 'application/atom+xml',
-                    'href': reverse('tags_listgroups')}]},
     ]
     return generate_nav_catalog(subsections)
 
@@ -129,18 +125,6 @@ def generate_tags_catalog(tags):
                                            kwargs=dict(tag=tag.name))}]}
 
     tags_subsections = map(convert_tag, tags)
-    return generate_nav_catalog(tags_subsections)
-
-
-def generate_taggroups_catalog(tag_groups):
-    def convert_group(group):
-        return {'id': group.slug, 'title': group.name,
-                'updated': datetime.datetime.now(),
-                'links': [{'rel': 'subsection', 'type': 'application/atom+xml',
-                           'href': reverse('tag_groups_feed', kwargs=dict(
-                               group_slug=group.slug))}]}
-
-    tags_subsections = map(convert_group, tag_groups)
     return generate_nav_catalog(tags_subsections)
 
 
@@ -185,8 +169,8 @@ def generate_catalog(request, page_obj):
         add_kwargs = {
             'content': book.summary,
             'links': linklist,
-            'authors': [{'name': book.authors}],
-            'dc_publisher': book.publishers,
+            'authors': [{'name': a.name} for a in book.authors.all()],
+            'dc_publisher': [p.name for p in book.publishers.all()],
             'dc_issued': book.dc_issued,
             'dc_identifier': book.dc_identifier,
         }

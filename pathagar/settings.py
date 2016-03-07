@@ -197,12 +197,19 @@ PAGINATION_SETTINGS = {
 # Number of books shown per page in the OPDS catalogs and in the HTML pages.
 BOOKS_PER_PAGE = 50
 
-BOOKS_STATICS_VIA_DJANGO = True
-
 DEFAULT_BOOK_STATUS = 'Published'
+
+# PK for Status(status=='Published')
+BOOK_PUBLISHED = 1
 
 # Allow non logged in users to upload books
 ALLOW_PUBLIC_ADD_BOOKS = False
+
+# Allow non logged in users to browse the site
+ALLOW_PUBLIC_BROWSE = False
+
+# Allow regular users to modify Books and Authors.
+ALLOW_USER_EDIT = False
 
 ALLOW_USER_COMMENTS = True
 

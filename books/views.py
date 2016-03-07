@@ -18,43 +18,31 @@
 import logging
 import os
 
-from dal import autocomplete
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import Http404
-from django.http import HttpResponse
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.views.generic import FormView
-from django.views.generic import View
-from django.views.generic.detail import DetailView
-from django.views.generic.detail import SingleObjectMixin
+from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import FormView, View
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
+
+from dal import autocomplete
 from formtools.wizard.views import SessionWizardView
 from pure_pagination import Paginator, EmptyPage
 from pure_pagination.mixins import PaginationMixin
 from sendfile import sendfile
 from taggit.models import Tag
 
-from app_settings import BOOKS_PER_PAGE
-from books.app_settings import BOOK_PUBLISHED
-from forms import AuthorEditForm, BookAddTagsForm, BookEditForm, \
-    AddLanguageForm
-from models import Author, Book, Language, Publisher, Status, TagGroup
-from opds import generate_catalog
-from opds import generate_root_catalog
-from opds import generate_taggroups_catalog
-from opds import generate_tags_catalog
+from forms import (AuthorEditForm, BookAddTagsForm, BookEditForm)
+from models import Author, Book, Language, Publisher, Status
+from opds import (generate_catalog, generate_root_catalog,
+                  generate_tags_catalog)
 from opds import page_qstring
-from popuphandler import handle_pop_add
 from search import simple_search, advanced_search
 
 logger = logging.getLogger(__name__)
@@ -117,8 +105,6 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class AddBookWizard(SessionWizardView):
-    # TODO: allow adding books to anonymous if settings.ALLOW_PUBLIC_ADD_BOOKS
-    # This is currently prevented by the login_required decorator on urls.py.
     file_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT,
                                                            'upload'))
     instance = None
@@ -230,11 +216,6 @@ class AddBookWizard(SessionWizardView):
         return redirect(self.instance.get_absolute_url())
 
 
-@login_required
-def add_language(request):
-    return handle_pop_add(request, AddLanguageForm, 'language')
-
-
 class AuthorDetailView(DetailView):
     model = Author
 
@@ -263,7 +244,7 @@ class AuthorEditView(UpdateView):
 class AuthorListView(PaginationMixin, ListView):
     model = Author
     context_object_name = "authors"
-    paginate_by = BOOKS_PER_PAGE
+    paginate_by = settings.BOOKS_PER_PAGE
 
     def get_context_data(self, **kwargs):
         context = super(AuthorListView, self).get_context_data(**kwargs)
@@ -368,33 +349,15 @@ def download_book(request, book_id):
     return sendfile(request, filename, attachment=True)
 
 
-def tags(request, qtype=None, group_slug=None):
+def tags(request, qtype=None):
     """
 
     :param request:
     :param qtype:
-    :param group_slug:
     :return:
     """
-    context = {'list_by': 'by-tag'}
-
-    tag_list = Tag.objects.all().annotate(count=Count('book'))
-
-    if group_slug is not None:
-        tag_group = get_object_or_404(TagGroup, slug=group_slug)
-        context.update({'tag_group': tag_group})
-
-        # TODO: find a way of performing the previous django-tagging
-        # get_for_object(tag_group) using django-taggit. Currently it just
-        # returns all the tags, as a quick hack for avoiding problems, but it
-        # is the *wrong* behaviour.
-        # context.update({'tag_list': Tag.objects.get_for_object(tag_group)})
-        context.update({'tag_list': tag_list})
-    else:
-        context.update({'tag_list': tag_list})
-
-    tag_groups = TagGroup.objects.all()
-    context.update({'tag_group_list': tag_groups})
+    context = {'list_by': 'by-tag',
+               'tag_list': Tag.objects.all().annotate(count=Count('book'))}
 
     # Return OPDS Atom Feed:
     if qtype == 'feed':
@@ -405,13 +368,6 @@ def tags(request, qtype=None, group_slug=None):
     return render(request, 'books/tag_list.html', context)
 
 
-def tags_listgroups(request):
-    tag_groups = TagGroup.objects.all()
-    catalog = generate_taggroups_catalog(tag_groups)
-    return HttpResponse(catalog, content_type='application/atom+xml')
-
-
-@login_required
 def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     """
     Filter the books, paginate the result, and return either a HTML
@@ -423,10 +379,12 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     search_author = request.GET.get('search-author') == 'on'
 
     if not request.user.is_authenticated():
-        queryset = queryset.filter(a_status=BOOK_PUBLISHED)
+        queryset = queryset.filter(a_status=settings.BOOK_PUBLISHED)
 
-    published_count = Book.objects.filter(a_status=BOOK_PUBLISHED).count()
-    unpublished_count = Book.objects.exclude(a_status=BOOK_PUBLISHED).count()
+    published_count = Book.objects.\
+        filter(a_status=settings.BOOK_PUBLISHED).count()
+    unpublished_count = Book.objects.\
+        exclude(a_status=settings.BOOK_PUBLISHED).count()
 
     # If no search options are specified, assumes search all, the
     # advanced search will be used:
@@ -442,7 +400,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
             queryset = simple_search(queryset, q,
                                      search_title, search_author)
 
-    paginator = Paginator(queryset, BOOKS_PER_PAGE)
+    paginator = Paginator(queryset, settings.BOOKS_PER_PAGE)
     page = int(request.GET.get('page', '1'))
 
     try:
@@ -477,7 +435,6 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
     return render(request, 'books/book_list2.html', extra_context)
 
 
-@login_required
 def home(request):
     return redirect('latest')
 
@@ -493,31 +450,21 @@ def root(request, qtype=None):
     return HttpResponse(root_catalog, content_type='application/atom+xml')
 
 
-@login_required
-def authors(request, qtype=None):
-    queryset = authors.books.all()
-    return _book_list(request, queryset, qtype, list_by='authors')
-
-
-@login_required
 def latest(request, qtype=None):
     queryset = Book.objects.all()
     return _book_list(request, queryset, qtype, list_by='latest')
 
 
-@login_required
 def by_title(request, qtype=None):
     queryset = Book.objects.all().order_by('title')
     return _book_list(request, queryset, qtype, list_by='by-title')
 
 
-@login_required
 def by_author(request, qtype=None):
     queryset = Book.objects.all().order_by('authors')
     return _book_list(request, queryset, qtype, list_by='by-author')
 
 
-@login_required
 def by_tag(request, tag, qtype=None):
     """ displays a book list by the tag argument
     :param request:
@@ -525,12 +472,8 @@ def by_tag(request, tag, qtype=None):
     :param qtype:
     :returns:
     """
-    # get the Tag object
-    tag_instance = Tag.objects.get(name=tag)
-
-    # if the tag does not exist, return 404
-    if tag_instance is None:
-        raise Http404()
+    # get the Tag object or return 404
+    tag_instance = get_object_or_404(Tag, name=tag)
 
     # Get a list of books that have the requested tag
     queryset = Book.objects.filter(tags=tag_instance)
@@ -538,7 +481,6 @@ def by_tag(request, tag, qtype=None):
                       tag=tag_instance)
 
 
-@login_required
 def most_downloaded(request, qtype=None):
     queryset = Book.objects.all().order_by('-downloads')
     return _book_list(request, queryset, qtype, list_by='most-downloaded')

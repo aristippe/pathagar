@@ -94,13 +94,8 @@ class PublisherAdmin(admin.ModelAdmin):
     book_count.admin_order_field = 'book_count'
 
 
-class TagGroupAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("name",)}
-
-
 admin.site.register(books_models.Author, AuthorAdmin)
 admin.site.register(books_models.Book, BookAdmin)
 admin.site.register(books_models.Language)
 admin.site.register(books_models.Publisher, PublisherAdmin)
 admin.site.register(books_models.Status)
-admin.site.register(books_models.TagGroup, TagGroupAdmin)

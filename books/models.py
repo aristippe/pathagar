@@ -114,20 +114,6 @@ class Publisher(models.Model):
         ordering = ('name',)
 
 
-class TagGroup(models.Model):
-    name = models.CharField(max_length=200, blank=False)
-    slug = models.SlugField(max_length=200, blank=False)
-
-    # tags = TagableManager()
-
-    class Meta:
-        verbose_name = _("Tag group")
-        verbose_name_plural = _("Tag groups")
-
-    def __unicode__(self):
-        return self.name
-
-
 class Status(models.Model):
     status = models.CharField(max_length=200, blank=False)
 
