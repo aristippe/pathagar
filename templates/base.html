@@ -56,27 +56,7 @@
                 {% endif %}
 
                 <li class="searchbox">
-                    <form
-                            {% if list_by %}
-                                {% if list_by == 'latest' %}
-                                    action="{% url "latest" %}"
-                                {% endif %}
-                                {% if list_by == 'by-title' %}
-                                    action="{% url "by_title" %}"
-                                {% endif %}
-                                {% if list_by == 'by-author' %}
-                                    action="{% url "by_author" %}"
-                                {% endif %}
-                                {% if list_by == 'by-tag' %}
-                                    {% if tag %}
-                                        action="{% url "by_tag" tag.name %}"
-                                    {% endif %}
-                                {% endif %}
-                                {% if list_by == 'most-downloaded' %}
-                                    action="{% url "most_downloaded" %}"
-                                {% endif %}
-                            {% endif %}
-                            method="get" class="navbar-form">
+                    <form action="{% if not list_by %}{% url "latest" %}{% endif %}" method="get" class="navbar-form">
                         <input id="search" class="form-control input-sm" type="text"
                                 name="q"/>
                         <input id="submit" type="submit" value="Submit"/>
