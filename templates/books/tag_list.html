@@ -2,25 +2,27 @@
 {% load i18n %}
 {% load static from staticfiles %}
 
-{% block head %}
+{% block title %}{{ book.title }} :: Pathagar Book Server{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet"
           href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"
           type="text/css"/>
-    <script type="text/javascript"
-            src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-
     <link rel="stylesheet"
           href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
           type="text/css"/>
+    <link rel="stylesheet" href="{% static "style/book_list.css" %}"
+          type="text/css">
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript"
             src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
-
-    <link rel="stylesheet" href="{% static "style/book_list.css" %}" type="text/css">
     <script type="text/javascript"
             src="{% static "js/book_list.js" %}"></script>
 {% endblock %}
-
-{% block title %}{{ book.title }} :: Pathagar Book Server{% endblock %}
 
 {% block script %}
     {{ block.super }}
