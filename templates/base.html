@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% load bootstrap3 %}
+{% load pathagar_permissions %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,30 +37,24 @@
 </head>
 
 <body>
-
-<!-- hide header to show only login page -->
-{% if user.is_authenticated %}
-
+{# do not show navbar on login page #}
+{% url 'userena_signin' as signin_url %}
+{% if signin_url not in request.path  %}
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="{% url "latest" %}">Pathagar</a>
             </div>
+
             <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item"><a data-name="latest" href="
-                {% url "latest" %}">{% trans "Books" %}</a></li>
-                <li class="nav-item">
-                    <a data-name="authors" href="{% url "author_list" %}">
-                        {% trans "Authors" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url "latest_feed" %}">{% trans "RSS" %}</a>
-                </li>
-                {% if user.is_authenticated or allow_public_add_book %}
-                    <li class="nav-item">
-                        <a href="{% url "book_add" %}">{% trans "Upload" %}</a>
-                    </li>
+                <li class="nav-item"><a data-name="latest" href="{% url "latest" %}">{% trans "Books" %}</a></li>
+                <li class="nav-item"><a data-name="authors" href="{% url "author_list" %}">{% trans "Authors" %}</a></li>
+                <li class="nav-item"><a href="{% url "latest_feed" %}">{% trans "RSS" %}</a></li>
+
+                {% if user|can_upload %}
+                <li class="nav-item"><a href="{% url "book_add" %}">{% trans "Upload" %}</a></li>
                 {% endif %}
+
                 <li class="searchbox">
                     <form
                             {% if list_by %}
@@ -87,40 +82,31 @@
                         <input id="submit" type="submit" value="Submit"/>
                     </form>
                 </li>
+
+                {% if user.is_authenticated %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img width="20px" src="{{ user.profile.get_mugshot_url }}" alt="{% trans "Your mugshot" %}"/><span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        {% if user.is_authenticated %}
-                            <li>
-                                <a href="{% url 'userena_profile_detail' user.username %}">{{ user.username }}</a>
-                            </li>
-                            {% if user.is_superuser %}
-                                <li>
-                                    <a target="_blank"
-                                            href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
-                                </li>
-                            {% endif %}
-                            <li><a href="{% url "userena_signout" %}?next=/"
-                            >{% trans "Log Out" %}</a></li>
-                        {% else %}
-                            {% if allow_public_add_book %}
-                                <a href="{% url "book_add" %}">{% trans "Add Book" %}</a>&nbsp;&nbsp;
-                                <a href="{% url "login" %}?next=/">{% trans "Log In" %}</a>
-                            {% endif %}
+                        <li><a href="{% url 'userena_profile_detail' user.username %}">{{ user.username }}</a></li>
+                        {% if user.is_superuser %}
+                            <li><a target="_blank" href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
                         {% endif %}
+                        <li><a href="{% url "userena_signout" %}">{% trans "Log Out" %}</a></li>
                     </ul>
                 </li>
+                {% else %} {# user.is_authenticated == False #}
+                <li class="nav-item"><a href="{% url "userena_signin" %}">{% trans "Log In" %}</a></li>
+                {% endif %}
             </ul>
         </div>
-    </nav> <!-- header -->
+    </nav>
 
     <div class="container">
         {% if messages %}
             {% bootstrap_messages %}
         {% endif %}
     </div>
-
-{% endif %} <!-- hide if not authenticated -->
+{% endif %}
 
 <div class="container">
     {% block content %}{% endblock %}
@@ -148,7 +134,6 @@
             </div>
         {% endblock %}
     {% endif %}
-
 </div>
 
 </body>
