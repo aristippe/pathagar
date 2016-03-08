@@ -90,31 +90,30 @@
 
 <div class="container">
     {% block content %}{% endblock %}
-
-    {% if user.is_authenticated %}
-        {% block footer %}
-            <hr/>
-            <div class="footer">
-                <div class="row">
-                    <div class="col-sm-5">{% trans "Books:" %}
-                        {{ books.count }}
-                    </div>
-                    {% if user.is_superuser %}
-                        <div class="col-sm-5">
-                        {% trans "Unpublished eBooks:" %}
-                            {{ unpublished_books }}
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
-                    </div>
-                </div>
-            </div>
-        {% endblock %}
-    {% endif %}
 </div>
 
+{# do not show footer on login page #}
+{% if signin_url not in request.path  %}
+<footer class="footer">
+    <div class="container">
+    {% block footer %}
+        <div class="row">
+            <div class="col-sm-5">{% trans "Books:" %}
+                {{ books.count }}
+            </div>
+            {% if user.is_superuser %}
+                <div class="col-sm-5">
+                {% trans "Unpublished eBooks:" %}
+                    {{ unpublished_books }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
+            </div>
+        </div>
+    {% endblock %}
+{% endif %}
 </body>
 </html>
