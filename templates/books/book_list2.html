@@ -29,12 +29,14 @@
 {% endblock %}
 
 {% block script %}
-    {{ block.super }}
+{{ block.super }}
+$(document).ready(function(){
     {% if q != None %}
         $('#search').val('{{ q }}');
     {% else %}
-        $('#search').example('{% trans "Book Search" %}...');
+        $('#search').attr('placeholder', '{% trans "Book Search" %}...');
     {% endif %}
+});
 {% endblock %}
 
 {% block content %}
