@@ -14,7 +14,7 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     {% bootstrap_css %}
     <link rel="stylesheet" href="{% static "style/style.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "style/sticky-footer.css" %}" type="text/css">
+{#    <link rel="stylesheet" href="{% static "style/sticky-footer.css" %}" type="text/css">#}
     {% block extra_css %}
     {% endblock %}
 
@@ -43,13 +43,16 @@
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="{% url "latest" %}">Pathagar</a>
+                <a class="navbar-brand" href="{% url "latest" %}">
+                    {{ request.site.name }}</a>
             </div>
 
             <div class="nav navbar-right">
                 <ul class="nav navbar-nav">
                     <li class="nav-item"><a data-name="latest" href="{% url "latest" %}">{% trans "Books" %}</a></li>
                     <li class="nav-item"><a data-name="authors" href="{% url "author_list" %}">{% trans "Authors" %}</a></li>
+                    <li class="nav-item"><a data-name="tags" href="
+                    {% url "tags" %}">{% trans "Tags" %}</a></li>
                     <li class="nav-item"><a href="{% rss_url list_by tag q %}">{% trans "RSS" %}</a></li>
 
                     {% if user|can_upload %}
@@ -62,7 +65,7 @@
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="{% trans "Search ..." %}" id="search" name="q">
                             <span class="input-group-btn">
-                                <button type="submit" class="btn"><span class="glyphicon glyphicon-search"></span></button>
+                                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
                             </span>
                         </div>
                     </div>
@@ -100,27 +103,27 @@
 </div>
 
 {# do not show footer on login page #}
-{% if signin_url not in request.path  %}
-<footer class="footer">
-    <div class="container">
-    {% block footer %}
-        <div class="row">
-            <div class="col-sm-5">{% trans "Books:" %}
-                {{ books.count }}
-            </div>
-            {% if user.is_superuser %}
-                <div class="col-sm-5">
-                {% trans "Unpublished eBooks:" %}
-                    {{ unpublished_books }}
-                </div>
-            {% endif %}
-        </div>
-        <div class="row">
-            <div class="col-sm-3">
-                <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>
-            </div>
-        </div>
-    {% endblock %}
-{% endif %}
+{#{% if signin_url not in request.path  %}#}
+{#<footer class="footer">#}
+{#    <div class="container">#}
+{#    {% block footer %}#}
+{#        <div class="row">#}
+{#            <div class="col-sm-5">{% trans "Books:" %}#}
+{#                {{ books.count }}#}
+{#            </div>#}
+{#            {% if user.is_superuser %}#}
+{#                <div class="col-sm-5">#}
+{#                {% trans "Unpublished eBooks:" %}#}
+{#                    {{ unpublished_books }}#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-sm-3">#}
+{#                <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    {% endblock %}#}
+{#{% endif %}#}
 </body>
 </html>

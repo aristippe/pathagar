@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static from staticfiles %}
 
-{% block title %}{{ book.title }} :: Pathagar Book Server{% endblock %}
+{% block title %}{% trans "Tags" %} :: {% request.site.name %}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet"

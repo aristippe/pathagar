@@ -4,7 +4,7 @@
 {% load comments %}
 {% load thumbnail %}
 
-{% block title %}{{ author.name }} :: Pathagar{% endblock %}
+{% block title %}{{ author.name }} :: {{ request.site.name }}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet"

@@ -3,7 +3,7 @@
 {% load static from staticfiles %}
 {% load comments %}
 
-{% block title %}{% trans "Welcome to the Pathagar book server" %}{% endblock %}
+{% block title %}{% blocktrans with site_name=request.site.name %} "{{ site_name }} :: Books"{% endblocktrans %}{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet"

@@ -6,7 +6,14 @@
 
 {#https://stackoverflow.com/questions/8174122/django-sorl-thumbnail-and-easy-thumbnail-in-same-project#}
 
-{% block title %}{% trans "Welcome to the Pathagar book server" %}{% endblock %}
+{% block title %}
+    {% if q != None %}
+        {% trans "search" %} "{{ q }}"
+    {% else %}
+        {% trans "Books" %}
+    {% endif %}
+    :: {{ request.site.name }}
+{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet"
