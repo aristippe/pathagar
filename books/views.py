@@ -432,7 +432,7 @@ def _book_list(request, queryset, qtype=None, list_by='latest', **kwargs):
         'allow_user_comments': settings.ALLOW_USER_COMMENTS,
     })
 
-    return render(request, 'books/book_list2.html', extra_context)
+    return render(request, 'books/book_list.html', extra_context)
 
 
 def home(request):
