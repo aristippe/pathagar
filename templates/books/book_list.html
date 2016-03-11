@@ -72,44 +72,25 @@ $(document).ready(function(){
         <thead>
         <tr>
             <th></th>
-            {% if q != None %}
 
-                <th><a data-name="by-title"
-                       href="{% url "by_title" %}?q={{ q|urlencode }}">{% trans "Title" %}</a> / <a data-name="by-author"
-                       href="{% url "by_author" %}?q={{ q|urlencode }}">{% trans "Author" %}</a>
-                </th>
+            <th><a data-name="by-title" {% if list_by == "by-title" %}class="sort-selected" {% endif %}
+                   href="{% url "by_title" %}{% if q %}?q={{ q|urlencode }}{% endif %}">{% trans "Title" %}</a>
+                   /
+                <a data-name="by-author" {% if list_by == "by-author" %}class="sort-selected" {% endif %}
+                   href="{% url "by_author" %}{% if q %}?q={{ q|urlencode }}{% endif %}">{% trans "Author" %}</a>
+            </th>
 
-                <th><a data-name="latest"
-                       href="{% url "latest" %}?q={{ q|urlencode }}">{% trans "Added" %}</a>
-                </th>
+            <th><a data-name="latest" {% if list_by == "latest" %}class="sort-selected" {% endif %}
+                   href="{% url "latest" %}{% if q %}?q={{ q|urlencode }}{% endif %}">{% trans "Added" %}</a>
+            </th>
 
-                {% if allow_user_comments %}
-                    <th class="list_number">❝</th>
-                {% endif %}
-
-                <th class="list_number"><a data-name="by-author"
-                                              href="{% url "most_downloaded" %}?q={{ q|urlencode }}">⬇</a>
-                </th>
-            {% else %}
-
-                <th><a data-name="by-title" href="{% url "by_title" %}">
-                    {% trans "Title" %}</a> / <a data-name="by-author"
-                        href="{% url "by_author" %}">
-                    {% trans "Author" %}</a></th>
-
-                <th class="th_date_added"><a data-name="latest" href=
-                        "{% url "latest" %}">
-                    {% trans "Added" %}</a></th>
-
-                {% if allow_user_comments %}
-                    <th class="list_number">❝</th>
-                {% endif %}
-
-                <th class="list_number"><a data-name="by-author"
-                                              href="{% url "most_downloaded" %}">⬇</a>
-                </th>
-
+            {% if allow_user_comments %}
+                <th class="list_number">❝</th>
             {% endif %}
+
+            <th class="list_number"><a data-name="by-author" {% if list_by == "most-downloaded" %}class="sort-selected" {% endif %}
+                                          href="{% url "most_downloaded" %}{% if q %}?q={{ q|urlencode }}{% endif %}">⬇</a>
+            </th>
             <th>&nbsp;</th>
         </tr>
         </thead>

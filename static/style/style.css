@@ -332,3 +332,6 @@ img.cover_detail {
 i.fa-rss-square {
 	color: #ff9c00;
 }
+a.sort-selected {
+	font-style: italic;
+}
