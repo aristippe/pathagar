@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     {% bootstrap_css %}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "style/style.css" %}" type="text/css">
     <link rel="stylesheet" href="{% static "style/sticky-footer.css" %}" type="text/css">
     {% block extra_css %}
@@ -44,6 +45,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="{% url "latest" %}">{{ request.site.name }}</a>
+                <a class="navbar-brand" href="{% url "root_feed" %}"><i class="fa fa-rss-square"></i></a>
             </div>
 
             <div class="nav navbar-right">
@@ -52,7 +54,6 @@
                     <li class="nav-item"><a data-name="authors" href="{% url "author_list" %}">{% trans "Authors" %}</a></li>
                     <li class="nav-item"><a data-name="tags" href="
                     {% url "tags" %}">{% trans "Tags" %}</a></li>
-                    <li class="nav-item"><a href="{% rss_url list_by tag q %}">{% trans "RSS" %}</a></li>
 
                     {% if user|can_upload %}
                     <li class="nav-item"><a href="{% url "book_add" %}">{% trans "Upload" %}</a></li>

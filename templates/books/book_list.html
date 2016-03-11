@@ -3,6 +3,7 @@
 {% load static from staticfiles %}
 {% load comments %}
 {% load thumbnail %}
+{% load pathagar_common %}
 
 {#https://stackoverflow.com/questions/8174122/django-sorl-thumbnail-and-easy-thumbnail-in-same-project#}
 
@@ -47,6 +48,7 @@ $(document).ready(function(){
 {% endblock %}
 
 {% block content %}
+    <h3>{% trans "Books" %} <small><a href="{% rss_url list_by tag q %}"><i class="fa fa-rss-square"></i></a></small></h3>
 
     {% if q != None %}
         <h3>{% trans "Search:" %}
