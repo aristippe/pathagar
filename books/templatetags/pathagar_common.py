@@ -43,7 +43,7 @@ def rss_url(list_by, tag=None, q=''):
     else:
         url = reverse(url_name)
     return '%s%s' % (url,
-                     ('?q=%s' % str(q)) if q else '')
+                     ('?q=%s' % q) if q else '')
 
 
 register.filter('can_upload', can_upload)

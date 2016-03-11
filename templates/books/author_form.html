@@ -3,9 +3,7 @@
 {% load static from staticfiles %}
 {% load bootstrap3 %}
 
-{% block title %}
-    {% trans "Editing" %} - {{ author.name }} :: {{ request.site.name }}
-{% endblock %}
+{% block title %}{% trans "Editing" %} - {{ author.name }}{% endblock %}
 
 
 {% block content %}

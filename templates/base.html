@@ -8,6 +8,8 @@
 <head>
     <meta charset=utf-8/>
 
+    <title>{% block title %}{% endblock %} :: {{ request.site.name }}</title>
+
     {# CSS #}
     <link rel="stylesheet" href="{% static "style/bootstrap/bootstrap.css" %}" type="text/css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -33,8 +35,6 @@
 
     {# Other <head> content #}
     {% block extra_head %}{% endblock %}
-
-    <title>{% block title %}{% endblock %}</title>
 </head>
 
 <body>
