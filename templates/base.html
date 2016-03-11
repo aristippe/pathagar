@@ -14,7 +14,7 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     {% bootstrap_css %}
     <link rel="stylesheet" href="{% static "style/style.css" %}" type="text/css">
-{#    <link rel="stylesheet" href="{% static "style/sticky-footer.css" %}" type="text/css">#}
+    <link rel="stylesheet" href="{% static "style/sticky-footer.css" %}" type="text/css">
     {% block extra_css %}
     {% endblock %}
 
@@ -43,8 +43,7 @@
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="{% url "latest" %}">
-                    {{ request.site.name }}</a>
+                <a class="navbar-brand" href="{% url "latest" %}">{{ request.site.name }}</a>
             </div>
 
             <div class="nav navbar-right">
@@ -103,27 +102,13 @@
 </div>
 
 {# do not show footer on login page #}
-{#{% if signin_url not in request.path  %}#}
-{#<footer class="footer">#}
-{#    <div class="container">#}
-{#    {% block footer %}#}
-{#        <div class="row">#}
-{#            <div class="col-sm-5">{% trans "Books:" %}#}
-{#                {{ books.count }}#}
-{#            </div>#}
-{#            {% if user.is_superuser %}#}
-{#                <div class="col-sm-5">#}
-{#                {% trans "Unpublished eBooks:" %}#}
-{#                    {{ unpublished_books }}#}
-{#                </div>#}
-{#            {% endif %}#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-sm-3">#}
-{#                <a data-name="by-tag" href="{% url "tags" %}">{% trans "Tags" %}</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endblock %}#}
-{#{% endif %}#}
+{% if signin_url not in request.path  %}
+<footer class="footer">
+    <div class="container text-center">
+    {% block footer %}
+        <p class="text-muted">{{ request.site.name }} OPDS server</p>
+    {% endblock %}
+    </div>
+{% endif %}
 </body>
 </html>
