@@ -51,7 +51,7 @@ $(document).ready(function(){
 {#        {% else %}#}
 {#        <h1>{% trans "Books" %}</h1>#}
         {% else %}
-        <div style="padding-top:1em"></div>
+        <div class="space"></div>
     {% endif %}
 
     {% url 'by_tag' tag as view_tag %}
@@ -118,7 +118,9 @@ $(document).ready(function(){
 
                     {% if book.publishers.all %}
                     | {% for publisher in book.publishers.all %}
-                    <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+                    <span class="list_publishers">
+                        <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+                    </span>
                     {% endif %}
 
 {#                    {%  if book.dc_issued %}#}
