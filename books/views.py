@@ -186,6 +186,8 @@ class AddBookWizard(SessionWizardView):
         self.instance.file_sha256sum = self.storage.\
             extra_data['file_sha256sum']
         self.instance.original_path = self.storage.extra_data['original_path']
+        if self.request.user.is_authenticated():
+            self.instance.uploader = self.request.user
         self.instance.save()
         # Save the m2m fields.
         self.instance.authors.add(*form_list[1].cleaned_data['authors'])
