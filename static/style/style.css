@@ -10,7 +10,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-    color: inherit;
+    color: #2e9dfd;
+    /*color: inherit;*/
 }
 
 a:hover, h4.detail_author a, div.footer a {
@@ -269,6 +270,10 @@ tbody {
     float: left;
 }
 
+.detail_sidebar a {
+    color: inherit;
+}
+
 .details {
     display: block;
     overflow: hidden;
@@ -327,4 +332,15 @@ hr.comment {
 img.cover_detail {
 	width: 180px;
 	margin-bottom: 2em;
+}
+
+i.fa-rss-square {
+	color: #ff9c00;
+}
+a.sort-selected {
+	font-style: italic;
+}
+
+div.space {
+    padding-top: 1em;
 }

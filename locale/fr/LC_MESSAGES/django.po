@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-29 00:02-0800\n"
+"POT-Creation-Date: 2016-03-15 02:17-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,117 +28,70 @@ msgstr ""
 
 #: accounts/models.py:19
 msgid "user"
-msgstr ""
+msgstr "utilisateur"
 
 #: accounts/models.py:21
 msgid "gender"
-msgstr ""
+msgstr "genre"
 
-#: accounts/templates/accounts/profile_detail.html:4
-#, python-format
-msgid "%(username)s's profile."
-msgstr ""
+#: books/forms.py:94
+msgid "Author(s)"
+msgstr "Auteur(s) :"
 
-#: accounts/templates/accounts/profile_detail.html:11
-msgid "Accounts"
-msgstr ""
+#: books/forms.py:100
+msgid "Publisher(s)"
+msgstr "Éditeur(s) :"
 
-#: accounts/templates/accounts/profile_detail.html:17 templates/base.html:92
-msgid "Your mugshot"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:21
-#: templates/books/tag_list.html:42
-msgid "Name"
-msgstr "Nom"
-
-#: accounts/templates/accounts/profile_detail.html:25
-msgid "Email"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:29
-msgid "Age"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:33
-msgid "Website"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:37
-msgid "Location"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:41
-msgid "About me"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:56
-msgid "Edit details"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:59
-msgid "Change password"
-msgstr ""
-
-#: accounts/templates/accounts/profile_detail.html:62
-msgid "Change email"
-msgstr ""
-
-#: books/models.py:41
-msgid "author"
-msgstr "Auteur"
-
-#: books/models.py:42
-msgid "description"
-msgstr ""
-
-#: books/models.py:43
-msgid "headshot"
-msgstr ""
-
-#: books/models.py:45
-msgid "website"
-msgstr ""
-
-#: books/models.py:80
-msgid "language name"
-msgstr "Langage"
-
-#: books/models.py:85
+#: books/forms.py:117 books/forms.py:174 books/models.py:98
 msgid "Language"
 msgstr "Langage"
 
-#: books/models.py:86
-msgid "Languages"
-msgstr "Langages"
+#: books/forms.py:118 books/forms.py:175
+msgid "Published"
+msgstr "Publié :"
 
-#: books/models.py:94
-msgid "publisher"
-msgstr "Éditeur"
-
-#: books/models.py:111
-msgid "Tag group"
-msgstr ""
-
-#: books/models.py:112
-msgid "Tag groups"
-msgstr ""
-
-#: books/models.py:122 books/models.py:123
+#: books/forms.py:119 books/forms.py:176 books/models.py:121
+#: books/models.py:122
 msgid "Status"
 msgstr ""
 
-#: books/models.py:143
+#: books/models.py:54
+msgid "author"
+msgstr "Auteur"
+
+#: books/models.py:55
+msgid "description"
+msgstr ""
+
+#: books/models.py:56
+msgid "headshot"
+msgstr ""
+
+#: books/models.py:58
+msgid "website"
+msgstr "site"
+
+#: books/models.py:93
+msgid "language name"
+msgstr "Langage"
+
+#: books/models.py:99
+msgid "Languages"
+msgstr "Langages"
+
+#: books/models.py:107
+msgid "publisher"
+msgstr "Éditeur"
+
+#: books/models.py:142
 msgid "file"
 msgstr "fichier"
 
-#: books/models.py:146
+#: books/models.py:145
 msgid "cover"
 msgstr "couverture"
 
 #: books/models.py:150
-#, fuzzy
-#| msgid "Title"
 msgid "title"
 msgstr "Titre"
 
@@ -186,244 +139,262 @@ msgstr "livre"
 msgid "books"
 msgstr "livres"
 
-#: books/templates/book_add_tags.html:25 templates/books/book_detail.html:28
+#: books/templates/book_add_tags.html:25 templates/books/book_detail.html:22
 msgid "Download"
 msgstr "Télécharger"
 
 #: books/templates/book_add_tags.html:37
-#: templates/formtools/wizard/wizard_form.html:29
 msgid "submit"
 msgstr "soumettre"
 
-#: books/templates/book_add_tags.html:45 templates/books/author_detail.html:124
-#: templates/books/book_detail.html:65 templates/books/book_list.html:121
-#: templates/books/book_list2.html:129
+#: books/templates/book_add_tags.html:45 templates/books/author_detail.html:125
+#: templates/books/book_detail.html:59 templates/books/book_list.html:114
 msgid "and"
-msgstr ""
+msgstr "et"
 
-#: books/templates/book_add_tags.html:52 templates/books/book_detail.html:75
+#: books/templates/book_add_tags.html:52 templates/books/book_detail.html:69
 msgid "Publisher:"
 msgstr "Éditeur(s) :"
 
-#: books/templates/book_add_tags.html:62 templates/books/book_detail.html:85
-#: templates/books/book_form.html:111
+#: books/templates/book_add_tags.html:62 templates/books/book_detail.html:79
 msgid "Published:"
 msgstr "Publié :"
 
-#: books/templates/book_add_tags.html:66 templates/books/book_detail.html:89
-#: templates/books/book_form.html:104
+#: books/templates/book_add_tags.html:66 templates/books/book_detail.html:83
 msgid "Language:"
 msgstr "Langage :"
 
-#: books/templates/book_add_tags.html:79 templates/books/book_detail.html:102
-#: templates/books/book_form.html:126
+#: books/templates/book_add_tags.html:79 templates/books/book_detail.html:96
 msgid "Tags:"
 msgstr "Étiquettes :"
 
-#: books/templates/book_add_tags.html:91 templates/books/book_detail.html:114
+#: books/templates/book_add_tags.html:91 templates/books/book_detail.html:108
 msgid "Added:"
 msgstr "Ajouté :"
 
-#: books/templates/book_add_tags.html:93 templates/books/book_detail.html:116
+#: books/templates/book_add_tags.html:93 templates/books/book_detail.html:110
 #, python-format
 msgid "%(time_added)s ago "
 msgstr "il y a %(time_added)s"
 
-#: books/templates/book_add_tags.html:100 templates/books/book_detail.html:123
+#: books/templates/book_add_tags.html:100 templates/books/book_detail.html:117
 msgid "Downloads:"
 msgstr "Téléchargments :"
 
-#: books/templates/book_add_tags.html:109 templates/books/book_detail.html:132
+#: books/templates/book_add_tags.html:109 templates/books/book_detail.html:126
 msgid "Path:"
 msgstr "Répertoire :"
 
-#: books/templates/book_add_tags.html:125 templates/books/book_detail.html:148
+#: books/templates/book_add_tags.html:125 templates/books/book_detail.html:142
 msgid "Comments:"
 msgstr "Commentaires :"
 
-#: books/templates/book_add_tags.html:131 templates/books/book_detail.html:154
+#: books/templates/book_add_tags.html:131 templates/books/book_detail.html:148
 #, python-format
 msgid "%(user_name)s | %(comment_date)s ago"
 msgstr "%(user_name)s | il y a %(comment_date)s"
 
-#: books/templates/book_add_tags.html:148 templates/books/book_detail.html:182
+#: books/templates/book_add_tags.html:148 templates/books/book_detail.html:176
 msgid "Add comment"
 msgstr "Ajouter"
 
-#: templates/admin/base_site.html:4
-msgid "Pathagar admin"
+#: templates/accounts/profile_detail.html:4
+#, python-format
+msgid "%(username)s's profile."
+msgstr "profile de %(username)s."
+
+#: templates/accounts/profile_detail.html:11
+msgid "Accounts"
+msgstr "Comptes"
+
+#: templates/accounts/profile_detail.html:17 templates/base.html:82
+msgid "Your mugshot"
 msgstr ""
 
-#: templates/admin/base_site.html:7
-msgid "Pathagar administration"
+#: templates/accounts/profile_detail.html:21 templates/books/tag_list.html:42
+msgid "Name"
+msgstr "Nom"
+
+#: templates/accounts/profile_detail.html:25
+msgid "Email"
+msgstr "Courier"
+
+#: templates/accounts/profile_detail.html:29
+msgid "Age"
+msgstr "Age"
+
+#: templates/accounts/profile_detail.html:33
+msgid "Website"
+msgstr "Site web"
+
+#: templates/accounts/profile_detail.html:37
+msgid "Location"
+msgstr "Location"
+
+#: templates/accounts/profile_detail.html:41
+msgid "About me"
+msgstr "À propos de moi"
+
+#: templates/accounts/profile_detail.html:56
+msgid "Edit details"
 msgstr ""
 
-#: templates/base.html:49 templates/books/author_list.html:54
+#: templates/accounts/profile_detail.html:59
+msgid "Change password"
+msgstr "Changer mot de passe"
+
+#: templates/accounts/profile_detail.html:62
+msgid "Change email"
+msgstr "Changer courier"
+
+#: templates/admin/base_site.html:9
+msgid "administration"
+msgstr ""
+
+#: templates/base.html:59 templates/books/author_list.html:59
+#: templates/books/book_list.html:10 templates/books/book_list.html.py:44
 #: templates/books/tag_list.html:43
 msgid "Books"
 msgstr "Livres"
 
-#: templates/base.html:52 templates/books/author_list.html:27
-#: templates/books/author_list.html:37
+#: templates/base.html:60 templates/books/author_list.html:7
+#: templates/books/author_list.html.py:42
 msgid "Authors"
 msgstr "Auteurs"
 
-#: templates/base.html:56
-msgid "RSS"
-msgstr ""
-
-#: templates/base.html:61
-msgid "Upload"
-msgstr "Téléverser"
-
-#: templates/base.html:100
-msgid "Admin"
-msgstr ""
-
-#: templates/base.html:104
-msgid "Log Out"
-msgstr "Déconnecter"
-
-#: templates/base.html:107
-msgid "Add Book"
-msgstr "Ajouter un livre"
-
-#: templates/base.html:108
-msgid "Log In"
-msgstr "Se connecter"
-
-#: templates/base.html:126
-msgid "Books:"
-msgstr "Livres"
-
-#: templates/base.html:131 templates/books/book_list.html:148
-msgid "Unpublished eBooks:"
-msgstr "Publié :"
-
-#: templates/base.html:138 templates/books/tag_list.html:32
+#: templates/base.html:61 templates/books/tag_list.html:5
+#: templates/books/tag_list.html.py:33
 msgid "Tags"
 msgstr "Étiquettes"
 
-#: templates/books/author_detail.html:49 templates/books/author_form.html:48
+#: templates/base.html:64
+msgid "Upload"
+msgstr "Téléverser"
+
+#: templates/base.html:71
+msgid "Search ..."
+msgstr "Recherche ..."
+
+#: templates/base.html:86
+msgid "Admin"
+msgstr "Administration"
+
+#: templates/base.html:88
+msgid "Log Out"
+msgstr "Déconnecter"
+
+#: templates/base.html:92
+msgid "Log In"
+msgstr "Se connecter"
+
+#: templates/books/author_detail.html:50 templates/books/author_form.html:46
 msgid "Biography:"
-msgstr ""
+msgstr "Biographie :"
 
-#: templates/books/author_detail.html:56 templates/books/author_form.html:40
+#: templates/books/author_detail.html:57 templates/books/author_form.html:38
 msgid "Link:"
-msgstr ""
+msgstr "Lien :"
 
-#: templates/books/author_detail.html:73 templates/books/author_detail.html:87
-#: templates/books/book_list.html:61 templates/books/book_list.html.py:77
-#: templates/books/book_list2.html:67 templates/books/book_list2.html.py:85
+#: templates/books/author_detail.html:74 templates/books/author_detail.html:88
+#: templates/books/book_list.html:70
 msgid "Title"
 msgstr "Titre"
 
-#: templates/books/author_detail.html:74 templates/books/author_detail.html:89
-#: templates/books/author_list.html:53 templates/books/book_list.html:64
-#: templates/books/book_list.html.py:79 templates/books/book_list2.html:68
-#: templates/books/book_list2.html.py:87
+#: templates/books/author_detail.html:75 templates/books/author_detail.html:90
+#: templates/books/author_list.html:58 templates/books/book_list.html:73
 msgid "Author"
 msgstr "Auteur"
 
-#: templates/books/author_detail.html:77 templates/books/author_detail.html:92
-#: templates/books/book_list.html:67 templates/books/book_list.html.py:82
-#: templates/books/book_list2.html:72 templates/books/book_list2.html.py:91
+#: templates/books/author_detail.html:78 templates/books/author_detail.html:93
+#: templates/books/book_list.html:77
 msgid "Added"
 msgstr "Ajouté"
 
-#: templates/books/author_detail.html:151 templates/books/book_list.html:126
-#: templates/books/book_list2.html:156
+#: templates/books/author_detail.html:152 templates/books/book_list.html:143
 #, python-format
 msgid "%(time_added)s ago"
 msgstr "il y a %(time_added)s"
 
-#: templates/books/author_form.html:7 templates/books/book_form.html:9
+#: templates/books/author_form.html:6 templates/books/book_form.html:5
 msgid "Editing"
 msgstr "Éditer"
 
-#: templates/books/author_form.html:32
-#, fuzzy
-#| msgid "Name"
+#: templates/books/author_form.html:30
 msgid "Name:"
 msgstr "Nom"
 
-#: templates/books/author_form.html:58 templates/books/book_form.html:54
+#: templates/books/author_form.html:56
 msgid "Edit"
 msgstr "Éditer"
 
-#: templates/books/author_form.html:61
-#: templates/books/book_confirm_delete.html:29
-#: templates/books/book_form.html:58
+#: templates/books/author_form.html:59
+#: templates/books/book_confirm_delete.html:26
+#: templates/books/snippets/book_edit_form.html:52
 msgid "Cancel"
 msgstr "Annuler"
 
-#: templates/books/author_list.html:40 templates/books/book_list.html:40
-#: templates/books/book_list2.html:43
+#: templates/books/author_list.html:35
+msgid "Author Search"
+msgstr "Recherche auteur"
+
+#: templates/books/author_list.html:45 templates/books/book_list.html:47
 msgid "Search:"
 msgstr "Recherche :"
 
-#: templates/books/author_list.html:41 templates/books/book_list.html:41
-#: templates/books/book_list2.html:44
+#: templates/books/author_list.html:46 templates/books/book_list.html:48
 #, python-format
 msgid "\"%(query)s\""
 msgstr "« %(query)s »"
 
-#: templates/books/author_list.html:43 templates/books/book_list.html:43
-#: templates/books/book_list2.html:46
+#: templates/books/author_list.html:48 templates/books/book_list.html:50
 msgid "results"
 msgstr "résultats"
 
-#: templates/books/author_list.html:134
+#: templates/books/author_list.html:137
 msgid "more"
 msgstr "plus"
 
-#: templates/books/book_confirm_delete.html:26
+#: templates/books/book_confirm_delete.html:23
 #, python-format
 msgid "Are you sure you want to remove %(book_title)s?"
 msgstr ""
 
-#: templates/books/book_form.html:79
-msgid "Title:"
-msgstr "Titre"
+#: templates/books/book_form.html:13
+msgid "Edit Book"
+msgstr "Ajouter un livre"
 
-#: templates/books/book_form.html:87
-msgid "Author(s):"
-msgstr "Auteur(s) :"
+#: templates/books/book_list.html:10
+msgid "search"
+msgstr "recherche"
 
-#: templates/books/book_form.html:96
-msgid "Publisher(s):"
-msgstr "Éditeur(s) :"
-
-#: templates/books/book_form.html:118
-msgid "Status:"
-msgstr ""
-
-#: templates/books/book_form.html:134
-msgid "Downloads"
-msgstr "Téléchargments"
-
-#: templates/books/book_list.html:25 templates/books/book_list2.html:28
-msgid "Welcome to the Pathagar book server"
-msgstr ""
-
-#: templates/books/book_list.html:33 templates/books/book_list2.html:36
+#: templates/books/book_list.html:38
 msgid "Book Search"
 msgstr "Recherche"
 
-#: templates/books/book_list.html:50 templates/books/book_list2.html:55
+#: templates/books/book_list.html:59
 msgid "Tag:"
 msgstr "Étiquette :"
 
-#: templates/books/book_list.html:146
-msgid "Published eBooks:"
-msgstr "Publié :"
+#: templates/books/snippets/book_edit_form.html:53
+msgid "Save"
+msgstr "Enregistrer"
 
-#: templates/formtools/wizard/wizard_form.html:25
-msgid "first step"
+#: templates/formtools/wizard/wizard_form.html:5
+#: templates/formtools/wizard/wizard_form.html:14
+msgid "Upload Book"
+msgstr "Téléverser"
+
+#: templates/formtools/wizard/wizard_form.html:23
+#: templates/formtools/wizard/wizard_form.html:37
+msgid "Add Book"
+msgstr "Ajouter un livre"
+
+#: templates/formtools/wizard/wizard_form.html:33
+msgid "First step"
 msgstr "étape premier"
 
-#: templates/formtools/wizard/wizard_form.html:27
-msgid "prev step"
+#: templates/formtools/wizard/wizard_form.html:39
+msgid "Next step"
 msgstr "étape précedante"
 
 #: templates/userena/signin_form.html:17 templates/userena/signin_form.html:32
@@ -433,72 +404,3 @@ msgstr ""
 #: templates/userena/signin_form.html:34
 msgid "Forgot your password?"
 msgstr ""
-
-#~ msgid "atom:title"
-#~ msgstr "Titre"
-
-#~ msgid "by"
-#~ msgstr "de"
-
-#~ msgid "Unknown"
-#~ msgstr "Inconnu"
-
-#~ msgid "atom:author"
-#~ msgstr "Auteur"
-
-#~ msgid "dc:publisher"
-#~ msgstr "Éditeur"
-
-#~ msgid "Remove"
-#~ msgstr "Supprimer"
-
-#~ msgid "Summary"
-#~ msgstr "Sommaire"
-
-#~ msgid "Optional information"
-#~ msgstr "Information facultatif"
-
-#~ msgid "Category"
-#~ msgstr "Catégorie"
-
-#~ msgid "Rights"
-#~ msgstr "Droits"
-
-#~ msgid "Cover image"
-#~ msgstr "Couverture"
-
-#~ msgid "Latest"
-#~ msgstr "Par date"
-
-#~ msgid "By Title"
-#~ msgstr "Par titre"
-
-#~ msgid "By Author"
-#~ msgstr "Par auteur"
-
-#~ msgid "Most Downloaded"
-#~ msgstr "Par téléchargements"
-
-#~ msgid "Welcome"
-#~ msgstr "Bienvenue"
-
-#~ msgid "Size:"
-#~ msgstr "Taille :"
-
-#~ msgid "First"
-#~ msgstr "Premier"
-
-#~ msgid "Previous"
-#~ msgstr "Précédent"
-
-#~ msgid "Next"
-#~ msgstr "Suivant"
-
-#~ msgid "Last"
-#~ msgstr "Dernier"
-
-#~ msgid "of"
-#~ msgstr "de"
-
-#~ msgid "Login"
-#~ msgstr "Se connecter"

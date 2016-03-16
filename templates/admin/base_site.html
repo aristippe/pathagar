@@ -1,10 +1,12 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block title %}{{ title }} | {% trans 'Pathagar admin' %}{% endblock %}
+{% block title %}{{ title }} | {{ request.site.name }} {% trans 'admin' %
+    }{% endblock %}
 
 {% block branding %}
-    <h1 id="site-name">{% trans 'Pathagar administration' %}</h1>
+    <h1 id="site-name">{{ request.site.name }}
+        {% trans 'administration' %}</h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

@@ -4,33 +4,38 @@
 {% load comments %}
 {% load thumbnail %}
 
-{% block head %}
+{% block title %}{% trans "Authors" %}{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet"
-            href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"
-            type="text/css"/>
+          href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"
+          type="text/css"/>
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="{% static "style/book_list.css" %}"
+          type="text/css">
+{% endblock %}
+
+{% block extra_js %}
     <script type="text/javascript"
             src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-
-    <link rel="stylesheet"
-            href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css"
-            type="text/css"/>
     <script type="text/javascript"
             src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
-
-    <link rel="stylesheet" href="{% static "style/book_list.css" %}"
-            type="text/css">
     <script type="text/javascript"
             src="{% static "js/book_list.js" %}"></script>
-
 {% endblock %}
-
-    {% block title %}{% trans "Authors" %} :: Pathagar{% endblock %}
 
 {% block script %}
-    {{ block.super }}
-    $('#search').example('Book Search...');
+{{ block.super }}
+$(document).ready(function(){
+    {% if q != None %}
+        $('#search').val('{{ q }}');
+    {% else %}
+        $('#search').attr('placeholder', '{% trans "Author Search" %}...');
+    {% endif %}
+});
 {% endblock %}
-
 
 {% block content %}
 
@@ -74,8 +79,7 @@
                             <td class="blank">&nbsp;</td>
                         {% endif %}
 
-                        <td class="author_cover" style="width:50px;
-                                text-align:center">
+                        <td class="author_cover">
                             <a href="{% url "book_detail" book.pk %}">
                                 {% if book.cover_img %}
                                     <img class="author_cover" src=
@@ -89,14 +93,13 @@
                             </a>
                         </td>
 
-                        <td class="author_book"
-                                style="vertical-align:middle">
+                        <td class="author_book">
                             <a class="book" href=
                             "{% url "book_detail" book.pk %}">
                             {{ book.title }}</a>
                                 {% if book.publishers.all %}
                                 | {% for publisher in book.publishers.all %}
-                                <a href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
+                                <a class="list_publishers" href="{% url "by_title" %}?q={{ publisher.name|urlencode }}">{{ publisher.name }}</a>{% if not forloop.last %},{% endif %}{% endfor %}
                             {% if book.tags.count != 0 %}
                             <div class="list_tags">
                                 {% for tag in book.tags.all %}

@@ -31,6 +31,10 @@ table#book_list, table#author_list tbody td {
     color: gray;
 }
 
+thead th a {
+    color: inherit;
+}
+
 table#book_list th.th_date_added {
     width: 13em;
 }
@@ -42,6 +46,10 @@ table#book_list th.th_date_added {
 
 .list_author {
     width: 30%;
+}
+
+.list_publishers a, a.list_publishers {
+    color: inherit;
 }
 
 td.list_cover {
@@ -59,6 +67,10 @@ td.list_cover {
 .list_download_link {
     text-align: center;
     width: 2em;
+}
+
+.list_download_link a {
+    color: inherit !important;
 }
 
 .list_date {
@@ -85,7 +97,7 @@ div.list_authors {
     padding-top:0.5em;
 }
 
-span.list_authors {
+span.list_authors, span.list_authors a {
     color: black;
 }
 
@@ -114,8 +126,13 @@ a.book {
 
 .author_cover {
     max-width: 40px;
-    width: auto;
     height: auto;
+    width:50px;
+    text-align:center;
+}
+
+.author_book {
+    vertical-align: center;
 }
 
 /* temp */
