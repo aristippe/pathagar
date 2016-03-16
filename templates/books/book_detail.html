@@ -117,6 +117,10 @@
                     <div class="col-sm-3">{% trans "Downloads:" %}</div>
                     <div class="col-sm-6">{{ book.downloads }}</div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-3">{% trans "Uploader:" %}</div>
+                    <div class="col-sm-6">{% if book.uploader %}<a href="{% url "userena_profile_detail" book.uploader %}">{{ book.uploader }}</a>{% else %}-{% endif %}</div>
+                </div>
                 {% if user.is_superuser %}
 {#                    <div class="col-sm-3"><a href="#more" class="" data-toggle="collapse">Toggle#}
 {#                        Foo</a></div>#}

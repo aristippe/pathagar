@@ -17,6 +17,7 @@
 
 from hashlib import sha256
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -144,7 +145,6 @@ class Book(models.Model):
     mimetype = models.CharField(max_length=200, null=True)
     cover_img = ImageField(_('cover'), upload_to='covers',
                            blank=True, null=True)
-    # cover_img_url = models.URLField(null=True, blank=True)
 
     # General fields
     title = models.CharField(_('title'), max_length=255, null=False)
@@ -169,6 +169,7 @@ class Book(models.Model):
                                      help_text=_('Use ISBN for this'))
 
     # Other fields.
+    uploader = models.ForeignKey(User, blank=True, null=True, default=None)
     # TODO a_status null=True?
     a_status = models.ForeignKey(Status, blank=False, null=False)
     time_added = models.DateTimeField(_('time added'), auto_now_add=True)
