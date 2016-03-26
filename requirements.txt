@@ -1,11 +1,11 @@
-Django==1.8.9
+Django==1.9.4
 django-sendfile==0.3.10
 lxml==3.5.0
 django-taggit==0.18.0
 django-contrib-comments==1.6.2
 django-formtools==1.0
 django-pure-pagination==0.3.0
-django-userena==1.5.1
+django-userena==2.0.1
 django-bootstrap3==6.2.2
 django-autocomplete-light==3.0.4
 django-precise-bbcode==1.2.2
