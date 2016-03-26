@@ -63,7 +63,7 @@ class BookAdmin(admin.ModelAdmin):
             'fields': ['summary', 'a_category', 'a_rights', 'a_id',
                        'dc_language', 'dc_issued',
                        'dc_identifier', 'time_added', 'a_updated',
-                       'downloads'],
+                       'downloads', 'uploader'],
             'classes': ['collapse']}),
     ]
 

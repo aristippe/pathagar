@@ -17,6 +17,7 @@
 
 from hashlib import sha256
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -27,6 +28,7 @@ from taggit.managers import TaggableManager
 from langlist import langs_by_code
 from storage import LinkOrFileSystemStorage
 from uuidfield import UUIDField
+from books.utils import standardize_language
 
 
 def sha256_sum(_file):  # used to generate sha256 sum of book files
@@ -71,35 +73,53 @@ class LanguageManager(models.Manager):
         the specified code, creating it if needed.
         If the code is not valid, it raises a ValueError.
 
-        TODO: replace with a RFC5646 compatible system.
-        TODO: find the proper Exception to subclass.
-        TODO: revise fixtures, some (or all) of them might be unreachable.
-
         :param code: language code
         :returns: language
         """
-        # Add Language, discarding it if it does not have a valid code.
-        if code in langs_by_code:
-            language, _ = self.get_or_create(
-                code=code, label=langs_by_code[code])
+        # Try to fetch the Language if already on DB.
+        try:
+            language = self.get(code=code)
             return language
+        except Language.DoesNotExist:
+            pass
+
+        # Add Language, discarding it if it does not have a valid code.
+        std = standardize_language(code)
+        if std:
+            long_name = "%s%s" % (std.description[0],
+                                  ' (%s)' % ', '.join(std.description[1:]) if
+                                  len(std.description) > 1 else '')
+            language = self.create(code=std.code,
+                                   label=std.description[0],
+                                   long_name=long_name)
+            return language
+
         raise ValueError('%s is not a valid language code' % code)
 
 
 class Language(models.Model):
+    """Model for a RFC5646 language.
+    * `code` is a lowercase RFC5646 tag (ie. "en-gb")
+    * `label` is the first element name (ie. "English")
+    * `long_name` is the full description, including the first element name and
+    subsequents elements (if any) between parenthesis and separated by commas
+    (ie. "English (United Kingdom)")
+    """
     # Custom manager for using get_or_create_by_code().
     objects = LanguageManager()
 
-    label = models.CharField(_('language name'), max_length=50, blank=True,
-                             unique=False)
-    code = models.CharField(max_length=5, blank=True, unique=True)
+    # max_length is set following recommendations of RFC5646 section 4.1.
+    code = models.CharField(max_length=50, unique=True)
+    label = models.CharField(_('language name'), max_length=128)
+    long_name = models.CharField(max_length=1024)
 
     class Meta:
         verbose_name = _("Language")
         verbose_name_plural = _("Languages")
+        ordering = ('long_name',)
 
     def __unicode__(self):
-        return self.label
+        return self.long_name
 
 
 @python_2_unicode_compatible
@@ -144,7 +164,6 @@ class Book(models.Model):
     mimetype = models.CharField(max_length=200, null=True)
     cover_img = ImageField(_('cover'), upload_to='covers',
                            blank=True, null=True)
-    # cover_img_url = models.URLField(null=True, blank=True)
 
     # General fields
     title = models.CharField(_('title'), max_length=255, null=False)
@@ -169,6 +188,7 @@ class Book(models.Model):
                                      help_text=_('Use ISBN for this'))
 
     # Other fields.
+    uploader = models.ForeignKey(User, blank=True, null=True, default=None)
     # TODO a_status null=True?
     a_status = models.ForeignKey(Status, blank=False, null=False)
     time_added = models.DateTimeField(_('time added'), auto_now_add=True)
